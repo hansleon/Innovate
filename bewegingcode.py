@@ -1,21 +1,28 @@
 class Main:
     def __init__(self):
-
-	
-        #global maken
-        global beginx
-        global beginy
+        #alle globale variabelen
+        global posx
+        global posy
         global beurt
-        global elekx
-        global eleky
-        
-        #beginx en beginy geven de huidige positie aan van de elektromagneet
-        self.beginx = 0
-        self.beginy = 0
-        self.beurt = 1
-        self.elekx = 0
-        self.eleky = 0
+        global beurt2
+        global startx
+        global starty
+        global endx
+        global endy
+        global slagx
+        global slagy
 
+        #alle variabelen een waarde meegeven
+        self.posx = 0
+        self.posy = 0
+        self.beurt = 0
+        self.beurt2 = ""
+        self.startx = 0
+        self.starty = 0
+        self.endx = 0
+        self.endy = 0
+        self.slagx = 0
+        self.slagy = 0
 
         #beginpunt x as van het schaakstuk
         #beginpunt y as van het schaakstuk
@@ -25,280 +32,206 @@ class Main:
         #eindpunt x as geslagen stuk
         #eindpunt y as geslagen stuk
         #is er een promotie en welk stuk word het en is het stuk aanwezig eerste getal geeft aan welk stuk het is,
-        #0 voor nee, 1 voor koningin, 2 voor paard, 3 voor toren, 4 voor loper
+        #is het stuk nog niet geslagen vul dan 0 in. Zo ja vul de y in van de positie van dit stuk
+        #het tweede getal geeft aan waar dit stuk staat als hij bestaat
         #rokade 0 is geen, 1 is korte rokade, 2 is lange rokade
-        #op dit punt zijn er 3 zetten geweest
-        self.Ifslag(3,7,3,8,False,9,6,1,0,self.beurt)
-        self.Ifslag(3,7,3,8,False,9,6,1,0,self.beurt)
-        #self.Ifslag(5,4,5,8,True,9,1,1,0,self.beurt)
+        #startx, starty, endx, endy, slag, slagx, slagy, promotie, rokade
 
+        self.set(7,7,7,8,False,9,5,2,0)
+        self.set(2,2,2,1,False,9,1,7,0)
 
-    def Ifslag(self, inputstartx, inputstarty, inputendx, inputendy, slag, inputslagx, inputslagy, promotie, rokade, beurt):
-        if(self.beurt%2 == 0):
-            beurt = "black"
-        if(self.beurt%2 != 0):
-            beurt = "white"
-        self.beurt = self.beurt + 1
-        #als er een rokade is word deze eerste behandeld
-        if(rokade == 0):
-		
-            #als er een promotie is word deze eerste behandeld
-            if(promotie == 0):
-			
-                #als er een slag is wordt die eerst gedaan
-                if(slag == True):
-				
-                    #omrekenen van coördinaten van de api naar coördinaten van ons schaakbord
-                    slagy = inputslagy * 2
-                    startx = (inputstartx + 2) * 2
-                    starty = inputstarty * 2
-                    endx = (inputendx + 2) * 2
-                    endy = inputendy * 2
+    def set(self, inputstartx, inputstarty, inputendx, inputendy, slag, inputslagx, inputslagy, promotie, rokade):
 
-                    #b
-                    movementx = endx - self.beginx
-                    movementy = endy - self.beginy
-                    #voert de beweging uit
-                    self.beweegxy(movementx, movementy)
-                    
-                    #activeren van de elektromagneet
-                    self.elektromagneet(1)
-
-                    #beweging om tussen de stukken door te gaan
-                    self.beweegxy(0,1)
-					
-                    if(self.beurt%2 == 0):
-					
-                        #beweging om naar de linkerkant te gaan in het geval van een slag voor wit
-                        self.beweegxy(4 - self.elekx, 0)
-
-                        #beweging om naar de hoogte van het gewenste vak te gaan
-                        self.beweegxy(0, slagy - endy)
-
-                        #beweging om naar het juiste vak te bewegen op de graveyard
-                        #eerste if word geactiveerd als het een pion is en de tweede als het een ander stuk is
-                        if(inputslagx == 9):
-                            self.beweegxy(-4,0)
-                        if(inputslagx == 10):
-                            self.beweegxy(-2,0)
-                    if(self.beurt%2 != 0):
-                        self.beweegxy(22 - self.elekx, 0)
-                        self.beweegxy(slagy-endy)
-                        if(inputslagx == 9):
-                            self.beweegxy(4,0)
-                        if(inputslagx == 10):
-                            self.beweegxy(2,0)
-                    #beweging om recht in het vak te komen
-                    self.beweegxy(0,-1)
-
-                    #deactiveren van de elektromagneet
-                    self.elektromagneet(0)
-
-                    #positie x as elektromagneet bepalen, de eerste voor als het stuk een pion is de tweede voor als het een ander stuk is
-                    if(inputslagx == 9):
-                        self.beginx = 0
-                    if(inputslagx == 10):
-                        self.beginx = 2
-
-                    #positie y as elektromagneet bepalen
-                    self.beginy = inputslagy *2
-
-                #als al de andere dingen zoals promotie of rokade behandeld is word de zet uitgevoerd
-                self.SetMoverShort(inputstartx, inputstarty, inputendx, inputendy)
-
-############################################################
-############################################################                
-############################################################
-                ###Promotie code###
-############################################################
-############################################################
-############################################################
-
-    
-            if(promotie != 0):
-                print(self.elekx)
-                print(self.eleky)
-                print(inputstartx)
-                print(inputstarty)
-                print(inputendx)
-                print(inputendy)
-                self.SetMoverShort(inputstartx, inputstarty, inputendx, inputendy)
-                print("done")
-                geslagen = True
-                
-            if(promotie == 1):
-                #promotie is koningin
-                #check of het stuk al eerder geslagen is of niet
-                if(geslagen == True):
-                    slagx = (inputslagx + 2) * 2
-                    slagy = (inputslagy * 2)
-                    self.elektromagneet(1)
-                    #eerst pion weg brengen
-                    #daarna nieuw koningin ophalen
-                    #breng pion naar zijn plek
-                    if(beurt == "white"):
-                        self.beweegxy(0,2)
-                        self.beweegxy(4 - self.elekx,0)
-                    if(beurt == "black"):
-                        self.beweegxy(0,-2)
-                        self.beweegxy(22 - self.elekx,0)
-                    self.beweegxy(0,slagy - self.eleky + 1)
-                    self.beweegxy(-4,0)
-                    self.beweegxy(0,-1)
-                    self.elektromagneet(0)
-            #if(promotie == 2):
-                #promotie is paard
-            #if(promotie == 3):
-                #promotie is een toren
-            #if(promotie == 4)
-                #promotie is een loper
-
-############################################################
-############################################################                
-############################################################
-                ###Rokade code###should fucking work
-############################################################
-############################################################
-############################################################
-                
-        #korte rokade               
-        if(rokade == 1):
-
-            #zet elektromagneet onder de koning en activeer de elektromagneet
-            movementx = 14 - self.elekx
-            
-            if(beurt == "white"):
-                movementy = 2 - self.eleky
-            if(beurt == "black"):
-                movementy = 16 - self.eleky
-                
-            self.beweegxy(movementx, movementy)
-            self.elektromagneet(1)
-
-            #zet de koning op het juiste vlak voor de korte rokade dat is voor wit (2,18) voor zwart (16,18)
-            self.beweegxy(4,0)
-
-            #Deactiveer elektromagneet
-            self.elektromagneet(0)
-
-            #zet de elektromagneet onder de toren 
-            self.beweegxy(2,0)
-
-            #Activeer elektromagneet
-            self.elektromagneet(1)
-
-            #zet de toren 2 omlaag voor wit of 2 omhoof voor zwart
-            #daarna beweegt hij naar de goede x
-            #daarna beweegt hij naar de goede Y
-            #dit moet om de koning te omzeilen
-            #de eerste if is voor als wit aan de beurt is;
-            #de tweede voor als zwart aan de beurt is 
-            
-            if(beurt == "white"):
-                self.beweegxy(0,-2)
-                self.beweegxy(-4,0)
-                self.beweegxy(0,2)
-                
-            if(beurt == "black"):
-                self.beweegxy(0,2)
-                self.beweegxy(-4,0)
-                self.beweegxy(0,-2)
-
-            #deactiveer elektromagneet
-            self.elektromagneet(0)
-           
-        #lange rokade
-        if(rokade == 2):
-            movementx = 14 - self.elekx
-            
-            if(beurt == "white"):
-                movementy = 2 - self.eleky
-            if(beurt == "black"):
-                movementy = 16 - self.eleky
-                
-            self.beweegxy(movementx, movementy)
-            self.elektromagneet(1)
-            
-            self.beweegxy(-4,0)
-            self.elektromagneet(0)
-            
-            self.beweegxy(-4,0)
-            self.elektromagneet(1)
-            
-            if(beurt == "white"):
-                self.beweegxy(0,-2)
-                self.beweegxy(6,0)
-                self.beweegxy(0,2)
-                
-            if(beurt == "black"):
-                self.beweegxy(0,2)
-                self.beweegxy(6,0)
-                self.beweegxy(0,-2)
-                
-            self.elektromagneet(0)
-
-############################################################
-############################################################                
-############################################################
-                ###beweging code###
-############################################################
-############################################################
-############################################################
-
-
-                 
-    def SetMoverShort(self, inputstartx, inputstarty, inputendx, inputendy):
-        #omreken van de x en y coördinaten
-        startx = (inputstartx + 2) * 2
-        starty = inputstarty * 2
-        endx = (inputendx + 2) * 2
-        endy = inputendy * 2
-        print(startx)
-        print(starty)
-        print(endx)
-        print(endy)
-        #de beweging van het vorige punt van de elektromagneet naar het start punt van het stuk
-        movementx = startx - self.beginx
-        movementy = starty - self.beginy
-
-        #activeren van de beweging
-        self.beweegxy(movementx, movementy)
+        #rekent alle inputCoördinaten om naar coöordinaten die nodig zijn voor het bord
         
-        #activeren van de elektromagneet
+        #zorgt de beurt per zet verandert
+        self.beurt += 1
+        if((self.beurt & 1) == 0):
+            self.beurt2 = "black"
+        if((self.beurt & 1) == 1):
+            self.beurt2 = "white"
+
+        self.omrekenen(inputstartx, inputstarty, inputendx, inputendy, inputslagx, inputslagy)
+   
+        #kijkt of er een rokade gebeurt, zo nee checkt hij of er een promotie is,
+        #daarna kijkt hij of er een slag is. als al deze dingen False zijn dan
+        #word het stuk van a naar b verplaatst
+        if(rokade == 0):
+            
+            if(promotie == 0):
+                
+                if(slag == True):
+
+                    self.slag(0)
+                                         
+                self.move()
+##############################################################################
+##############################################################################
+## promotie functie
+## eerst moet in deze functie de pion naar zijn doel worden gebracht
+## daarna checkt het bord of het stuk al geslagen is of niet
+## zo ja: dan plaatst hij de pion in de graveyard en haalt het goede stuk op uit de graveyard
+## zo nee: dan gebeurt er niks en functioneert de pion als nieuw stuk                
+                
+            if(promotie != 0):
+                self.move()
+                promotie *= 2
+                y3 = promotie
+                if(self.beurt2 == "white"):
+                    x = 4
+                    x2 = 2
+                    y = 18
+                    y2 = 16
+                    beurt = 1
+                if(self.beurt2 == "black"):
+                    x = 22
+                    x2 = 24
+                    y = 0
+                    y2 = 2
+                    beurt = 2
+                self.slag(beurt)
+                self.beweegposxy(x2,y3)
+                self.elektromagneet(1)
+                self.beweegposxy(x,self.posy)
+                self.beweegposxy(self.posx, y)
+                self.beweegposxy(self.endx, self.posy)
+                self.beweegposxy(self.posx, y2)
+                self.elektromagneet(0)
+                    
+                    
+                
+
+
+
+##############################################################################
+##############################################################################
+## rokade functie.
+## de eerste 2 if statements bepalen de x locatie waar de toren en koning
+## staan of heen moeten
+## de tweede 2 if statements bepalen de y locatie waar de toren en koning
+## staan of heen moeten
+
+        if(rokade == 1):
+            x1 = 18
+            x2 = 20
+            x3 = 16
+        if(rokade == 2):
+            x1 = 10
+            x2 = 6
+            x3 = 12   
+        if(self.beurt2 == "white"):
+            y1 = 2
+            y2 = 0
+        if(self.beurt2 == "black"):
+            y1 = 16
+            y2 = 18
+        if(rokade != 0): 
+            self.beweegposxy(14,y1)
+            self.elektromagneet(1)
+            
+            self.beweegposxy(x1,y1)
+            self.elektromagneet(0)
+            
+            self.beweegposxy(x2,y1)
+            self.elektromagneet(1)
+            
+            self.beweegposxy(x2,y2)
+            self.beweegposxy(x3,y2)
+            self.beweegposxy(x3,y1)
+            self.elektromagneet(0)
+
+    def slag(self, beurt):
+        self.beweegposxy(self.endx, self.endy)
+        self.elektromagneet(1)
+        self.beweegposxy(self.posx, self.endy + 1)
+
+        if(beurt == 0):
+            if(self.beurt2 == "white"):
+                self.beweegposxy(22, self.posy)
+            if(self.beurt2 == "black" ):
+                self.beweegposxy(4, self.posy)
+            x = self.slagx
+        if(beurt == 1):
+            self.beweegposxy(4, self.posy)
+            x = 0   
+        if(beurt == 2):
+            self.beweegposxy(22, self.posy)
+            x = 26
+        self.beweegposxy(self.posx, self.slagy + 1)
+        self.beweegposxy(x, self.posy)
+        self.beweegposxy(self.posx, self.slagy)
+        self.elektromagneet(0)
+##############################################################################
+##############################################################################
+##          alle functie nodig voor het bewegen van de schaakstukken        ##
+##############################################################################
+##############################################################################
+
+    #bij deze functie word een schaakstuk van startxy naar endxy gebracht
+    def move(self):
+        #zet de elektromagneet onder het juiste stuk
+        self.beweegposxy(self.startx,self.starty)
+
+        #zet de elektromagneet aan
         self.elektromagneet(1)
 
-        #de beweging van het begin van de zet naar het eind van de zet berekenen
-        movementx = endx - startx  
-        movementy = endy - starty
+        #beweegt de elektromagneet naar de eindbestemming
+        self.beweegposxy(self.endx,self.endy)
 
-        #activeren van de beweging        
-        self.beweegxy(movementx, movementy)
-
-        #deactiveren van de elektromagneet
+        #zet de elektromagneet uit
         self.elektromagneet(0)
 
-        #de huidige positie van de elektromagneet door geven
-        self.beginx = endx
-        self.beginy = endy
-        self.beurt += 1
-		
-    #als de motor niks hoeft te doen word deze ook niet geactiveerd
+    #omreken tabel voor de coördinaten
+    def omrekenen(self, inputstartx, inputstarty, inputendx, inputendy, inputslagx, inputslagy):
+        self.startx = (inputstartx + 2) * 2
+        self.starty = inputstarty * 2
+        
+        self.endx = (inputendx + 2) * 2
+        self.endy = inputendy * 2
+        print("beurt = " + str(self.beurt2))
+        if(inputslagx == 9):
+            if(self.beurt2 == "black"):
+                self.slagx = 0
+            if(self.beurt2 == "white"):
+                self.slagx = 26
+        if(inputslagx == 10):
+            if(self.beurt2 == "black"):
+                self.slagx = 2
+            if(self.beurt2 == "white"):
+                self.slagx = 24
+        self.slagy = inputslagy * 2
+    
+    ###de parameters voor deze functies bepalen de nieuwe locatie 
+    ###waar de elektromagneet heen moet
+    def beweegposxy(self, x, y):
+        movementx = x - self.posx
+        movementy = y - self.posy
+        self.posx += movementx
+        self.posy += movementy
+        
+        self.beweegxy(movementx, movementy)
+        print("posx = " + str(self.posx) + " posy = " + str(self.posy))
+
     def beweegxy(self, x, y):
-        self.elekx += x
-        self.eleky += y
-        if(x != 0):
-            print("motor1 beweeg " + str(x))
-        if(y != 0):
-            print("motor2 beweeg " + str(y))
-        print(str(self.elekx),str(self.eleky))
+        self.motorx(x)
+        self.motory(y)
+
+    ###de parameters voor de volgende twee functies bepalen 
+    ###de afstand over de x en de y as
+    ###
+    def motorx(self, x):
+        print("motor x-as beweeg " + str(x))
+
+    def motory(self, y):
+        print("motor y-as beweeg " + str(y))
 
     def elektromagneet(self, status):
         if(status == 0):
             print("Deactiveer de elektromagneet")
-        if(status == 1):
+        elif(status == 1):
             print("Activeer de elektromagneet")
-                  
-    
-Main()
-        
+        else:
+            print("Error onjuiste data")
 
+        
+Main()
