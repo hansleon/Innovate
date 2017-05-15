@@ -1,28 +1,6 @@
-class Main:
+class Movement:
     def __init__(self):
-        #alle globale variabelen
-        global posx
-        global posy
-        global beurt
-        global beurt2
-        global startx
-        global starty
-        global endx
-        global endy
-        global slagx
-        global slagy
 
-        #alle variabelen een waarde meegeven
-        self.posx = 0
-        self.posy = 0
-        self.beurt = 0
-        self.beurt2 = ""
-        self.startx = 0
-        self.starty = 0
-        self.endx = 0
-        self.endy = 0
-        self.slagx = 0
-        self.slagy = 0
 
         #beginpunt x as van het schaakstuk
         #beginpunt y as van het schaakstuk
@@ -35,82 +13,52 @@ class Main:
         #is het stuk nog niet geslagen vul dan 0 in. Zo ja vul de y in van de positie van dit stuk
         #het tweede getal geeft aan waar dit stuk staat als hij bestaat
         #rokade 0 is geen, 1 is korte rokade, 2 is lange rokade
-        #startx, starty, endx, endy, slag, slagx, slagy, promotie, rokade
+        #startx, starty, endx, endy, slag, slagx, slagy, promotie, rokade, beurt in string, posx, posy.
+        #posx en posy zijn fixt en worden steeds gereturned voor de volgende stap
+        posx = 0
+        posy = 0
+        posx, posy = self.Set(7,4,8,6,0,0,0,0,"white", posx ,posy)
+        #posx, posy = self.Set(7,7,7,8,9,4,0,0,"black", posx ,posy)
 
-        self.set(7,7,7,8,False,9,5,2,0)
-        self.set(2,2,2,1,False,9,1,7,0)
-
-    def set(self, inputstartx, inputstarty, inputendx, inputendy, slag, inputslagx, inputslagy, promotie, rokade):
-
-        #rekent alle inputCoördinaten om naar coöordinaten die nodig zijn voor het bord
-        
-        #zorgt de beurt per zet verandert
-        self.beurt += 1
-        if((self.beurt & 1) == 0):
-            self.beurt2 = "black"
-        if((self.beurt & 1) == 1):
-            self.beurt2 = "white"
-
-        self.omrekenen(inputstartx, inputstarty, inputendx, inputendy, inputslagx, inputslagy)
-   
-        #kijkt of er een rokade gebeurt, zo nee checkt hij of er een promotie is,
-        #daarna kijkt hij of er een slag is. als al deze dingen False zijn dan
-        #word het stuk van a naar b verplaatst
+    def Set(self, inputstartx, inputstarty, inputendx, inputendy, inputslagx, inputslagy, promotie, rokade, beurt, posx, posy):
+        startx, starty, endx, endy, slagx, slagy = self.Omrekenen(inputstartx, inputstarty, inputendx, inputendy, inputslagx, inputslagy, beurt)
         if(rokade == 0):
             
             if(promotie == 0):
                 
-                if(slag == True):
+                if(inputslagx != 0 or inputslagy != 0):
 
-                    self.slag(0)
-                                         
-                self.move()
-##############################################################################
-##############################################################################
-## promotie functie
-## eerst moet in deze functie de pion naar zijn doel worden gebracht
-## daarna checkt het bord of het stuk al geslagen is of niet
-## zo ja: dan plaatst hij de pion in de graveyard en haalt het goede stuk op uit de graveyard
-## zo nee: dan gebeurt er niks en functioneert de pion als nieuw stuk                
-                
+                    posx, posy = self.slag(endx, endy, posx, posy, slagx, slagy, 0 , beurt)
+                moveh = self.Moveh(startx, starty, endx, endy, posx, posx)        
+                if(moveh == False):
+                    posx, posy = self.Move(posx, posy, startx, starty, endx, endy, beurt)
             if(promotie != 0):
-                self.move()
+                posx, posy = self.Move(posx, posy, startx, starty, endx, endy, beurt)
                 promotie *= 2
                 y3 = promotie
-                if(self.beurt2 == "white"):
+                if(beurt == "white"):
                     x = 4
                     x2 = 2
                     y = 18
                     y2 = 16
-                    beurt = 1
-                if(self.beurt2 == "black"):
+                    beurtint = 1
+                if(beurt == "black"):
                     x = 22
                     x2 = 24
                     y = 0
                     y2 = 2
-                    beurt = 2
-                self.slag(beurt)
-                self.beweegposxy(x2,y3)
-                self.elektromagneet(1)
-                self.beweegposxy(x,self.posy)
-                self.beweegposxy(self.posx, y)
-                self.beweegposxy(self.endx, self.posy)
-                self.beweegposxy(self.posx, y2)
-                self.elektromagneet(0)
+                    beurtint = 2
+                    endx, endy, posx, posy, slagx, slagy, beurt, beurtstring
+                posx, posy = self.Slag(endx, endy, posx, posy, slagx, slagy, beurtint, beurt)
+                posx, posy = self.Beweegposxy(posx, posy, x2, y3)
+                self.Elektromagneet(1)
+                posx, posy = self.Beweegposxy(posx, posy, x, posy)
+                posx, posy = self.Beweegposxy(posx, posy, posx, y)
+                posx, posy = self.Beweegposxy(posx, posy, endx, posy)
+                posx, posy = self.Beweegposxy(posx, posy, posx, y2)
+                self.Elektromagneet(0)
+        
                     
-                    
-                
-
-
-
-##############################################################################
-##############################################################################
-## rokade functie.
-## de eerste 2 if statements bepalen de x locatie waar de toren en koning
-## staan of heen moeten
-## de tweede 2 if statements bepalen de y locatie waar de toren en koning
-## staan of heen moeten
-
         if(rokade == 1):
             x1 = 18
             x2 = 20
@@ -119,113 +67,139 @@ class Main:
             x1 = 10
             x2 = 6
             x3 = 12   
-        if(self.beurt2 == "white"):
+        if(beurt == "white"):
             y1 = 2
             y2 = 0
-        if(self.beurt2 == "black"):
+        if(beurt == "black"):
             y1 = 16
             y2 = 18
         if(rokade != 0): 
-            self.beweegposxy(14,y1)
-            self.elektromagneet(1)
+            posx, posy = self.Beweegposxy(posx, posy, 14, y1)
+            self.Elektromagneet(1)
             
-            self.beweegposxy(x1,y1)
-            self.elektromagneet(0)
+            posx, posy = self.Beweegposxy(posx, posy, x1, y1)
+            self.Elektromagneet(0)
             
-            self.beweegposxy(x2,y1)
-            self.elektromagneet(1)
+            posx, posy = self.Beweegposxy(posx, posy, x2, y1)
+            self.Elektromagneet(1)
             
-            self.beweegposxy(x2,y2)
-            self.beweegposxy(x3,y2)
-            self.beweegposxy(x3,y1)
-            self.elektromagneet(0)
+            posx, posy = self.Beweegposxy(posx, posy, x2, y2)
+            posx, posy = self.Beweegposxy(posx, posy, x3, y2)
+            posx, posy = self.Beweegposxy(posx, posy, x3, y1)
+            self.Elektromagneet(0)
+        return posx, posy
 
-    def slag(self, beurt):
-        self.beweegposxy(self.endx, self.endy)
-        self.elektromagneet(1)
-        self.beweegposxy(self.posx, self.endy + 1)
 
-        if(beurt == 0):
-            if(self.beurt2 == "white"):
-                self.beweegposxy(22, self.posy)
-            if(self.beurt2 == "black" ):
-                self.beweegposxy(4, self.posy)
-            x = self.slagx
-        if(beurt == 1):
-            self.beweegposxy(4, self.posy)
-            x = 0   
-        if(beurt == 2):
-            self.beweegposxy(22, self.posy)
-            x = 26
-        self.beweegposxy(self.posx, self.slagy + 1)
-        self.beweegposxy(x, self.posy)
-        self.beweegposxy(self.posx, self.slagy)
-        self.elektromagneet(0)
-##############################################################################
-##############################################################################
-##          alle functie nodig voor het bewegen van de schaakstukken        ##
-##############################################################################
-##############################################################################
 
-    #bij deze functie word een schaakstuk van startxy naar endxy gebracht
-    def move(self):
+            
+    def slag(self, endx, endy, posx, posy, slagx, slagy, beurt, beurtstring):
+            posx, posy = self.Beweegposxy(posx, posy, endx, endy)
+            self.Elektromagneet(1)
+            posx, posy = self.Beweegposxy(posx, posy, posx, endy + 1)
+
+            if(beurt == 0):
+                if(beurtstring == "white"):
+                    posx, posy = self.Beweegposxy(posx, posy, 22, posy)
+                if(beurtstring == "black" ):
+                    posx, posy = self.Beweegposxy(posx, posy, 4, posy)
+                x = slagx
+            if(beurt == 1):
+                posx, posy = self.Beweegposxy(posx, posy, 4, posy)
+                x = 0   
+            if(beurt == 2):
+                posx, posy = self.Beweegposxy(posx, posy, 22, posy)
+                x = 26
+            posx, posy = self.Beweegposxy(posx, posy, posx, slagy + 1)
+            posx, posy = self.Beweegposxy(posx, posy, x, posy)
+            posx, posy = self.Beweegposxy(posx, posy, posx, slagy)
+            self.Elektromagneet(0)
+            return posx, posy
+
+    def Move(self, posx, posy, startx, starty, endx, endy, beurt):
         #zet de elektromagneet onder het juiste stuk
-        self.beweegposxy(self.startx,self.starty)
+        posx, posy = self.Beweegposxy(posx, posy, startx, starty)
 
         #zet de elektromagneet aan
-        self.elektromagneet(1)
+        self.Elektromagneet(1)
 
         #beweegt de elektromagneet naar de eindbestemming
-        self.beweegposxy(self.endx,self.endy)
+        posx, posy = self.Beweegposxy(posx, posy, endx, endy)
 
         #zet de elektromagneet uit
-        self.elektromagneet(0)
+        self.Elektromagneet(0)
+        return posx, posy
 
-    #omreken tabel voor de coördinaten
-    def omrekenen(self, inputstartx, inputstarty, inputendx, inputendy, inputslagx, inputslagy):
-        self.startx = (inputstartx + 2) * 2
-        self.starty = inputstarty * 2
+    def Moveh(self, startx, starty, endx, endy, posx, posy):
+        posx, posy = self.Beweegposxy(posx, posy, startx, starty)
+        movementx = endx - startx
+        movementy = endy - starty
+        if((movementx == 2 and movementy == 4) or (movementx == 4 and movementy == 2)
+           or (movementx == 4 and movementy == 2) or (movementx == 4 and movementy == -2)
+           or (movementx == 2 and movementy == -4) or (movementx == -2 and movementy == -4)
+           or (movementx == -4 and movementy == -2) or (movementx == -4 and movementy == 2)
+           or (movementx == -2 and movementy == 4)):
+            if(movementx == 2 or movementx == -2):
+                x = movementx / 2
+            else:
+                x = 0
+            if(movementx == 4 or movementx == -4):
+                x2 = movementx
+            else:
+                x2 = 0
+            if(movementy == 2 or movementy == -2):
+                y = movementy / 2
+            else:
+                y = 0
+            if(movementy == 4 or movementy == -4):
+                y2 = movementy
+            else:
+                y2 = 0
+            posx, posy = self.Beweegposxy(posx, posy, posx + x, posy + y)
+            posx, posy = self.Beweegposxy(posx, posy, posx + x2, posy + y2)
+            posx, posy = self.Beweegposxy(posx, posy, posx + x, posy + y)
+
         
-        self.endx = (inputendx + 2) * 2
-        self.endy = inputendy * 2
-        print("beurt = " + str(self.beurt2))
+
+    def Omrekenen(self, inputstartx, inputstarty, inputendx, inputendy, inputslagx, inputslagy, beurt):
+        startx = (inputstartx + 2) * 2
+        starty = inputstarty * 2
+        
+        endx = (inputendx + 2) * 2
+        endy = inputendy * 2
+        print("beurt = " + str(beurt))
         if(inputslagx == 9):
-            if(self.beurt2 == "black"):
-                self.slagx = 0
-            if(self.beurt2 == "white"):
-                self.slagx = 26
+            if(beurt == "black"):
+                slagx = 0
+            if(beurt == "white"):
+                slagx = 26
         if(inputslagx == 10):
-            if(self.beurt2 == "black"):
-                self.slagx = 2
-            if(self.beurt2 == "white"):
-                self.slagx = 24
-        self.slagy = inputslagy * 2
-    
-    ###de parameters voor deze functies bepalen de nieuwe locatie 
-    ###waar de elektromagneet heen moet
-    def beweegposxy(self, x, y):
-        movementx = x - self.posx
-        movementy = y - self.posy
-        self.posx += movementx
-        self.posy += movementy
+            if(beurt == "black"):
+                slagx = 2
+            if(beurt == "white"):
+                slagx = 24
+        if(inputslagx == 0):
+            slagx = 0
+        slagy = inputslagy * 2
+        return startx, starty, endx, endy, slagx, slagy
+
+    def Beweegposxy(self, posx, posy, x, y):
+        movementx = x - posx
+        movementy = y - posy
+        posx += movementx
+        posy += movementy
         
-        self.beweegxy(movementx, movementy)
-        print("posx = " + str(self.posx) + " posy = " + str(self.posy))
+        self.Motorx(movementx)
+        self.Motory(movementy)
+        print("posx = " + str(posx) + " posy = " + str(posy))
+        return posx, posy
 
-    def beweegxy(self, x, y):
-        self.motorx(x)
-        self.motory(y)
-
-    ###de parameters voor de volgende twee functies bepalen 
-    ###de afstand over de x en de y as
-    ###
-    def motorx(self, x):
+    def Motorx(self, x):
         print("motor x-as beweeg " + str(x))
 
-    def motory(self, y):
+    def Motory(self, y):
         print("motor y-as beweeg " + str(y))
 
-    def elektromagneet(self, status):
+    def Elektromagneet(self, status):
         if(status == 0):
             print("Deactiveer de elektromagneet")
         elif(status == 1):
@@ -233,5 +207,4 @@ class Main:
         else:
             print("Error onjuiste data")
 
-        
-Main()
+Movement()
