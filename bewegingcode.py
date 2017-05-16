@@ -19,24 +19,37 @@ class Movement:
         posx = 0
         posy = 0
         
-        posx, posy = self.Set(7,4,8,6,0,0,0,0,"white", posx ,posy)
-        #posx, posy = self.Set(7,7,7,8,9,4,0,0,"black", posx ,posy)
+        posx, posy = self.Set(5,2,5,4,0,0,0,0,"white", posx ,posy)
+##        posx, posy = self.Set(4,7,4,5,0,0,0,0,"black", posx ,posy)
+##        posx, posy = self.Set(5,4,4,5,9,4,0,0,"white", posx ,posy)
+##        posx, posy = self.Set(4,8,4,5,9,2,0,0,"black", posx ,posy)
+##        posx, posy = self.Set(3,2,3,4,0,0,0,0,"white", posx ,posy)
+##        posx, posy = self.Set(2,7,2,6,0,0,0,0,"black", posx ,posy)
+##        posx, posy = self.Set(3,4,4,5,10,5,0,0,"white", posx ,posy)
+##        posx, posy = self.Set(3,8,1,6,0,0,0,0,"black", posx ,posy)
+##        posx, posy = self.Set(7,1,6,3,0,0,0,0,"white", posx ,posy)
+##        posx, posy = self.Set(2,8,3,6,0,0,0,0,"black", posx ,posy)
+##        posx, posy = self.Set(4,1,8,5,0,0,0,0,"white", posx ,posy)
+##        posx, posy = self.Set(0,0,0,0,0,0,0,2,"black", posx ,posy)
 
     def Set(self, inputstartx, inputstarty, inputendx, inputendy, inputslagx, inputslagy, promotie, rokade, beurt, posx, posy):
         startx, starty, endx, endy, slagx, slagy = self.Omrekenen(inputstartx, inputstarty, inputendx, inputendy, inputslagx, inputslagy, beurt)
         #check voor rokade, promotie, slag. Zo nee, doe de move, zo ja voer de de taak uit
+        print(inputstartx, inputstarty, inputendx, inputendy, inputslagx, inputslagy, promotie, rokade, beurt, posx, posy)
+        print(startx, starty, endx, endy, slagx, slagy)
         if(rokade == 0):
-            
+            print("rokade is 0")
             if(promotie == 0):
-                
+                print("promotie is 0")                
                 #als de inputslagx of inputslagy niet nul is betekend het dat er coördinaten zijn voor een plek in de graveyard.
                 #hierdoor weet het systeem dat er een slag is.
                 if(inputslagx != 0 or inputslagy != 0):
-
+                    print("slag is 1")
                     #de slag functie word later uitgelegt
                     posx, posy = self.Slag(endx, endy, posx, posy, slagx, slagy, 0 , beurt)
-
+                print("slag is 0")
                 #in deze functie word de stap gezet
+                print(posx, posy, startx, starty, endx, endy, beurt)
                 posx, posy = self.Move(posx, posy, startx, starty, endx, endy, beurt)
 
             #als er wel een promotie is gaat de code hier verder.
@@ -144,7 +157,7 @@ class Movement:
     #beurt is nodig voor de promotie functie zodat het stuk terug gaat naar zijn eigen graveyard inplaat van naar de tegenstander
     #beurtstring geeft aan wie de huidige beurt heeft, wit of zwart
     def Slag(self, endx, endy, posx, posy, slagx, slagy, beurt, beurtstring):
-
+            print("slag is true")            
             posx, posy = self.Beweegposxy(posx, posy, endx, endy)
             self.Elektromagneet(1)
             
