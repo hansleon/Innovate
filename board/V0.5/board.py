@@ -125,7 +125,7 @@ class main:
                 # De calcCord methode wordt uitgevoerd
                 # cords = self.calcCord(moves[currentMove], player, white, black, graveyard)
                 # cords = "3 2-3 4" #Debug placeholder
-                cords = "3 2-5 8&=Q"
+                cords = "3 2-3 4&=Q"
 
                 
 
@@ -133,11 +133,20 @@ class main:
                 if "#" in cords:
                     cords = cords.split("#")
                     cord = cords[0].split("-")
+                    print(1)
                 elif "&" in cords:
                     cords = cords.split("&")
                     cord = cords[0].split("-")
+                    promo = cords[1][1]
+                    print(promo)
+                    number = 1
+                    for pawn in white:
+                        if promo in white[pawn][1]:
+                            number += 1
+                    promo = promo + str(number)
                 else:
                     cord = cords.split("-")
+                    print(3)
 
 
                 # Beide cords worden opgeslagen in variabelen
@@ -159,6 +168,10 @@ class main:
                         # Wanneer de plek vrijgemaakt is kunnen we de pion die moet worden verplaatst verplaatsen
                         if white[pawnWhite][0] == cordOne:
                             white[pawnWhite][0] = cordTwo
+                            if cordpromo:
+                                promo = cordpromo[1] + "2"
+                                white[pawnWhite][1] = promo
+                                print(white)
 
                     elif player == "black":
 
@@ -171,6 +184,10 @@ class main:
                         # Wanneer de plek vrijgemaakt is kunnen we de pion die moet worden verplaatst verplaatsen
                         if black[pawnBlack][0] == cordOne:
                             black[pawnBlack][0] = cordTwo
+                            if cordpromo:
+                                promo = cordpromo[1] + "2"
+                                black[pawnBlack][1] = promo
+                                print(black)
                 
 
                 # Wanneer de zet is gedaan gaan we naar de volgende move
@@ -212,10 +229,10 @@ class main:
                 for pawnWhite, pawnBlack in zip(white, black):
                     # Wanneer de plek van de pion gelijk is aan de plek van de geconcate string van de variabelen x en y wordt deze toegevoegd aan de string en wordt spaceIsset op true gezet
                     if white[pawnWhite][0] == str(x) + " " + str(y):
-                        board += pawnWhite
+                        board += white[pawnWhite][1]
                         break
                     elif black[pawnBlack][0] == str(x) + " " + str(y):
-                        board += pawnBlack
+                        board += black[pawnBlack][1]
                         break
 
                 # Wanneer de for loop niet wordt gebreaked (De plek is dus leeg) wordt "--" ingevuld
