@@ -127,26 +127,42 @@ class main:
                 # cords = "3 2-3 4" #Debug placeholder
                 cords = "3 2-3 4&=Q"
 
-                
-
                 # De coordinaten worden gesplit op de -, hieruit krijg je een array met de start [0] en eind [1] cords
                 if "#" in cords:
+                    
                     cords = cords.split("#")
                     cord = cords[0].split("-")
-                    print(1)
+                    
                 elif "&" in cords:
+                    
                     cords = cords.split("&")
                     cord = cords[0].split("-")
                     promo = cords[1][1]
-                    print(promo)
+                    
                     number = 1
-                    for pawn in white:
-                        if promo in white[pawn][1]:
-                            number += 1
+                    if player == "white":
+                        for pawn in white:
+                            if promo in white[pawn][1]:
+                                number += 1
+                    elif player == "black":
+                        for pawn in black:
+                            if promo in black[pawn][1]:
+                                number += 1
+                    
                     promo = promo + str(number)
+
+                    if player == "white":
+                        for pawn in white:
+                            if white[pawn][0] == cord[0]:
+                                white[pawn][1] = promo
+                    elif player == "black":
+                        for pawn in black:
+                            if black[pawn][0] == cord[0]:
+                                black[pawn][1] = promo
+                                
                 else:
+                    
                     cord = cords.split("-")
-                    print(3)
 
 
                 # Beide cords worden opgeslagen in variabelen
@@ -162,16 +178,13 @@ class main:
                         # Er wordt gechecked of de positie waar de pion naar verplaatst bezet is door een zwarte pion
                         if black[pawnBlack][0] == cordTwo:
 
-                            # Als de positie bezet is door een pion wordt die pion in de "Graveyard" op zijn eigen plek gezet
+                            # Als de positie bezet is door een pion wordt die pion in de "Graveyard" op zijn eigen plek gezet en wordt de eventuele promotie weggehaalt
+                            black[pawnblack][1] = pawnblack
                             black[pawnBlack][0] = graveyardPos[pawnBlack]
 
                         # Wanneer de plek vrijgemaakt is kunnen we de pion die moet worden verplaatst verplaatsen
                         if white[pawnWhite][0] == cordOne:
                             white[pawnWhite][0] = cordTwo
-                            if cordpromo:
-                                promo = cordpromo[1] + "2"
-                                white[pawnWhite][1] = promo
-                                print(white)
 
                     elif player == "black":
 
