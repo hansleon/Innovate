@@ -1,0 +1,15 @@
+start x aparte int
+start y aparte int
+
+eind x aparte int
+eind y aparte int
+
+boolean true als er iets wordt geslagen
+boolean false als er iets wordt gelsagen
+
+x en y coordinaten van waar het stuk heen moet als hij gelsagen is =graveyard (2 aparte coordinaten)
+
+als geen promotie is geef ik 0 in of als het stuk niet in de graveyard staat 
+als er promotie is geef ik de y waarde mee van waar het stuk in de graveyard staat
+
+rokade: 0 is geen rokade, 1 is korte rokade, 2 is lange rokade
