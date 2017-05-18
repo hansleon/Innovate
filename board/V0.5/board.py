@@ -125,13 +125,38 @@ class main:
                 # De calcCord methode wordt uitgevoerd
                 # cords = self.calcCord(moves[currentMove], player, white, black, graveyard)
                 # cords = "3 2-3 4" #Debug placeholder
-                cords = "3 2-3 4&=Q"
+                cords = "3 2-3 4#4 2-4 4"
 
-                # De coordinaten worden gesplit op de -, hieruit krijg je een array met de start [0] en eind [1] cords
+                # We checken op bijzonderheden als een rokade (#) of promotiee (&)
                 if "#" in cords:
-                    
+
+                    # Wanneer er een rokade is moeten twee pionnen worden verplaatst, we splitten de coördinaten eerst op de #
                     cords = cords.split("#")
+
+                    # Hier splitten we de eerste twee coordinaten op de -, deze worden behandeld als een gewone zet
                     cord = cords[0].split("-")
+
+                    # Hier splitten we de laatste twee coördinaten op de -, deze worden hieronder weer verwerkt
+                    cordRokade = cords[1].split("-")
+                    cordOne = cordRokade[0]
+                    cordTwo = cordRokade[1]
+
+                    if player == "white":
+                        
+                        for pawn in white:
+                            
+                            if white[pawn][0] == cordOne:
+                                
+                                white[pawn][0] = cordTwo
+                            
+                    elif player == "black":
+
+                        for pawn in black:
+                            
+                            if black[pawn][0] == cordOne:
+                                
+                                black[pawn][0] = cordTwo
+                        
                     
                 elif "&" in cords:
                     
