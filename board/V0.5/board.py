@@ -141,6 +141,7 @@ class main:
                     cordOne = cordRokade[0]
                     cordTwo = cordRokade[1]
 
+                    # We kijken of de speler wit of zwart is en verzetten daarna de 2e pion
                     if player == "white":
                         
                         for pawn in white:
@@ -157,33 +158,84 @@ class main:
                                 
                                 black[pawn][0] = cordTwo
                         
-                    
+
+                # Wanneer er een & wordt gebruikt is er sprake van promotie
                 elif "&" in cords:
-                    
+
+                    # We splitsen de coördinaten op op  de &
                     cords = cords.split("&")
+
+                    # We splitsen de eerste helft van de array op op de -, deze coördinaten worden behandelt als een gewone zet
                     cord = cords[0].split("-")
+
+                    # van de tweede helft wordt de = afgehaalt en blijft alleen een letter over
                     promo = cords[1][1]
-                    
+
+                    # Met dit variabel wordt geteld hoeveel varianten er van dit soort pion zijn (soort als in bijv. queen of loper)
                     number = 1
+
+                    # We checken of de speler wit of zwart is
                     if player == "white":
+                        
+                        # We loopen door de witte pionnen heen
                         for pawn in white:
+
+                            # Wanneer de een pion de van de soort promo is wordt number opgeteld
                             if promo in white[pawn][1]:
                                 number += 1
+                    
                     elif player == "black":
+
+                        # We loopen door de zwarte pionnen heen
                         for pawn in black:
+
+                            # Wanneer de een pion de van de soort promo is wordt number opgeteld
                             if promo in black[pawn][1]:
                                 number += 1
-                    
+
+                    # We voegen de letter in promo en de cijfer in number aan elkaar toe om het duidelijk te maken dat het bijvoorbeeld een tweede queen is
                     promo = promo + str(number)
 
+                    # We checken de kleur van de speler weer
+                    # Wanneer de speler wit is
                     if player == "white":
+
+                        # We loopen door alle pionnen heen
                         for pawn in white:
+
+                            # We kijken welke pion op de coördinaten staat
                             if white[pawn][0] == cord[0]:
+
+                                # We promoveren de pion
                                 white[pawn][1] = promo
+
+                    # Wanneer de speler zwart is
                     elif player == "black":
+
+                        # We loopen door alle pionnen heen
                         for pawn in black:
+
+                            # We kijken welke pion op de coördinaten staat
                             if black[pawn][0] == cord[0]:
+
+                                # We promoveren de pion
                                 black[pawn][1] = promo
+
+                elif "X" in cords:
+
+                    # We splitsen de coördinaten op op  de X
+                    cords = cords.split("X")
+
+                    # We splitsen de eerste helft van de array op op de -, deze coördinaten worden behandelt als een gewone zet
+                    cord = cords[0].split("-")
+
+                    if player == "white":
+
+                        for pawn in black:
+
+                            
+                        
+                    elif player = "black"
                                 
                 else:
                     

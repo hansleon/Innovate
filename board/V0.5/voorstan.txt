@@ -1,0 +1,13 @@
+Return shit
+
+NIKS BIJZONDERS:
+"3 2-3 4"
+
+ROKADE:
+"3 2-3 4#4 2-4 4"
+
+PROMOTIE:
+"3 2-3 4&=Q"
+
+PASSANT:
+"3 2-3 4X4 3"
