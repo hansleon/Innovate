@@ -11,42 +11,41 @@ class main:
 
         # De start posities van alle witte pionnen wordt in deze associative array gezet
         white = {
-            "K1" : "5 1",
-            "Q1" : "4 1",
-            "B1" : "3 1",
-            "B2" : "6 1",
-            "N1" : "2 1",
-            "N2" : "7 1",
-            "R1" : "1 1",
-            "R2" : "8 1",
-            "P1" : "1 2",
-            "P2" : "2 2",
-            "P3" : "3 2",
-            "P4" : "4 2",
-            "P5" : "5 2",
-            "P6" : "6 2",
-            "P7" : "7 2",
-            "P8" : "8 2",
+            "K1" : ["5 1", "K1"],
+            "Q1" : ["4 1", "Q1"],
+            "B1" : ["3 1", "B1"],
+            "B2" : ["6 1", "B2"],
+            "N1" : ["2 1", "N1"],
+            "N2" : ["7 1", "N2"],
+            "R1" : ["1 1", "R1"],
+            "R2" : ["8 1", "R2"],
+            "P1" : ["1 2", "P1"],
+            "P2" : ["2 2", "P2"],
+            "P3" : ["3 2", "P3"],
+            "P4" : ["4 2", "P4"],
+            "P5" : ["5 2", "P5"],
+            "P6" : ["6 2", "P6"],
+            "P7" : ["7 2", "P7"],
+            "P8" : ["8 2", "P8"]
             }
-        
-        # De start posities van alle zwarte pionnen wordt in deze associative array gezet
+
         black = {
-            "K1" : "5 8",
-            "Q1" : "4 8",
-            "B1" : "3 8",
-            "B2" : "6 8",
-            "N1" : "2 8",
-            "N2" : "7 8",
-            "R1" : "1 8",
-            "R2" : "8 8",
-            "P1" : "1 7",
-            "P2" : "2 7",
-            "P3" : "3 7",
-            "P4" : "4 7",
-            "P5" : "5 7",
-            "P6" : "6 7",
-            "P7" : "7 7",
-            "P8" : "8 7",
+            "K1" : ["5 8", "K1"],
+            "Q1" : ["4 8", "Q1"],
+            "B1" : ["3 8", "B1"],
+            "B2" : ["6 8", "B2"],
+            "N1" : ["2 8", "N1"],
+            "N2" : ["7 8", "N2"],
+            "R1" : ["1 8", "R1"],
+            "R2" : ["8 8", "R2"],
+            "P1" : ["1 7", "P1"],
+            "P2" : ["2 7", "P2"],
+            "P3" : ["3 7", "P3"],
+            "P4" : ["4 7", "P4"],
+            "P5" : ["5 7", "P5"],
+            "P6" : ["6 7", "P6"],
+            "P7" : ["7 7", "P7"],
+            "P8" : ["8 7", "P8"],
             }
 
         # De graveyardPos array wordt gebruikt om te kijken welk stuk op welke positie moet komen te staan wanneer geslagen, rij x 9 voor pionnen x 10 voor andere stukken
@@ -184,6 +183,7 @@ class main:
             for pawn in playerBoard:
                 if i >= 8:
 
+                    # prepareert string
                     place = list(move)
                     place[0] = self.letterToNumber(place[0])
 
@@ -197,10 +197,10 @@ class main:
                         placeCheck2 = str(place[0]) + " " + str(place2)
 
                         # vergelijkt de strings met posities van de pionnen
-                        if placeCheck1 == playerBoard[pawn]:
-                            print("de controle voor 1 stapje werkt , beweegt 1 vakje en startpositie is wit " + playerBoard[pawn])
-                        elif placeCheck2 == playerBoard[pawn]:
-                            print("de controle voor 2 stapjes werkt, beweegt 2 vakjes en startpositie is wit " + playerBoard[pawn])
+                        if placeCheck1 == playerBoard[pawn][0]:
+                            print("de controle voor 1 stapje werkt , beweegt 1 vakje en startpositie is wit " + playerBoard[pawn][0])
+                        elif placeCheck2 == playerBoard[pawn][0]:
+                            print("de controle voor 2 stapjes werkt, beweegt 2 vakjes en startpositie is wit " + playerBoard[pawn][0])
 
                     # controleert of het een zwart stuk is die beweegt
                     if player == "black":
@@ -211,10 +211,10 @@ class main:
                         place2 = int(place[1]) + 2
                         placeCheck2 = str(place[0]) + " " + str(place2)
                         
-                        if placeCheck1 == playerBoard[pawn]:
-                            print("placeCheck1 is gelijk aan playerboar[pawn], beweegt 1 vakje en startpositie is zwart " + playerBoard[pawn])
-                        elif placeCheck2 == playerBoard[pawn]:
-                            print("placeCheck2 is gelijk aan playerBoard[pawn], beweegt 2 vakjes en startpositie is zwart " + playerBoard[pawn])
+                        if placeCheck1 == playerBoard[pawn][0]:
+                            print("placeCheck1 is gelijk aan playerboar[pawn], beweegt 1 vakje en startpositie is zwart " + playerBoard[pawn][0])
+                        elif placeCheck2 == playerBoard[pawn][0]:
+                            print("placeCheck2 is gelijk aan playerBoard[pawn], beweegt 2 vakjes en startpositie is zwart " + playerBoard[pawn][0])
                 i += 1
         #########################################################################
         #                                                                       # 
@@ -232,28 +232,25 @@ class main:
         #                                                                       #
         #########################################################################
         elif "B" in move:
-
-
                             
             # prepareer vergelijking voor 
             place = list(move)
-            place[0] = self.letterToNumber(place[-2])
-
+            place[-2] = self.letterToNumber(place[-2])
+            
             moveCor = str(place[-2]) + " " + str(place[-1])
-            print(moveCor)
 
             # prepareert de move string voor positiecontrole en controleert welke speciale dingen de zet bevat
             if "x" in move:
                 if player is "white":
-                    for piece in blackBoard:
-                        print(whiteBoardpiece, moveCor)
-                        if piece in move:
-                            print("charlieeeeee")
+                    for piece in lackBoard:
+                        print(blackBoard[piece], moveCor)
+                        if blackBoard[piece] in moveCor:
+                            print("charlieeeeee", moveCor)
                 if player is "black":
                     for piece in whiteBoard:
                         print(whiteBoard[piece], moveCor)
-                        if whiteBoard[piece] in move:
-                            print("charlie that hurts")
+                        if whiteBoard[piece] in moveCor:
+                            print("charlie that hurts", moveCor)
             
             # controleert of de bishop op een zwart of wit vlak staat
             if self.letterToNumber(place[-2]) % 2 == 1:
