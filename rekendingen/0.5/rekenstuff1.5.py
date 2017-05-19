@@ -171,6 +171,8 @@ class main:
         rokade = 0
         returnString = "0"
 
+        move = "Nbxc3"
+
         # problemen met schaak staan voorkomen
         if "+" in move:
             move = move[:-1]
@@ -211,11 +213,11 @@ class main:
                         
                         # controleert hoeveel stappen de pion heeft gezet
                         if placeCheck1 == playerBoard[pawn][0]:
-                            print(startX, startY, place[0], place[1], slaan, graveX, graveY, promotieY, rokade, "returnstring is ", returnString)
+                            print(startX, startY, place[0], place[1], slaan, graveX, graveY, promotieY, rokade)
                             # self.chielsMethod(startX, startY, place[0], place[1], slaan, graveX, graveY, promotieY, rokade)
                             # return(returnString)
                         elif placeCheck2 == playerBoard[pawn][0]:
-                            print(startX, startY, place[0], place[1], slaan, graveX, graveY, promotieY, rokade, "returnstring is ", returnString)
+                            print(startX, startY, place[0], place[1], slaan, graveX, graveY, promotieY, rokade)
                             # self.chielsMethod(startX, startY, place[0], place[1], slaan, graveX, graveY, promotieY, rokade)
                             # return(returnString)
 
@@ -232,12 +234,12 @@ class main:
                         
                         # controleert hoeveel stappen de pion heeft gezet
                         if placeCheck1 == playerBoard[pawn][0]:
-                            print(startX, startY, place[0], place[1], slaan, graveX, graveY, promotieY, rokade, "returnstring is ", returnString)
+                            print(startX, startY, place[0], place[1], slaan, graveX, graveY, promotieY, rokade)
                             # self.chielsMethod(startX, startY, place[0], place[1], slaan, graveX, graveY, promotieY, rokade)
                             # return(returnString)
                             
                         elif placeCheck2 == playerBoard[pawn][0]:
-                            print(startX, startY, place[0], place[1], slaan, graveX, graveY, promotieY, rokade, "returnstring is ", returnString)
+                            print(startX, startY, place[0], place[1], slaan, graveX, graveY, promotieY, rokade)
                             # self.chielsMethod(startX, startY, place[0], place[1], slaan, graveX, graveY, promotieY, rokade)
                             # return(returnString)
                 i += 1
@@ -306,18 +308,11 @@ class main:
                             eindY = movementY
                             amountOfPawns += 1
 
-                    pawnXTemp = pawnX
-                    pawnYTemp = pawnY
-
-                    while pawnX < 9 and pawnX > 0 and pawnY < 9 and pawnY > 0:
-                        x -= 1
-                        y += 1
-                        if pawnX == movementX and pawnY == movementY:
-                            startX = pawnX
-                            startY = pawnY
-                            eindX = movementX
-                            eindY = movementY
-                            amountOfPawns += 1
+                        for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
+                            if whiteBoard[pawnWhite][0][0] == movementX and  whiteBoard[pawnWhite][0][2] == movementY:
+                                break
+                            elif blackBoard[pawnBlack][0][0] == movementX and whiteBoard[pawnWhite][0][2] == movementY:
+                                break
 
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
@@ -331,6 +326,31 @@ class main:
                             eindX = movementX
                             eindY = movementY
                             amountOfPawns += 1
+
+                        for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
+                            if whiteBoard[pawnWhite][0][0] == movementX and  whiteBoard[pawnWhite][0][2] == movementY:
+                                break
+                            elif blackBoard[pawnBlack][0][0] == movementX and whiteBoard[pawnWhite][0][2] == movementY:
+                                break
+
+                    pawnXTemp = pawnX
+                    pawnYTemp = pawnY
+
+                    while pawnX < 9 and pawnX > 0 and pawnY < 9 and pawnY > 0:
+                        x -= 1
+                        y += 1
+                        if pawnX == movementX and pawnY == movementY:
+                            startX = pawnX
+                            startY = pawnY
+                            eindX = movementX
+                            eindY = movementY
+                            amountOfPawns += 1
+
+                        for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
+                            if whiteBoard[pawnWhite][0][0] == movementX and  whiteBoard[pawnWhite][0][2] == movementY:
+                                break
+                            elif blackBoard[pawnBlack][0][0] == movementX and whiteBoard[pawnWhite][0][2] == movementY:
+                                break
 
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
@@ -344,99 +364,17 @@ class main:
                             eindX = movementX
                             eindY = movementY
                             amountOfPawns += 1
+
+                        for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
+                            if whiteBoard[pawnWhite][0][0] == movementX and  whiteBoard[pawnWhite][0][2] == movementY:
+                                break
+                            elif blackBoard[pawnBlack][0][0] == movementX and whiteBoard[pawnWhite][0][2] == movementY:
+                                break
                             
-                if amountOfPawns > 1:
+            pawnType = "B"                            
+            self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, movementX, movementY, slagen, pawnType, player, whiteBoard, blackBoard)
 
-                    if "x" in move:
-                        
-                        checkMove = move[1:-3]                        
-                        
-                    else:
-
-                        checkMove = move[1:-2]
-
-                    if len(checkMove) == 1:
-                        if checkMove.isalpha():
-                            
-                            checkMove = self.letterToNumber(checkMove)
-
-                            for pawn in playerBoard:
-
-                                if "B" in playerBoard[pawn][1]:
-
-                                    if (playerBoard[pawn][0][:-2] != "9") | (playerBoard[pawn][0][:-2] != "10"):
-
-                                        if str(checkMove) == playerBoard[pawn][0][:-2]:
-
-                                            startX = int(playerBoard[pawn][0][0])
-                                            startY = int(playerBoard[pawn][0][2])
-                                            eindX = movementX
-                                            eindY = movementY
-                                            
-                        else:
-
-                            for pawn in playerBoard:
-
-                                if "B" in playerBoard[pawn][1]:
-                                    
-                                    if checkMove == playerBoard[pawn][0][-1]:
-
-                                        startX = int(playerBoard[pawn][0][0])
-                                        startY = int(playerBoard[pawn][0][2])
-                                        eindX = movementX
-                                        eindY = movementY
-                                        
-                    else:
-
-                        x = self.letterToNumber(checkMove[0])
-                        y = checkMove[1]
-
-                        for pawn in playerBoard:
-
-                            if "B" in playerBoard[pawn][1]:
-
-                                print(playerBoard[pawn][0][:-2], playerBoard[pawn][0][-1])
-                                print(x, y)
-                                
-                                if (str(x) == playerBoard[pawn][0][:-2]) & (y == playerBoard[pawn][0][-1]):
-
-                                    startX = int(playerBoard[pawn][0][0])
-                                    startY = int(playerBoard[pawn][0][2])
-                                    eindX = movementX
-                                    eindY = movementY
-                        
-                    
-                if slagen == True:
-
-                    if player == "white":
-                        enemyBoard = blackBoard
-                    elif player == "black":
-                        enemyBoard = whiteBoard
-
-                    for pawn in enemyBoard:
-
-                        if enemyBoard[pawn][0] == str(eindX) + " " + str(eindY):
-
-                            graveyardPos = graveyard[pawn]
-                            
-                            graveyardX = int(graveyardPos[:-2])
-
-                            if graveyardX == 10:
-
-                                graveyardY = int(graveyardPos[3])
-                                
-                            else:
-                                
-                                graveyardY = int(graveyardPos[2])
-
-            print(startX, startY, eindX, eindY, slagen, graveyardY)
-
-        # controleert of de zet een dame is 
-        elif "Q" in move:
-
-
-            
-            
+        
         elif "R" in move:
 
             slagen = False
@@ -473,12 +411,20 @@ class main:
                     
                     while pawnX < 9 and pawnX > 0 and pawnY < 9 and pawnY > 0:
                         x += 1
+
                         if pawnX == movementX and pawnY == movementY:
+
                             startX = pawnX
                             startY = pawnY
                             eindX = movementX
                             eindY = movementY
                             amountOfPawns += 1
+
+                        for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
+                            if whiteBoard[pawnWhite][0][0] == movementX and  whiteBoard[pawnWhite][0][2] == movementY:
+                                break
+                            elif blackBoard[pawnBlack][0][0] == movementX and whiteBoard[pawnWhite][0][2] == movementY:
+                                break
                             
                     rookx = pawnX
                     rooky = pawnY
@@ -492,6 +438,12 @@ class main:
                             eindX = movementX
                             eindY = movementY
                             amountOfPawns += 1
+
+                        if whiteBoard[pawnWhite][0][0] == movementX and  whiteBoard[pawnWhite][0][2] == movementY:
+                            break
+                        elif blackBoard[pawnBlack][0][0] == movementX and whiteBoard[pawnWhite][0][2] == movementY:
+                            break
+                            
                             
                     rookx = pawnX
                     rooky = pawnY
@@ -505,6 +457,12 @@ class main:
                             eindX = movementX
                             eindY = movementY
                             amountOfPawns += 1
+
+                        if whiteBoard[pawnWhite][0][0] == movementX and  whiteBoard[pawnWhite][0][2] == movementY:
+                            break
+                        elif blackBoard[pawnBlack][0][0] == movementX and whiteBoard[pawnWhite][0][2] == movementY:
+                            break
+
                             
                     rookx = pawnX
                     rooky = pawnY
@@ -518,94 +476,15 @@ class main:
                             eindX = movementX
                             eindY = movementY
                             amountOfPawns += 1
+
+                        if whiteBoard[pawnWhite][0][0] == movementX and  whiteBoard[pawnWhite][0][2] == movementY:
+                            break
+                        elif blackBoard[pawnBlack][0][0] == movementX and whiteBoard[pawnWhite][0][2] == movementY:
+                            break
                         
 
-                        
-                if amountOfPawns > 1:
-
-                    if "x" in move:
-                        
-                        checkMove = move[1:-3]                        
-                        
-                    else:
-
-                        checkMove = move[1:-2]
-
-                    if len(checkMove) == 1:
-                        if checkMove.isalpha():
-                            
-                            checkMove = self.letterToNumber(checkMove)
-
-                            for pawn in playerBoard:
-
-                                if "R" in playerBoard[pawn][1]:
-
-                                    if (playerBoard[pawn][0][:-2] != "9") | (playerBoard[pawn][0][:-2] != "10"):
-
-                                        if str(checkMove) == playerBoard[pawn][0][:-2]:
-
-                                            startX = int(playerBoard[pawn][0][0])
-                                            startY = int(playerBoard[pawn][0][2])
-                                            eindX = movementX
-                                            eindY = movementY
-                                            
-                        else:
-
-                            for pawn in playerBoard:
-
-                                if "R" in playerBoard[pawn][1]:
-                                    
-                                    if checkMove == playerBoard[pawn][0][-1]:
-
-                                        startX = int(playerBoard[pawn][0][0])
-                                        startY = int(playerBoard[pawn][0][2])
-                                        eindX = movementX
-                                        eindY = movementY
-                                        
-                    else:
-
-                        x = self.letterToNumber(checkMove[0])
-                        y = checkMove[1]
-
-                        for pawn in playerBoard:
-
-                            if "R" in playerBoard[pawn][1]:
-
-                                print(playerBoard[pawn][0][:-2], playerBoard[pawn][0][-1])
-                                print(x, y)
-                                
-                                if (str(x) == playerBoard[pawn][0][:-2]) & (y == playerBoard[pawn][0][-1]):
-
-                                    startX = int(playerBoard[pawn][0][0])
-                                    startY = int(playerBoard[pawn][0][2])
-                                    eindX = movementX
-                                    eindY = movementY
-                        
-                    
-                if slagen == True:
-
-                    if player == "white":
-                        enemyBoard = blackBoard
-                    elif player == "black":
-                        enemyBoard = whiteBoard
-
-                    for pawn in enemyBoard:
-
-                        if enemyBoard[pawn][0] == str(eindX) + " " + str(eindY):
-
-                            graveyardPos = graveyard[pawn]
-                            
-                            graveyardX = int(graveyardPos[:-2])
-
-                            if graveyardX == 10:
-
-                                graveyardY = int(graveyardPos[3])
-                                
-                            else:
-                                
-                                graveyardY = int(graveyardPos[2])
-
-            print(startX, startY, eindX, eindY, slagen, graveyardY)
+            pawntype = "R"        
+            self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, movementX, movementY, slagen, pawnType, player, whiteBoard, blackBoard)
 
         elif "Q" in move:
 
@@ -640,6 +519,8 @@ class main:
 
                     queenX = pawnX
                     queenY = pawnY
+
+                    x = 0
                     
                     while pawnX < 9 and pawnX > 0 and pawnY < 9 and pawnY > 0:
                         x += 1
@@ -649,10 +530,17 @@ class main:
                             eindX = movementX
                             eindY = movementY
                             amountOfPawns += 1
+
+                        for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
+                            if whiteBoard[pawnWhite][0][0] == movementX and  whiteBoard[pawnWhite][0][2] == movementY:
+                                break
+                            elif blackBoard[pawnBlack][0][0] == movementX and whiteBoard[pawnWhite][0][2] == movementY:
+                                break
                             
                     queenX = pawnX
                     queenY = pawnY
-                    
+
+                    x = 0                    
 
                     while pawnX < 9 and pawnX > 0 and pawnY < 9 and pawnY > 0:
                         x -= 1
@@ -662,10 +550,17 @@ class main:
                             eindX = movementX
                             eindY = movementY
                             amountOfPawns += 1
+
+                        for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
+                            if whiteBoard[pawnWhite][0][0] == movementX and  whiteBoard[pawnWhite][0][2] == movementY:
+                                break
+                            elif blackBoard[pawnBlack][0][0] == movementX and whiteBoard[pawnWhite][0][2] == movementY:
+                                break
                             
                     queenX = pawnX
                     queenY = pawnY
-                    
+
+                    x = 0                    
 
                     while pawnX < 9 and pawnX > 0 and pawnY < 9 and pawnY > 0:
                         y += 1
@@ -675,6 +570,12 @@ class main:
                             eindX = movementX
                             eindY = movementY
                             amountOfPawns += 1
+
+                        for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
+                            if whiteBoard[pawnWhite][0][0] == movementX and  whiteBoard[pawnWhite][0][2] == movementY:
+                                break
+                            elif blackBoard[pawnBlack][0][0] == movementX and whiteBoard[pawnWhite][0][2] == movementY:
+                                break
                             
                     queenX = pawnX
                     queenY = pawnY
@@ -689,6 +590,12 @@ class main:
                             eindY = movementY
                             amountOfPawns += 1
 
+                        for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
+                            if whiteBoard[pawnWhite][0][0] == movementX and  whiteBoard[pawnWhite][0][2] == movementY:
+                                break
+                            elif blackBoard[pawnBlack][0][0] == movementX and whiteBoard[pawnWhite][0][2] == movementY:
+                                break
+
                     while pawnX < 9 and pawnX > 0 and pawnY < 9 and pawnY > 0:
                         x += 1
                         y += 1
@@ -699,18 +606,11 @@ class main:
                             eindY = movementY
                             amountOfPawns += 1
 
-                    queenX = pawnX
-                    queenY = pawnY
-
-                    while pawnX < 9 and pawnX > 0 and pawnY < 9 and pawnY > 0:
-                        x -= 1
-                        y += 1
-                        if pawnX == movementX and pawnY == movementY:
-                            startX = pawnX
-                            startY = pawnY
-                            eindX = movementX
-                            eindY = movementY
-                            amountOfPawns += 1
+                        for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
+                            if whiteBoard[pawnWhite][0][0] == movementX and  whiteBoard[pawnWhite][0][2] == movementY:
+                                break
+                            elif blackBoard[pawnBlack][0][0] == movementX and whiteBoard[pawnWhite][0][2] == movementY:
+                                break
 
                     queenX = pawnX
                     queenY = pawnY
@@ -724,6 +624,31 @@ class main:
                             eindX = movementX
                             eindY = movementY
                             amountOfPawns += 1
+
+                        for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
+                            if whiteBoard[pawnWhite][0][0] == movementX and  whiteBoard[pawnWhite][0][2] == movementY:
+                                break
+                            elif blackBoard[pawnBlack][0][0] == movementX and whiteBoard[pawnWhite][0][2] == movementY:
+                                break
+
+                    queenX = pawnX
+                    queenY = pawnY
+
+                    while pawnX < 9 and pawnX > 0 and pawnY < 9 and pawnY > 0:
+                        x -= 1
+                        y += 1
+                        if pawnX == movementX and pawnY == movementY:
+                            startX = pawnX
+                            startY = pawnY
+                            eindX = movementX
+                            eindY = movementY
+                            amountOfPawns += 1
+
+                        for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
+                            if whiteBoard[pawnWhite][0][0] == movementX and  whiteBoard[pawnWhite][0][2] == movementY:
+                                break
+                            elif blackBoard[pawnBlack][0][0] == movementX and whiteBoard[pawnWhite][0][2] == movementY:
+                                break
 
                     queenX = pawnX
                     queenY = pawnY
@@ -737,94 +662,16 @@ class main:
                             eindX = movementX
                             eindY = movementY
                             amountOfPawns += 1
+
+                        for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
+                            if whiteBoard[pawnWhite][0][0] == movementX and  whiteBoard[pawnWhite][0][2] == movementY:
+                                break
+                            elif blackBoard[pawnBlack][0][0] == movementX and whiteBoard[pawnWhite][0][2] == movementY:
+                                break
                         
 
-                        
-                if amountOfPawns > 1:
-
-                    if "x" in move:
-                        
-                        checkMove = move[1:-3]                        
-                        
-                    else:
-
-                        checkMove = move[1:-2]
-
-                    if len(checkMove) == 1:
-                        if checkMove.isalpha():
-                            
-                            checkMove = self.letterToNumber(checkMove)
-
-                            for pawn in playerBoard:
-
-                                if "Q" in playerBoard[pawn][1]:
-
-                                    if (playerBoard[pawn][0][:-2] != "9") | (playerBoard[pawn][0][:-2] != "10"):
-
-                                        if str(checkMove) == playerBoard[pawn][0][:-2]:
-
-                                            startX = int(playerBoard[pawn][0][0])
-                                            startY = int(playerBoard[pawn][0][2])
-                                            eindX = movementX
-                                            eindY = movementY
-                                            
-                        else:
-
-                            for pawn in playerBoard:
-
-                                if "Q" in playerBoard[pawn][1]:
-                                    
-                                    if checkMove == playerBoard[pawn][0][-1]:
-
-                                        startX = int(playerBoard[pawn][0][0])
-                                        startY = int(playerBoard[pawn][0][2])
-                                        eindX = movementX
-                                        eindY = movementY
-                                        
-                    else:
-
-                        x = self.letterToNumber(checkMove[0])
-                        y = checkMove[1]
-
-                        for pawn in playerBoard:
-
-                            if "R" in playerBoard[pawn][1]:
-
-                                print(playerBoard[pawn][0][:-2], playerBoard[pawn][0][-1])
-                                print(x, y)
-                                
-                                if (str(x) == playerBoard[pawn][0][:-2]) & (y == playerBoard[pawn][0][-1]):
-
-                                    startX = int(playerBoard[pawn][0][0])
-                                    startY = int(playerBoard[pawn][0][2])
-                                    eindX = movementX
-                                    eindY = movementY
-                        
-                    
-                if slagen == True:
-
-                    if player == "white":
-                        enemyBoard = blackBoard
-                    elif player == "black":
-                        enemyBoard = whiteBoard
-
-                    for pawn in enemyBoard:
-
-                        if enemyBoard[pawn][0] == str(eindX) + " " + str(eindY):
-
-                            graveyardPos = graveyard[pawn]
-                            
-                            graveyardX = int(graveyardPos[:-2])
-
-                            if graveyardX == 10:
-
-                                graveyardY = int(graveyardPos[3])
-                                
-                            else:
-                                
-                                graveyardY = int(graveyardPos[2])
-
-            print(startX, startY, eindX, eindY, slagen, , graveyardY)
+            pawnType = "Q"        
+            self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, movementX, movementY, slagen, pawnType, player, whiteBoard, blackBoard)
 
 
         if "N" in move:
@@ -914,102 +761,9 @@ class main:
                         eindY = movementY
                         amountOfPawns += 1
 
+            pawnType = "N"                        
+            self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, movementX, movementY, slagen, pawnType, player, whiteBoard, blackBoard)
                         
-                if amountOfPawns > 1:
-
-                    if "x" in move:
-                        
-                        checkMove = move[1:-3]                        
-                        
-                    else:
-
-                        checkMove = move[1:-2]
-
-                    if len(checkMove) == 1:
-                        if checkMove.isalpha():
-                            
-                            checkMove = self.letterToNumber(checkMove)
-
-                            for pawn in playerBoard:
-
-                                if "N" in playerBoard[pawn][1]:
-
-                                    if (playerBoard[pawn][0][:-2] != "9") | (playerBoard[pawn][0][:-2] != "10"):
-
-                                        if str(checkMove) == playerBoard[pawn][0][:-2]:
-
-                                            startX = int(playerBoard[pawn][0][0])
-                                            startY = int(playerBoard[pawn][0][2])
-                                            eindX = movementX
-                                            eindY = movementY
-                                            
-                        else:
-
-                            for pawn in playerBoard:
-
-                                if "N" in playerBoard[pawn][1]:
-                                    
-                                    if checkMove == playerBoard[pawn][0][-1]:
-
-                                        startX = int(playerBoard[pawn][0][0])
-                                        startY = int(playerBoard[pawn][0][2])
-                                        eindX = movementX
-                                        eindY = movementY
-                                        
-                    else:
-
-                        x = self.letterToNumber(checkMove[0])
-                        y = checkMove[1]
-
-                        for pawn in playerBoard:
-
-                            if "N" in playerBoard[pawn][1]:
-
-                                print(playerBoard[pawn][0][:-2], playerBoard[pawn][0][-1])
-                                print(x, y)
-                                
-                                if (str(x) == playerBoard[pawn][0][:-2]) & (y == playerBoard[pawn][0][-1]):
-
-                                    startX = int(playerBoard[pawn][0][0])
-                                    startY = int(playerBoard[pawn][0][2])
-                                    eindX = movementX
-                                    eindY = movementY
-                        
-                    
-                if slagen == True:
-
-                    if player == "white":
-                        enemyBoard = blackBoard
-                    elif player == "black":
-                        enemyBoard = whiteBoard
-
-                    for pawn in enemyBoard:
-
-                        if enemyBoard[pawn][0] == str(eindX) + " " + str(eindY):
-
-                            graveyardPos = graveyard[pawn]
-                            
-                            graveyardX = int(graveyardPos[:-2])
-
-                            if graveyardX == 10:
-
-                                graveyardY = int(graveyardPos[3])
-                                
-                            else:
-                                
-                                graveyardY = int(graveyardPos[2])
-
-                
-                    
-
-
-
-
-
-
-
-            print(startX, startY, eindX, eindY, slagen, graveyardY)
-
         elif "K" in move:
             playerBoardSplit = playerBoard["K1"][0].split(" ")
 
@@ -1115,5 +869,100 @@ class main:
                 x = 1
             if count is 9:
                 y -= 1
+
+    def pieceCheck(self, amountOfPawns, move, playerBoard, graveyard, movementX, movementY, slagen, pawnType, player, whiteBoard, blackBoard):
+
+        eindX = movementX
+        eindY = movementY
+
+        startX = 0
+        startY = 0
+
+        graveyardX = 0
+        graveyardY = 0
+
+        if amountOfPawns > 1:
+
+            if "x" in move:
+                
+                checkMove = move[1:-3]                        
+                
+            else:
+
+                checkMove = move[1:-2]
+
+            if len(checkMove) == 1:
+                if checkMove.isalpha():
+                    
+                    checkMove = self.letterToNumber(checkMove)
+
+                    for pawn in playerBoard:
+
+                        if "N" in playerBoard[pawn][1]:
+
+                            if (playerBoard[pawn][0][:-2] != "9") | (playerBoard[pawn][0][:-2] != "10"):
+
+                                if str(checkMove) == playerBoard[pawn][0][:-2]:
+
+                                    startX = int(playerBoard[pawn][0][0])
+                                    startY = int(playerBoard[pawn][0][2])
+                                    
+                else:
+
+                    for pawn in playerBoard:
+
+                        if "N" in playerBoard[pawn][1]:
+                            
+                            if checkMove == playerBoard[pawn][0][-1]:
+
+                                startX = int(playerBoard[pawn][0][0])
+                                startY = int(playerBoard[pawn][0][2])
+                                
+                                
+            else:
+
+                x = self.letterToNumber(checkMove[0])
+                y = checkMove[1]
+
+                for pawn in playerBoard:
+
+                    if pawnType in playerBoard[pawn][1]:
+
+                        print(playerBoard[pawn][0][:-2], playerBoard[pawn][0][-1])
+                        print(x, y)
+                        
+                        if (str(x) == playerBoard[pawn][0][:-2]) & (y == playerBoard[pawn][0][-1]):
+
+                            startX = int(playerBoard[pawn][0][0])
+                            startY = int(playerBoard[pawn][0][2])
+                
+            
+        if slagen == True:
+
+            if player == "white":
+                enemyBoard = blackBoard
+            elif player == "black":
+                enemyBoard = whiteBoard
+
+            for pawn in enemyBoard:
+
+                if enemyBoard[pawn][0] == str(eindX) + " " + str(eindY):
+
+                    graveyardPos = graveyard[pawn]
+                    
+                    graveyardX = int(graveyardPos[:-2])
+
+                    if graveyardX == 10:
+
+                        graveyardY = int(graveyardPos[3])
+                        
+                    else:
+                        
+                        graveyardY = int(graveyardPos[2])
+
+        print(startX, startY, eindX, eindY, slagen, graveyardY)
+
+        return str(startX) + " " + str(startY) + "-" + str(eindX) + " " + str(eindY)
+
                     
 main()
