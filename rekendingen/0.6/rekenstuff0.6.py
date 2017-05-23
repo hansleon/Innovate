@@ -7,7 +7,20 @@ class main:
 
     def __init__(self):
 
-        gameID = "Sc4g2GAJ"
+        gameID = "ai3CQvRT"
+
+
+####
+        # de pionnen krijgen de start x verkeerd mee(altijd 8), is waarschijnlijk een kleine domme fout ergens
+        # stukken die geen pion zijn krijgen geen graveyard coordinaten als ze iets slaan
+        # passant is raar
+        #
+        #
+        # als er misschien tijd is kunnen we het zo maken dat als een gepromoveerd stuk dat niet vervangen is toch vervanging krijgt het automatisch dat opmerkt en vervangt
+####
+
+
+
 
         # De start posities van alle witte pionnen wordt in deze associative array gezet
         white = {
@@ -76,7 +89,7 @@ class main:
 
         while True:
 
-            time.sleep(2)
+            time.sleep(1)
 
             with urllib.request.urlopen("https://nl.lichess.org/api/game/" + gameID +"?with_moves=1") as url:
                 data = json.loads(url.read().decode())
@@ -168,12 +181,28 @@ class main:
         graveX = 0
         graveY = 0
         promotieY = 0
+        promotieLetter = 0
+        passantX = 0
+        passantY = 0
         rokade = 0
         passant = False
         returnString = "0"
+        promotie = False
+
+        if "#" in move:
+            print("de game is over en moet gereset worden")
+
+
 
         # problemen met schaak staan voorkomen
         if "+" in move:
+            move = move[:-1]
+
+        # promotie controleren
+        if "=" in move:
+            promotie = True
+            moveLetter = list(move)
+            promotieLetter = moveLetter[-1]
             move = move[:-1]
 
         # prepareert coordinaten van de eindpositie in stringvorm
@@ -185,70 +214,8 @@ class main:
             playerBoard = blackBoard
         else:
             playerBoard = whiteBoard
-        # controleert of de zet een pion is die niets speciaals doet
-        if len(move) == 2:
-            i = 0;
 
-            # gaat door de schaakstukken-array heen en vuurt pas meer code af als hij bij de pionnen is
-            for pawn in playerBoard:
-                if i >= 8:
-
-                    startList = list(playerBoard[pawn][0])
-                    startX = startList[0]
-                    startY = startList[2]
-
-                    returnString = str(startX) + str(" ")+ str(startY)
-                    
-                    # controleert of het een wit stuk is die beweegt
-                    if player == "white":
-                        
-                        # prepareert de strings voor de if statement omdat als je dit in de if statement doet krijg je syntax errors
-                        place1 = int(place[1]) - 1 
-                        placeCheck1 = str(place[0]) + " " + str(place1)
-                        place2 = int(place[1]) - 2
-                        placeCheck2 = str(place[0]) + " " + str(place2)
-
-                        returnString = returnString + str("-") + str(place[0]) + str(" ") + str(place[1])
-                        
-                        # controleert hoeveel stappen de pion heeft gezet
-                        if placeCheck1 == playerBoard[pawn][0]:
-                            print(startX, startY, place[0], place[1], graveX, graveY, promotieY, rokade, passant, player)
-                            # self.chielsMethod(startX, startY, place[0], place[1], slaan, graveX, graveY, promotieY, rokade)
-                            # return(returnString)
-                        elif placeCheck2 == playerBoard[pawn][0]:
-                            print(startX, startY, place[0], place[1], graveX, graveY, promotieY, rokade, passant, player)
-                            # self.chielsMethod(startX, startY, place[0], place[1], slaan, graveX, graveY, promotieY, rokade)
-                            # return(returnString)
-
-                    # controleert of het een zwart stuk is die beweegt
-                    if player == "black":
-                        
-                        # prepareert de strings voor de if statement omdat als je dit in de if statement doet krijg je syntax errors
-                        place1 = int(place[1]) + 1 
-                        placeCheck1 = str(place[0]) + " " + str(place1)
-                        place2 = int(place[1]) + 2
-                        placeCheck2 = str(place[0]) + " " + str(place2)
-
-                        returnString = returnString + str("-") + str(place[0]) + str(" ") + str(place[1])
-                        
-                        # controleert hoeveel stappen de pion heeft gezet
-                        if placeCheck1 == playerBoard[pawn][0]:
-                            print(startX, startY, place[0], place[1], graveX, graveY, promotieY, rokade, passant, player)
-                            # self.chielsMethod(startX, startY, place[0], place[1], slaan, graveX, graveY, promotieY, rokade)
-                            # return(returnString)
-                            
-                        elif placeCheck2 == playerBoard[pawn][0]:
-                            print(startX, startY, place[0], place[1], graveX, graveY, promotieY, rokade, passant, player)
-
-                            # self.chielsMethod(startX, startY, place[0], place[1], slaan, graveX, graveY, promotieY, rokade)
-                            # return(returnString)
-                i += 1
-
-        elif "=" in move:
-            print("er wordt een pion gepormoveerd")
-        
-        # controleert of de zet die gedaan is een loper is
-        elif "B" in move:
+        if "B" in move:
             
             slagen = False
             if "x" in move:
@@ -366,7 +333,7 @@ class main:
                                 
                             
             pawnType = "B"
-            self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, passant, player)
+            self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, passant, player,promotieLetter)
 
         
         elif "R" in move:
@@ -478,7 +445,7 @@ class main:
                         
 
             pawnType = "R"        
-            self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, passant, player)
+            self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, passant, player, promotieLetter)
 
         elif "Q" in move:
 
@@ -490,7 +457,6 @@ class main:
                 move = move[:-1]
 
             moveSplit = list(move)
-
             movementX = int(self.letterToNumber(moveSplit[-2]))
             movementY = int(moveSplit[-1])
 
@@ -660,10 +626,10 @@ class main:
                         
 
             pawnType = "Q"        
-            self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, passant, player)
+            self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, passant, player, promotieLetter)
 
 
-        if "N" in move:
+        elif "N" in move:
 
             slagen = False
             if "x" in move:
@@ -750,15 +716,268 @@ class main:
                         eindY = movementY
                         amountOfPawns += 1
 
-            pawnType = "N"                        
-            self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, passant, player)
+            pawnType = "N"
+            
+            self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, passant, player, promotieLetter)
                         
         elif "K" in move:
-            playerBoardSplit = playerBoard["K1"][0].split(" ")
 
+            slagen = False
+
+            if "x" in move:
+                slagen = True
+
+            if "+" in move:
+                move = move[:-1]
+
+            moveSplit = list(move)
+
+            movementX = int(self.letterToNumber(moveSplit[-2]))
+            movementY = int(moveSplit[-1])
+
+            amountOfPawns = 0
+
+            startX = 0
+            startY = 0
+            eindX = 0
+            eindY = 0
+
+            graveyardX = 0
+            graveyardY = 0
+
+            for pawn in playerBoard:
+
+                if "K" in playerBoard[pawn][1]:
+
+                    pawnX = int(playerBoard[pawn][0][0])
+                    pawnY = int(playerBoard[pawn][0][2])
+
+                    if pawnX + 1 == movementX and pawnY == movementY:
+                        startX = pawnX
+                        startY = pawnY
+                        eindX = movementX
+                        eindY = movementY
+                        amountOfPawns += 1
+                        
+                    elif pawnX + 1 == movementX and pawnY +1 == movementY:
+                        startX = pawnX
+                        startY = pawnY
+                        eindX = movementX
+                        eindY = movementY
+                        amountOfPawns += 1
+                        
+                    elif pawnX + 1 == movementX and pawnY - 1 == movementY:
+                        startX = pawnX
+                        startY = pawnY
+                        eindX = movementX
+                        eindY = movementY
+                        amountOfPawns += 1
+                        
+                    elif pawnX == movementX and pawnY - 1 == movementY:
+                        startX = pawnX
+                        startY = pawnY
+                        eindX = movementX
+                        eindY = movementY
+                        amountOfPawns += 1
+                        
+                    elif pawnX == movementX and pawnY + 1 == movementY:
+                        startX = pawnX
+                        startY = pawnY
+                        eindX = movementX
+                        eindY = movementY
+                        amountOfPawns += 1
+                        
+                    elif pawnX - 1 == movementX and pawnY + 1 == movementY:
+                        startX = pawnX
+                        startY = pawnY
+                        eindX = movementX
+                        eindY = movementY
+                        amountOfPawns += 1
+                        
+                    elif pawnX - 1 == movementX and pawnY == movementY:
+                        startX = pawnX
+                        startY = pawnY
+                        eindX = movementX
+                        eindY = movementY
+                        amountOfPawns += 1
+                        
+                    elif pawnX - 1 == movementX and pawnY - 1 == movementY:
+                        startX = pawnX
+                        startY = pawnY
+                        eindX = movementX
+                        eindY = movementY
+                        amountOfPawns += 1
+
+            pawnType = "K"                        
+            self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, passant, player, promotieLetter)
         
+        else:
+
+            if promotie is True:
+                move = move[:-1]
+                moveSplit = list(move)
+
+            if "O-O" in move:
+                rokade = 1
+                if "white" in player:
+                    return("5 1-7 1#8 1-6-1")
+                    # self.chielsmethod(nul, nul, nul, nul, nul, nul, nul, 1, nul, nul)
+                else:
+                    return("5 8-7 8#8 8-6 8")
+                # self.chielsmethod(nul, nul, nul, nul, nul, nul, nul, 1, nul, nul)
+
+            if "O-O-O" in move:
+                rokade = 2
+                if "white" in player:
+                    return("5 1-3 1#1 1-4 1")
+                    # self.chielsmethod(nul, nul, nul, nul, nul, nul, nul, 2, nul, nul)
+                else:
+                    return("5 8-3 8#1 8-4 8")
+                    # self.chielsmethod(nul, nul, nul, nul, nul, nul, nul, 2, nul, nul)
+                    
+            slagen = False
+            if "x" in move:
+                slagen = True
+
+            if "+" in move:
+                move = move[:-1]
+
+            moveSplit = list(move)
+            movementX = int(self.letterToNumber(moveSplit[-2]))
+            movementY = int(moveSplit[-1])
+
+            amountOfPawns = 0
+
+            startX = 0
+            startY = 0
+            eindX = 0
+            eindY = 0
+
+            graveyardX = 0
+            graveyardY = 0
             
+            if "x"  in move:
+                for pawn in playerBoard:
+
+                    pawnX = int(playerBoard[pawn][0][0])
+                    pawnY = int(playerBoard[pawn][0][2])
+                        
+                    if "P" in playerBoard[pawn][1]:
+                        pawnX = int(playerBoard[pawn][0][0])
+                        pawnY = int(playerBoard[pawn][0][2])
+
+                        pawnXTemp = pawnX
+                        pawnYTemp = pawnY
+                        
+                        if "black" in player:
+
+                            pawnXTemp = pawnX
+                            pawnYTemp = pawnY
+                        
+                            if pawnX + 1 == movementX and pawnY == movementY:
+                                startX = pawnX
+                                startY = pawnY
+                                eindX = movementX
+                                eindY = movementY
+                                amountOfPawns += 1
+
+                        pawnXTemp = pawnX
+                        pawnYTemp = pawnY
+
+                        if pawnX + 2 == movementX and pawnY == movementY:
+                            startX = pawnX
+                            startY = pawnY
+                            eindX = movementX
+                            eindY = movementY
+                            amountOfPawns += 1
+
+                        if "white" in player:
+                            pawnXTemp = pawnX
+                            pawnYTemp = pawnY
+                            
+                            if pawnX - 1 == movementX and pawnY == movementY:
+                                startX = pawnX
+                                startY = pawnY
+                                eindX = movementX
+                                eindY = movementY
+                                amountOfPawns += 1
+
+                            pawnXTemp = pawnX
+                            pawnYTemp = pawnY
+
+                            if pawnX - 2 == movementX and pawnY == movementY:
+                                startX = pawnX
+                                startY = pawnY
+                                eindX = movementX
+                                eindY = movementY
+                                amountOfPawns += 1
+
+           
+                pawnType = "P"
+                self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, passant, player, promotieLetter)
+            # hier worden de passant en gewone slag van de pion gedaan
+            # ik weet niet zeker waar een statement moet staan die controleert of er een stuk op de eindpositie staat of niet, zodat je weet of er passant is geslagen of niet
+            else:
                 
+                for pawn in playerBoard:
+
+                    pawnX = int(playerBoard[pawn][0][0])
+                    pawnY = int(playerBoard[pawn][0][2])
+                        
+                    if "P" in playerBoard[pawn][1]:
+                        pawnX = int(playerBoard[pawn][0][0])
+                        pawnY = int(playerBoard[pawn][0][2])
+
+                        pawnXTemp = pawnX
+                        pawnYTemp = pawnY
+                        
+                        if "black" in player:
+
+                            pawnXTemp = pawnX
+                            pawnYTemp = pawnY
+                        
+                            if pawnX + 1 == movementX and pawnY == movementY:
+                                startX = pawnX
+                                startY = pawnY
+                                eindX = movementX
+                                eindY = movementY
+                                amountOfPawns += 1
+
+                        pawnXTemp = pawnX
+                        pawnYTemp = pawnY
+
+                        if pawnX + 2 == movementX and pawnY == movementY:
+                            startX = pawnX
+                            startY = pawnY
+                            eindX = movementX
+                            eindY = movementY
+                            amountOfPawns += 1
+
+                        if "white" in player:
+                            pawnXTemp -= 1
+                            pawnYTemp += 1
+                            
+                            if pawnX - 1 == movementX and pawnY == movementY:
+                                startX = pawnX
+                                startY = pawnY
+                                eindX = movementX
+                                eindY = movementY
+                                amountOfPawns += 1
+
+                            pawnXTemp = pawnX
+                            pawnYTemp = pawnY
+                        
+                            if pawnX - 2 == movementX and pawnY == movementY:
+                                startX = pawnX
+                                startY = pawnY
+                                eindX = movementX
+                                eindY = movementY
+                                amountOfPawns += 1
+                                
+           
+                pawnType = "P"
+                self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, passant, player, promotieLetter)
+                                
     # convert de letters van de x as naar cijfers
     def letterToNumber(self, letter):
 
@@ -858,8 +1077,8 @@ class main:
                 x = 1
             if count is 9:
                 y -= 1
-                
-    def pieceCheck(self, amountOfPawns, move, playerBoard, graveyard, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotie, rokade, passant, player):
+          
+    def pieceCheck(self, amountOfPawns, move, playerBoard, graveyard, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotie, rokade, passant, player, promotieLetter):
 
         eindX = movementX
         eindY = movementY
@@ -879,8 +1098,8 @@ class main:
                 
             else:
 
-                checkMove = move[1:-2]
-
+                checkMove = move[1:-1]
+        
             if len(checkMove) == 1:
                 if checkMove.isalpha():
                     
@@ -888,7 +1107,7 @@ class main:
 
                     for pawn in playerBoard:
 
-                        if "N" in playerBoard[pawn][1]:
+                        if pawnType in playerBoard[pawn][1]:
 
                             if (playerBoard[pawn][0][:-2] != "9") | (playerBoard[pawn][0][:-2] != "10"):
 
@@ -901,7 +1120,7 @@ class main:
 
                     for pawn in playerBoard:
 
-                        if "N" in playerBoard[pawn][1]:
+                        if pawnType in playerBoard[pawn][1]:
                             
                             if checkMove == playerBoard[pawn][0][-1]:
 
@@ -911,15 +1130,11 @@ class main:
                                 
             else:
 
-                x = self.letterToNumber(checkMove[0])
-                y = checkMove[1]
-
                 for pawn in playerBoard:
 
                     if pawnType in playerBoard[pawn][1]:
 
                         print(playerBoard[pawn][0][:-2], playerBoard[pawn][0][-1])
-                        print(x, y)
                         
                         if (str(x) == playerBoard[pawn][0][:-2]) & (y == playerBoard[pawn][0][-1]):
 
@@ -941,6 +1156,7 @@ class main:
             elif player == "black":
                 enemyBoard = whiteBoard
 
+                
             for pawn in enemyBoard:
 
                 if enemyBoard[pawn][0] == str(eindX) + " " + str(eindY):
@@ -956,10 +1172,12 @@ class main:
                     else:
                         
                         graveyardY = int(graveyardPos[2])
-
+            
         print(startX, startY, eindX, eindY, graveyardX, graveyardY, promotie, rokade, passant, player)
-
-        return str(startX) + " " + str(startY) + "-" + str(eindX) + " " + str(eindY)
+        if promotie > 0:
+            return(str(startX) + " " + str(startY) + "-" + str(eindX) + " " + str(eindY) + "=" + promotieLetter)
+        else:
+            return(str(startX) + " " + str(startY) + "-" + str(eindX) + " " + str(eindY))
 
                     
 main()
