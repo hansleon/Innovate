@@ -7,7 +7,7 @@ class main:
 
     def __init__(self):
 
-        gameID = "yWLPzsK7"
+        gameID = "FxQea8NE"
 
 
 ####
@@ -1120,7 +1120,6 @@ class main:
 
         if amountOfPawns > 1:
             
-            
             if "x" in move:
                 
                 checkMove = move[1:-3]                        
@@ -1191,19 +1190,25 @@ class main:
             
         if slagen == True:
 
-            if player == "white":
+            if player == "black":
                 enemyBoard = blackBoard
-            elif player == "black":
+            elif player == "white":
                 enemyBoard = whiteBoard
-
                 
             for pawn in enemyBoard:
 
-                if enemyBoard[pawn][0] == str(eindX) + " " + str(eindY):
+                defeatCords = str(eindX) + " " + str(eindY)
+
+                print(enemyBoard[pawn][0])
+                print(defeatCords)
+
+                if enemyBoard[pawn][0] == defeatCords:
+
+                    print(3)
 
                     graveyardPos = graveyard[pawn]
                     
-                    graveyardX= int(graveyardPos[:-2])
+                    graveyardX = int(graveyardPos[:-2])
 
                     if graveyardX == 10:
 
@@ -1215,9 +1220,11 @@ class main:
             
         print(startX, startY, eindX, eindY, graveyardX, graveyardY, promotie, rokade, passant, player)
         if promotie > 0:
-            return(str(startX) + " " + str(startY) + "-" + str(eindX) + " " + str(eindY) + "=" + promotieLetter)
+            returnVar = str(startX) + " " + str(startY) + "-" + str(eindX) + " " + str(eindY) + "=" + promotieLetter
+            return(returnVar)
         else:
-            return(str(startX) + " " + str(startY) + "-" + str(eindX) + " " + str(eindY))
+            returnVar = str(startX) + " " + str(startY) + "-" + str(eindX) + " " + str(eindY)
+            return(returnVar)
 
                     
 main()
