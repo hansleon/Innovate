@@ -124,6 +124,8 @@ class main:
                 # De calcCord methode wordt uitgevoerd
                 cords = self.calcCor(moves[currentMove], player, white, black, graveyardPos)
 
+                print(cords)
+
                 # We checken op bijzonderheden als een rokade (#) of promotiee (&)
                 if "#" in cords:
 
@@ -135,6 +137,8 @@ class main:
 
                     # Hier splitten we de laatste twee coördinaten op de -, deze worden hieronder weer verwerkt
                     cordRokade = cords[1].split("-")
+
+                    # We splitten de rokade code op in de begin en eind positie
                     cordOne = cordRokade[0]
                     cordTwo = cordRokade[1]
 
@@ -142,13 +146,15 @@ class main:
                     if player == "white":
                         
                         for pawn in white:
-                            
+
+                            # We kijken welke pion op de beginpositie staat en die zetten we naar de eindpositie
                             if white[pawn][0] == cordOne:
                                 
                                 white[pawn][0] = cordTwo
                             
                     elif player == "black":
 
+                        # We kijken welke pion op de beginpositie staat en die zetten we naar de eindpositie
                         for pawn in black:
                             
                             if black[pawn][0] == cordOne:
@@ -225,6 +231,30 @@ class main:
 
                     # We splitsen de eerste helft van de array op op de -, deze coördinaten worden behandelt als een gewone zet
                     cord = cords[0].split("-")
+
+                    eindX = cord[1][0]
+                    eindY = cord[1][2]
+
+                    if player == "white":
+
+                        passantCord = str(eindX) + " " + str(int(eindY) - 1)
+
+                        for pawn in black:
+
+                            if black[pawn][0] == passantCord:
+
+                                black[pawn][0] = graveyardPos[pawn]
+                                
+                        
+                    elif player == "black":
+
+                        passantCord = str(eindX) + " " + str(int(eindY) + 1)
+
+                        for pawn in white:
+
+                            if white[pawn][0] == passantCord:
+
+                                white[pawn][0] = graveyardPos[pawn]
                                 
                 else:
                     
@@ -277,6 +307,12 @@ class main:
 
                 # De printChessBoard is een debug method, deze printen we voor een visuele representatie
                 self.printChessBoard(white, black)
+
+            else:
+                if data["status"] != "started":
+                    print("Game is done.")
+                    input("Press Enter to continue...")
+                    break
                 
 
     # De printChessBoard() method geeft een visuele representatie van de posities van alle pionnen
@@ -305,15 +341,15 @@ class main:
                 for pawnWhite, pawnBlack in zip(white, black):
                     # Wanneer de plek van de pion gelijk is aan de plek van de geconcate string van de variabelen x en y wordt deze toegevoegd aan de string en wordt spaceIsset op true gezet
                     if white[pawnWhite][0] == str(x) + " " + str(y):
-                        board += white[pawnWhite][1]
+                        board += "w" + white[pawnWhite][1]
                         break
                     elif black[pawnBlack][0] == str(x) + " " + str(y):
-                        board += black[pawnBlack][1]
+                        board += "b" + black[pawnBlack][1]
                         break
 
                 # Wanneer de for loop niet wordt gebreaked (De plek is dus leeg) wordt "--" ingevuld
                 else:
-                    board += "--"
+                    board += "---"
 
                 # Tussen elke positie wordt een spatie geadd, zo is het visueel beter leesbaar
                 board += " "
@@ -405,7 +441,7 @@ class main:
         print(graveyard)
 
     def calcCor(self, move, player, whiteBoard, blackBoard, graveyard):
-
+        
         i = 0
 
         slaan = False
@@ -464,15 +500,15 @@ class main:
         else:
             playerBoard = whiteBoard
 
+        slagen = False
+        if "x" in move:
+            slagen = True
+
+        if "+" in move:
+            move = move[:-1]
+
         if "B" in move:
             
-            slagen = False
-            if "x" in move:
-                slagen = True
-
-            if "+" in move:
-                move = move[:-1]
-
             moveSplit = list(move)
 
             movementX = int(self.letterToNumber(moveSplit[-2]))
@@ -484,10 +520,10 @@ class main:
 
                 if "B" in playerBoard[pawn][1]:
                     
-                    pawnX = int(playerBoard[pawn][0][0])
-                    pawnY = int(playerBoard[pawn][0][2])
+                    pawnX = int(playerBoard[pawn][0][:-2])
+                    pawnY = int(playerBoard[pawn][0][-1])
 
-                    stopLooping = False
+                    stopLoop = False
 
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
@@ -508,20 +544,20 @@ class main:
 
                             for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
                                 
-                                if str(whiteBoard[pawnWhite][0][0]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][2]) == str(pawnYTemp):
-                                    stopLooping = False
+                                if str(whiteBoard[pawnWhite][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
+                                    stopLoop = False
                                     
-                                elif str(blackBoard[pawnBlack][0][0]) == str(pawnXTemp) and str(whiteBoard[pawnWhite][0][2]) == str(pawnYTemp):
-                                    stopLooping = False
+                                elif str(blackBoard[pawnBlack][0][0]) == str(pawnXTemp) and str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
+                                    stopLoop = False
 
-                            if stopLooping:
+                            if stopLoop:
                                 break
                                     
 
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
 
-                    stopLooping = False
+                    stopLoop = False
 
                     while pawnXTemp < 9 and pawnXTemp > 0 and pawnYTemp < 9 and pawnYTemp > 0:
                         
@@ -539,20 +575,20 @@ class main:
 
                             for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
                                 
-                                if str(whiteBoard[pawnWhite][0][0]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][2]) == str(pawnYTemp):
-                                    stopLooping = False
+                                if str(whiteBoard[pawnWhite][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
+                                    stopLoop = False
                                     
-                                elif str(blackBoard[pawnBlack][0][0]) == str(pawnXTemp) and str(whiteBoard[pawnWhite][0][2]) == str(pawnYTemp):
-                                    stopLooping = False
+                                elif str(blackBoard[pawnBlack][0][0]) == str(pawnXTemp) and str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
+                                    stopLoop = False
 
-                            if stopLooping:
+                            if stopLoop:
                                 break
                                 
 
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
 
-                    stopLooping = False
+                    stopLoop = False
 
                     while pawnXTemp < 9 and pawnXTemp > 0 and pawnYTemp < 9 and pawnYTemp > 0:
 
@@ -570,20 +606,20 @@ class main:
 
                             for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
                                 
-                                if str(whiteBoard[pawnWhite][0][0]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][2]) == str(pawnYTemp):
-                                    stopLooping = False
+                                if str(whiteBoard[pawnWhite][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
+                                    stopLoop = False
                                     
-                                elif str(blackBoard[pawnBlack][0][0]) == str(pawnXTemp) and str(whiteBoard[pawnWhite][0][2]) == str(pawnYTemp):
-                                    stopLooping = False
+                                elif str(blackBoard[pawnBlack][0][0]) == str(pawnXTemp) and str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
+                                    stopLoop = False
 
-                            if stopLooping:
+                            if stopLoop:
                                 break
                                 
 
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
 
-                    stopLooping = False
+                    stopLoop = False
 
                     while pawnXTemp < 9 and pawnXTemp > 0 and pawnYTemp < 9 and pawnYTemp > 0:
 
@@ -601,13 +637,13 @@ class main:
 
                             for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
                                 
-                                if str(whiteBoard[pawnWhite][0][0]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][2]) == str(pawnYTemp):
-                                    stopLooping = False
+                                if str(whiteBoard[pawnWhite][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
+                                    stopLoop = False
                                     
-                                elif str(blackBoard[pawnBlack][0][0]) == str(pawnXTemp) and str(whiteBoard[pawnWhite][0][2]) == str(pawnYTemp):
-                                    stopLooping = False
+                                elif str(blackBoard[pawnBlack][0][0]) == str(pawnXTemp) and str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
+                                    stopLoop = False
 
-                            if stopLooping:
+                            if stopLoop:
                                 break
                                 
                             
@@ -616,13 +652,6 @@ class main:
 
         
         elif "R" in move:
-
-            slagen = False
-            if "x" in move:
-                slagen = True
-
-            if "+" in move:
-                move = move[:-1]
 
             moveSplit = list(move)
 
@@ -634,11 +663,11 @@ class main:
             for pawn in playerBoard:
 
                 if "R" in playerBoard[pawn][1]:
+                    
+                    pawnX = int(playerBoard[pawn][0][:-2])
+                    pawnY = int(playerBoard[pawn][0][-1])
 
-                    pawnX = int(playerBoard[pawn][0][0])
-                    pawnY = int(playerBoard[pawn][0][2])
-
-                    stopLooping = False
+                    stopLoop = False
                     
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
@@ -658,20 +687,19 @@ class main:
 
                             for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
 
-                                if str(whiteBoard[pawnWhite][0][0]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][2]) == str(pawnYTemp):
-                                    stopLooping = True
+                                if str(whiteBoard[pawnWhite][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
+                                    stopLoop = True
                                     
-                                elif str(blackBoard[pawnBlack][0][0]) == str(pawnXTemp) and str(blackBoard[pawnBlack][0][2]) == str(pawnYTemp):
-                                    stopLooping = True
+                                elif str(blackBoard[pawnBlack][0][:-2]) == str(pawnXTemp) and str(blackBoard[pawnBlack][0][2]) == str(pawnYTemp):
+                                    stopLoop = True
 
                             if stopLoop:
-                                print("DITBREAKT" + str(pawnX), str(pawnY))
                                 break
 
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
 
-                    stopLooping = False
+                    stopLoop = False
 
                     while pawnXTemp < 9 and pawnXTemp > 0 and pawnYTemp < 9 and pawnYTemp > 0:
                         
@@ -688,11 +716,11 @@ class main:
 
                             for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
 
-                                if str(whiteBoard[pawnWhite][0][0]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][2]) == str(pawnYTemp):
-                                    stopLooping = True
+                                if str(whiteBoard[pawnWhite][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
+                                    stopLoop = True
                                     
-                                elif str(blackBoard[pawnBlack][0][0]) == str(pawnXTemp) and str(blackBoard[pawnBlack][0][2]) == str(pawnYTemp):
-                                    stopLooping = True
+                                elif str(blackBoard[pawnBlack][0][:-2]) == str(pawnXTemp) and str(blackBoard[pawnBlack][0][2]) == str(pawnYTemp):
+                                    stopLoop = True
 
                             if stopLoop:
                                 break
@@ -700,7 +728,7 @@ class main:
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
 
-                    stopLooping = False
+                    stopLoop = False
 
                     while pawnXTemp < 9 and pawnXTemp > 0 and pawnYTemp < 9 and pawnYTemp > 0:
 
@@ -717,11 +745,11 @@ class main:
 
                             for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
 
-                                if str(whiteBoard[pawnWhite][0][0]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][2]) == str(pawnYTemp):
-                                    stopLooping = True
+                                if str(whiteBoard[pawnWhite][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
+                                    stopLoop = True
                                     
-                                elif str(blackBoard[pawnBlack][0][0]) == str(pawnXTemp) and str(blackBoard[pawnBlack][0][2]) == str(pawnYTemp):
-                                    stopLooping = True
+                                elif str(blackBoard[pawnBlack][0][:-2]) == str(pawnXTemp) and str(blackBoard[pawnBlack][0][2]) == str(pawnYTemp):
+                                    stopLoop = True
 
                             if stopLoop:
                                 break
@@ -730,7 +758,7 @@ class main:
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
 
-                    stopLooping = False
+                    stopLoop = False
 
                     while pawnXTemp < 9 and pawnXTemp > 0 and pawnYTemp < 9 and pawnYTemp > 0:
                         
@@ -747,11 +775,11 @@ class main:
 
                             for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
 
-                                if str(whiteBoard[pawnWhite][0][0]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][2]) == str(pawnYTemp):
-                                    stopLooping = True
+                                if str(whiteBoard[pawnWhite][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
+                                    stopLoop = True
                                     
-                                elif str(blackBoard[pawnBlack][0][0]) == str(pawnXTemp) and str(blackBoard[pawnBlack][0][2]) == str(pawnYTemp):
-                                    stopLooping = True
+                                elif str(blackBoard[pawnBlack][0][:-2]) == str(pawnXTemp) and str(blackBoard[pawnBlack][0][2]) == str(pawnYTemp):
+                                    stopLoop = True
 
                             if stopLoop:
                                 break
@@ -759,7 +787,7 @@ class main:
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
 
-                    stopLooping = False
+                    stopLoop = False
                             
 
             pawnType = "R"
@@ -767,13 +795,6 @@ class main:
             return(self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, startX, startY, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, passant, player, promotieLetter, i))
 
         elif "Q" in move:
-
-            slagen = False
-            if "x" in move:
-                slagen = True
-
-            if "+" in move:
-                move = move[:-1]
 
             moveSplit = list(move)
             movementX = int(self.letterToNumber(moveSplit[-2]))
@@ -785,10 +806,10 @@ class main:
 
                 if "Q" in playerBoard[pawn][1]:
 
-                    pawnX = int(playerBoard[pawn][0][0])
-                    pawnY = int(playerBoard[pawn][0][2])
+                    pawnX = int(playerBoard[pawn][0][:-2])
+                    pawnY = int(playerBoard[pawn][0][-1])
 
-                    stopLooping = False
+                    stopLoop = False
 
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
@@ -809,20 +830,20 @@ class main:
 
                             for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
                                 
-                                if str(whiteBoard[pawnWhite][0][0]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][2]) == str(pawnYTemp):
-                                    stopLooping = False
+                                if str(whiteBoard[pawnWhite][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
+                                    stopLoop = False
                                     
-                                elif str(blackBoard[pawnBlack][0][0]) == str(pawnXTemp) and str(whiteBoard[pawnWhite][0][2]) == str(pawnYTemp):
-                                    stopLooping = False
+                                elif str(blackBoard[pawnBlack][0][:-2]) == str(pawnXTemp) and str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
+                                    stopLoop = False
 
-                            if stopLooping:
+                            if stopLoop:
                                 break
                                     
 
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
 
-                    stopLooping = False
+                    stopLoop = False
 
                     while pawnXTemp < 9 and pawnXTemp > 0 and pawnYTemp < 9 and pawnYTemp > 0:
                         
@@ -840,20 +861,20 @@ class main:
 
                             for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
                                 
-                                if str(whiteBoard[pawnWhite][0][0]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][2]) == str(pawnYTemp):
-                                    stopLooping = False
+                                if str(whiteBoard[pawnWhite][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
+                                    stopLoop = False
                                     
-                                elif str(blackBoard[pawnBlack][0][0]) == str(pawnXTemp) and str(whiteBoard[pawnWhite][0][2]) == str(pawnYTemp):
-                                    stopLooping = False
+                                elif str(blackBoard[pawnBlack][0][:-2]) == str(pawnXTemp) and str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
+                                    stopLoop = False
 
-                            if stopLooping:
+                            if stopLoop:
                                 break
                                 
 
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
 
-                    stopLooping = False
+                    stopLoop = False
 
                     while pawnXTemp < 9 and pawnXTemp > 0 and pawnYTemp < 9 and pawnYTemp > 0:
 
@@ -871,20 +892,20 @@ class main:
 
                             for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
                                 
-                                if str(whiteBoard[pawnWhite][0][0]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][2]) == str(pawnYTemp):
-                                    stopLooping = False
+                                if str(whiteBoard[pawnWhite][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
+                                    stopLoop = False
                                     
-                                elif str(blackBoard[pawnBlack][0][0]) == str(pawnXTemp) and str(whiteBoard[pawnWhite][0][2]) == str(pawnYTemp):
-                                    stopLooping = False
+                                elif str(blackBoard[pawnBlack][0][:-2]) == str(pawnXTemp) and str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
+                                    stopLoop = False
 
-                            if stopLooping:
+                            if stopLoop:
                                 break
                                 
 
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
 
-                    stopLooping = False
+                    stopLoop = False
 
                     while pawnXTemp < 9 and pawnXTemp > 0 and pawnYTemp < 9 and pawnYTemp > 0:
 
@@ -902,19 +923,19 @@ class main:
 
                             for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
                                 
-                                if str(whiteBoard[pawnWhite][0][0]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][2]) == str(pawnYTemp):
-                                    stopLooping = False
+                                if str(whiteBoard[pawnWhite][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
+                                    stopLoop = False
                                     
-                                elif str(blackBoard[pawnBlack][0][0]) == str(pawnXTemp) and str(whiteBoard[pawnWhite][0][2]) == str(pawnYTemp):
-                                    stopLooping = False
+                                elif str(blackBoard[pawnBlack][0][:-2]) == str(pawnXTemp) and str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
+                                    stopLoop = False
 
-                            if stopLooping:
+                            if stopLoop:
                                 break
 
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
 
-                    stopLooping = False
+                    stopLoop = False
                     
                     while pawnXTemp < 9 and pawnXTemp > 0 and pawnYTemp < 9 and pawnYTemp > 0:
 
@@ -931,20 +952,19 @@ class main:
 
                             for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
 
-                                if str(whiteBoard[pawnWhite][0][0]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][2]) == str(pawnYTemp):
-                                    stopLooping = True
+                                if str(whiteBoard[pawnWhite][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
+                                    stopLoop = True
                                     
-                                elif str(blackBoard[pawnBlack][0][0]) == str(pawnXTemp) and str(blackBoard[pawnBlack][0][2]) == str(pawnYTemp):
-                                    stopLooping = True
+                                elif str(blackBoard[pawnBlack][0][:-2]) == str(pawnXTemp) and str(blackBoard[pawnBlack][0][2]) == str(pawnYTemp):
+                                    stopLoop = True
 
                             if stopLoop:
-                                print("DITBREAKT" + str(pawnX), str(pawnY))
                                 break
 
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
 
-                    stopLooping = False
+                    stopLoop = False
 
                     while pawnXTemp < 9 and pawnXTemp > 0 and pawnYTemp < 9 and pawnYTemp > 0:
                         
@@ -961,11 +981,11 @@ class main:
 
                             for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
 
-                                if str(whiteBoard[pawnWhite][0][0]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][2]) == str(pawnYTemp):
-                                    stopLooping = True
+                                if str(whiteBoard[pawnWhite][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
+                                    stopLoop = True
                                     
-                                elif str(blackBoard[pawnBlack][0][0]) == str(pawnXTemp) and str(blackBoard[pawnBlack][0][2]) == str(pawnYTemp):
-                                    stopLooping = True
+                                elif str(blackBoard[pawnBlack][0][:-2]) == str(pawnXTemp) and str(blackBoard[pawnBlack][0][2]) == str(pawnYTemp):
+                                    stopLoop = True
 
                             if stopLoop:
                                 break
@@ -973,7 +993,7 @@ class main:
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
 
-                    stopLooping = False
+                    stopLoop = False
 
                     while pawnXTemp < 9 and pawnXTemp > 0 and pawnYTemp < 9 and pawnYTemp > 0:
 
@@ -990,11 +1010,11 @@ class main:
 
                             for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
 
-                                if str(whiteBoard[pawnWhite][0][0]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][2]) == str(pawnYTemp):
-                                    stopLooping = True
+                                if str(whiteBoard[pawnWhite][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
+                                    stopLoop = True
                                     
-                                elif str(blackBoard[pawnBlack][0][0]) == str(pawnXTemp) and str(blackBoard[pawnBlack][0][2]) == str(pawnYTemp):
-                                    stopLooping = True
+                                elif str(blackBoard[pawnBlack][0][:-2]) == str(pawnXTemp) and str(blackBoard[pawnBlack][0][2]) == str(pawnYTemp):
+                                    stopLoop = True
 
                             if stopLoop:
                                 break
@@ -1003,7 +1023,7 @@ class main:
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
 
-                    stopLooping = False
+                    stopLoop = False
 
                     while pawnXTemp < 9 and pawnXTemp > 0 and pawnYTemp < 9 and pawnYTemp > 0:
                         
@@ -1020,11 +1040,11 @@ class main:
 
                             for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
 
-                                if str(whiteBoard[pawnWhite][0][0]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][2]) == str(pawnYTemp):
-                                    stopLooping = True
+                                if str(whiteBoard[pawnWhite][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
+                                    stopLoop = True
                                     
-                                elif str(blackBoard[pawnBlack][0][0]) == str(pawnXTemp) and str(blackBoard[pawnBlack][0][2]) == str(pawnYTemp):
-                                    stopLooping = True
+                                elif str(blackBoard[pawnBlack][0][:-2]) == str(pawnXTemp) and str(blackBoard[pawnBlack][0][2]) == str(pawnYTemp):
+                                    stopLoop = True
 
                             if stopLoop:
                                 break
@@ -1038,13 +1058,6 @@ class main:
 
         elif "N" in move:
 
-            slagen = False
-            if "x" in move:
-                slagen = True
-
-            if "+" in move:
-                move = move[:-1]
-
             moveSplit = list(move)
 
             movementX = int(self.letterToNumber(moveSplit[-2]))
@@ -1056,8 +1069,8 @@ class main:
 
                 if "N" in playerBoard[pawn][1]:
 
-                    pawnX = int(playerBoard[pawn][0][0])
-                    pawnY = int(playerBoard[pawn][0][2])
+                    pawnX = int(playerBoard[pawn][0][:-2])
+                    pawnY = int(playerBoard[pawn][0][-1])
 
                     if pawnX + 2 == movementX and pawnY + 1 == movementY:
                         startX = pawnX
@@ -1121,14 +1134,6 @@ class main:
                         
         elif "K" in move:
 
-            slagen = False
-
-            if "x" in move:
-                slagen = True
-
-            if "+" in move:
-                move = move[:-1]
-
             moveSplit = list(move)
 
             movementX = int(self.letterToNumber(moveSplit[-2]))
@@ -1140,8 +1145,8 @@ class main:
 
                 if "K" in playerBoard[pawn][1]:
 
-                    pawnX = int(playerBoard[pawn][0][0])
-                    pawnY = int(playerBoard[pawn][0][2])
+                    pawnX = int(playerBoard[pawn][0][:-2])
+                    pawnY = int(playerBoard[pawn][0][-1])
 
                     if pawnX + 1 == movementX and pawnY == movementY:
                         startX = pawnX
@@ -1204,34 +1209,27 @@ class main:
         
         else:
 
-            if promotie is True:
+            if promotie:
                 move = move[:-1]
                 moveSplit = list(move)
 
-            if "O-O" in move:
+            if move == "O-O":
                 rokade = 1
-                if "white" in player:
-                    return("5 1-7 1#8 1-6-1")
+                if player == "white":
+                    return("5 1-7 1#8 1-6 1")
                     # self.chielsmethod(nul, nul, nul, nul, nul, nul, nul, 1, nul, nul)
                 else:
                     return("5 8-7 8#8 8-6 8")
                 # self.chielsmethod(nul, nul, nul, nul, nul, nul, nul, 1, nul, nul)
 
-            if "O-O-O" in move:
+            if move == "O-O-O":
                 rokade = 2
-                if "white" in player:
+                if player == "white":
                     return("5 1-3 1#1 1-4 1")
                     # self.chielsmethod(nul, nul, nul, nul, nul, nul, nul, 2, nul, nul)
                 else:
                     return("5 8-3 8#1 8-4 8")
                     # self.chielsmethod(nul, nul, nul, nul, nul, nul, nul, 2, nul, nul)
-                    
-            slagen = False
-            if "x" in move:
-                slagen = True
-
-            if "+" in move:
-                move = move[:-1]
 
             moveSplit = list(move)
             movementX = int(self.letterToNumber(moveSplit[-2]))
@@ -1240,30 +1238,21 @@ class main:
             amountOfPawns = 0
 
             i = 1
+            
+            for pawn in playerBoard:
+                    
+                if "P" in playerBoard[pawn][1]:
+                    pawnX = int(playerBoard[pawn][0][:-2])
+                    pawnY = int(playerBoard[pawn][0][-1])
 
-            if "x" in move:
-                
-                for pawn in playerBoard:
+                    pawnXTemp = pawnX
+                    pawnYTemp = pawnY
 
-                    var1 = True
-                    var2 = True
-
-                    pawnX = int(playerBoard[pawn][0][0])
-                    pawnY = int(playerBoard[pawn][0][2])
-                        
-                    if "P" in playerBoard[pawn][1]:
-                        pawnX = int(playerBoard[pawn][0][0])
-                        pawnY = int(playerBoard[pawn][0][2])
-
-                        pawnXTemp = pawnX
-                        pawnYTemp = pawnY
-                        
+                    if slagen != True:
+                    
                         if "white" in player:
-
-                            pawnXTemp = pawnX
-                            pawnYTemp = pawnY
                         
-                            if pawnXTemp + 1 == movementX and pawnYTemp == movementY:
+                            if pawnX == movementX and pawnY + 1 == movementY:
                                 startX = pawnX
                                 startY = pawnY
                                 eindX = movementX
@@ -1271,81 +1260,7 @@ class main:
                                 amountOfPawns += 1
                                 break
 
-                            pawnXTemp = pawnX
-                            pawnYTemp = pawnY
-
-                            if pawnYTemp + 2 == movementX and pawnYTemp == movementY:
-                                startX = pawnX
-                                startY = pawnY
-                                eindX = movementX
-                                eindY = movementY
-                                amountOfPawns += 1
-                                break
-
-                            i += 1
-                                
-
-                        if "black" in player:
-                            pawnXTemp = pawnX
-                            pawnYTemp = pawnY
-                            
-                            if pawnYTemp - 1 == movementX and pawnYTemp == movementY:
-                                startX = pawnX
-                                startY = pawnY
-                                eindX = movementX
-                                eindY = movementY
-                                amountOfPawns += 1
-                                break
-
-                            pawnXTemp = pawnX
-                            pawnYTemp = pawnY
-
-                            if pawnYTemp - 2 == movementX and pawnYTemp == movementY:
-                                startX = pawnX
-                                startY = pawnY
-                                eindX = movementX
-                                eindY = movementY
-                                amountOfPawns += 1
-                                break
-
-                            i += 1
-
-           
-                pawnType = "P"
-                return(self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, startX, startY, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, passant, player, promotieLetter, i))
-            # hier worden de passant en gewone slag van de pion gedaan
-            # ik weet niet zeker waar een statement moet staan die controleert of er een stuk op de eindpositie staat of niet, zodat je weet of er passant is geslagen of niet
-            else:
-                
-                for pawn in playerBoard:
-
-                    var1 = True
-                    var2 = True
-                        
-                    if "P" in playerBoard[pawn][1]:
-                        pawnX = int(playerBoard[pawn][0][0])
-                        pawnY = int(playerBoard[pawn][0][2])
-
-                        pawnXTemp = pawnX
-                        pawnYTemp = pawnY
-                        
-                        if "white" in player:
-
-                            pawnXTemp = pawnX
-                            pawnYTemp = pawnY
-                        
-                            if pawnXTemp == movementX and pawnYTemp + 1 == movementY:
-                                startX = pawnX
-                                startY = pawnY
-                                eindX = movementX
-                                eindY = movementY
-                                amountOfPawns += 1
-                                break
-
-                            pawnXTemp = pawnX
-                            pawnYTemp = pawnY
-
-                            if pawnXTemp == movementX and pawnYTemp + 2 == movementY:
+                            if pawnX == movementX and pawnY + 2 == movementY:
                                 startX = pawnX
                                 startY = pawnY
                                 eindX = movementX
@@ -1357,10 +1272,7 @@ class main:
 
                         if "black" in player:
                             
-                            pawnXTemp = pawnX
-                            pawnYTemp = pawnY
-                            
-                            if pawnXTemp == movementX and pawnYTemp - 1 == movementY:
+                            if pawnX == movementX and pawnY - 1 == movementY:
                                 
                                 startX = pawnX
                                 startY = pawnY
@@ -1368,11 +1280,8 @@ class main:
                                 eindY = movementY
                                 amountOfPawns += 1
                                 break
-
-                            pawnXTemp = pawnX
-                            pawnYTemp = pawnY
                         
-                            if pawnXTemp == movementX and pawnYTemp - 2 == movementY:
+                            if pawnX == movementX and pawnY - 2 == movementY:
                                 startX = pawnX
                                 startY = pawnY
                                 eindX = movementX
@@ -1381,11 +1290,53 @@ class main:
                                 break
 
                             i += 1
+
+                    else:
+
+                        if "white" in player:
+                                  
+                            if pawnX + 1 == movementX and pawnY + 1 == movementY and pawnX < 9 and pawnY < 9:
+                                startX = pawnX
+                                startY = pawnY
+                                eindX = movementX
+                                eindY = movementY
+                                amountOfPawns += 1
+                                break
+
+                            if pawnX - 1 == movementX and pawnY + 1 == movementY and pawnX > 0 and pawnY < 9:
+                                startX = pawnX
+                                startY = pawnY
+                                eindX = movementX
+                                eindY = movementY
+                                amountOfPawns += 1
+                                break
+
+                            i += 1
+
+                        if "black" in player:
                             
+                            if pawnX + 1 == movementX and pawnY - 1 == movementY and pawnX < 9 and pawnY > 0:
                                 
-           
-                pawnType = "P"
-                return(self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, startX, startY, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, passant, player, promotieLetter, i))
+                                startX = pawnX
+                                startY = pawnY
+                                eindX = movementX
+                                eindY = movementY
+                                amountOfPawns += 1
+                                break
+                        
+                            if pawnX - 1 == movementX and pawnY - 1 == movementY and pawnX > 0 and pawnY > 0:
+                                startX = pawnX
+                                startY = pawnY
+                                eindX = movementX
+                                eindY = movementY
+                                amountOfPawns += 1
+                                break
+
+                            i += 1
+                                
+       
+            pawnType = "P"
+            return(self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, startX, startY, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, passant, player, promotieLetter, i))
                                 
     # convert de letters van de x as naar cijfers
     def letterToNumber(self, letter):
@@ -1497,8 +1448,6 @@ class main:
 
         graveyardX = 0
         graveyardY = 0
-
-        print(amountOfPawns)
         
         if amountOfPawns > 1:
             
@@ -1509,34 +1458,22 @@ class main:
             else:
 
                 checkMove = move[1:-1]
-        
-            if len(checkMove) == 1:
-                if checkMove.isalpha():
-                    
-                    checkMove = self.letterToNumber(checkMove)
+                checkMove = checkMove[0]
 
-                    for pawn in playerBoard:
+            if checkMove.isalpha():
+                
+                checkMove = self.letterToNumber(checkMove)
 
-                        if pawnType in playerBoard[pawn][1]:
+                for pawn in playerBoard:
 
-                            if (playerBoard[pawn][0][:-2] != "9") | (playerBoard[pawn][0][:-2] != "10"):
+                    if pawnType in playerBoard[pawn][1]:
 
-                                if str(checkMove) == playerBoard[pawn][0][:-2]:
+                        if (playerBoard[pawn][0][:-2] != "9") | (playerBoard[pawn][0][:-2] != "10"):
 
-                                    startX = int(playerBoard[pawn][0][0])
-                                    startY = int(playerBoard[pawn][0][2])
-                                    
-                else:
+                            if str(checkMove) == playerBoard[pawn][0][:-2]:
 
-                    for pawn in playerBoard:
-
-                        if pawnType in playerBoard[pawn][1]:
-                            
-                            if checkMove == playerBoard[pawn][0][-1]:
-
-                                startX = int(playerBoard[pawn][0][0])
-                                startY = int(playerBoard[pawn][0][2])
-                                
+                                startX = int(playerBoard[pawn][0][:-2])
+                                startY = int(playerBoard[pawn][0][-1])
                                 
             else:
 
@@ -1544,11 +1481,11 @@ class main:
 
                     if pawnType in playerBoard[pawn][1]:
                         
-                        if (str(x) == playerBoard[pawn][0][:-2]) & (y == playerBoard[pawn][0][-1]):
+                        if checkMove == playerBoard[pawn][0][-1]:
 
-                            startX = int(playerBoard[pawn][0][0])
-                            startY = int(playerBoard[pawn][0][2])
-                
+                            startX = int(playerBoard[pawn][0][:-2])
+                            startY = int(playerBoard[pawn][0][-1])
+                                                
         else:
             
             for pawn in playerBoard:
@@ -1559,12 +1496,22 @@ class main:
 
                             pawnNumber = pawnType + str(i)
 
-                            # if pawnNumber in playerBoard[pawn][1]:
+                            if pawnNumber in playerBoard[pawn][1]:
 
-                                # startX = int(playerBoard[pawn][0][0])
-                                # startY = int(playerBoard[pawn][0][2])
+                                startX = int(playerBoard[pawn][0][:-2])
+                                startY = int(playerBoard[pawn][0][-1])
             
         if slagen == True:
+
+            endCords = str(movementX) + " " + str(movementY)
+
+            passant = True
+
+            for whitePawn, blackPawn in zip(whiteBoard, blackBoard):
+                
+                if whiteBoard[whitePawn][0] == endCords or blackBoard[blackPawn][0] == endCords:
+                    passant = False
+                    break
 
             if player == "black":
                 enemyBoard = blackBoard
@@ -1588,11 +1535,19 @@ class main:
                     else:
                         
                         graveyardY = int(graveyardPos[2])
-                        
-        if promotie > 0:
+
+        if passant:
+            
+            returnVar = str(startX) + " " + str(startY) + "-" + str(eindX) + " " + str(eindY) + "X"
+            return(returnVar)
+        
+        elif promotie > 0:
+            
             returnVar = str(startX) + " " + str(startY) + "-" + str(eindX) + " " + str(eindY) + "=" + promotieLetter
             return(returnVar)
+        
         else:
+            
             returnVar = str(startX) + " " + str(startY) + "-" + str(eindX) + " " + str(eindY)
             return(returnVar)
             
