@@ -106,9 +106,6 @@ class main:
                 input("Press Enter to continue...")
                 break
 
-            # Er zit een delay van 3 seconden op om te voorkomen dat de site het als spam gaat zien
-            time.sleep(1)
-
             # Hier wordt de connectie gemaakt en informatie opgehaalt
             with urllib.request.urlopen("https://nl.lichess.org/api/game/" + gameID +"?with_moves=1") as url:
                 data = json.loads(url.read().decode())
@@ -122,6 +119,7 @@ class main:
             # Alleen wanneer we de move die we moeten doen wordt het uitgevoerd
             if currentMove < len(moves):
                 # De calcCord methode wordt uitgevoerd
+                print(moves[currentMove])
                 cords = self.calcCor(moves[currentMove], player, white, black, graveyardPos)
 
                 print(cords)
@@ -159,7 +157,7 @@ class main:
                             
                             if black[pawn][0] == cordOne:
                                 
-                                black[pawn][0] = cordTwo
+                                black[pawn][0] = cordTwo                  
                         
 
                 # Wanneer er een & wordt gebruikt is er sprake van promotie
@@ -223,7 +221,8 @@ class main:
 
                                 # We promoveren de pion
                                 black[pawn][1] = promo
-
+                                
+                # Wanneer er een X wordt gebruikt is er sprake van passant
                 elif "X" in cords:
 
                     # We splitsen de coördinaten op op  de X
@@ -489,6 +488,11 @@ class main:
             moveLetter = list(move)
             promotieLetter = moveLetter[-1]
             move = move[:-1]
+            promotiePawn = promotieLetter + "1"
+            promotieY = graveyard[promotiePawn][:-1]
+
+        print(promotie)
+        print(promotieY)
 
         # prepareert coordinaten van de eindpositie in stringvorm
         place = list(move)
@@ -1438,7 +1442,7 @@ class main:
             if count is 9:
                 y -= 1
           
-    def pieceCheck(self, amountOfPawns, move, playerBoard, graveyard, startX, startY, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotie, rokade, passant, player, promotieLetter, i):
+    def pieceCheck(self, amountOfPawns, move, playerBoard, graveyard, startX, startY, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, passant, player, promotieLetter, i):
         
         eindX = movementX
         eindY = movementY
@@ -1536,14 +1540,16 @@ class main:
                         
                         graveyardY = int(graveyardPos[2])
 
+        print(promotieY)
+
         if passant:
             
             returnVar = str(startX) + " " + str(startY) + "-" + str(eindX) + " " + str(eindY) + "X"
             return(returnVar)
         
-        elif promotie > 0:
+        elif promotieY != 0:
             
-            returnVar = str(startX) + " " + str(startY) + "-" + str(eindX) + " " + str(eindY) + "=" + promotieLetter
+            returnVar = str(startX) + " " + str(startY) + "-" + str(eindX) + " " + str(eindY) + "&=" + promotieLetter
             return(returnVar)
         
         else:
