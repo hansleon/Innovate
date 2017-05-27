@@ -664,7 +664,7 @@ class main:
                                 elif str(blackBoard[pawnBlack][0][0]) == str(pawnXTemp) and str(blackBoard[pawnBlack][0][2]) == str(pawnYTemp):
                                     stopLooping = True
 
-                            if stopLoop:
+                            if stopLooping:
                                 print("DITBREAKT" + str(pawnX), str(pawnY))
                                 break
 
@@ -694,7 +694,7 @@ class main:
                                 elif str(blackBoard[pawnBlack][0][0]) == str(pawnXTemp) and str(blackBoard[pawnBlack][0][2]) == str(pawnYTemp):
                                     stopLooping = True
 
-                            if stopLoop:
+                            if stopLooping:
                                 break
 
                     pawnXTemp = pawnX
@@ -723,7 +723,7 @@ class main:
                                 elif str(blackBoard[pawnBlack][0][0]) == str(pawnXTemp) and str(blackBoard[pawnBlack][0][2]) == str(pawnYTemp):
                                     stopLooping = True
 
-                            if stopLoop:
+                            if stopLooping:
                                 break
                                     
 
@@ -753,7 +753,7 @@ class main:
                                 elif str(blackBoard[pawnBlack][0][0]) == str(pawnXTemp) and str(blackBoard[pawnBlack][0][2]) == str(pawnYTemp):
                                     stopLooping = True
 
-                            if stopLoop:
+                            if stopLooping:
                                 break
 
                     pawnXTemp = pawnX
@@ -937,7 +937,7 @@ class main:
                                 elif str(blackBoard[pawnBlack][0][0]) == str(pawnXTemp) and str(blackBoard[pawnBlack][0][2]) == str(pawnYTemp):
                                     stopLooping = True
 
-                            if stopLoop:
+                            if stopLooping:
                                 print("DITBREAKT" + str(pawnX), str(pawnY))
                                 break
 
@@ -967,7 +967,7 @@ class main:
                                 elif str(blackBoard[pawnBlack][0][0]) == str(pawnXTemp) and str(blackBoard[pawnBlack][0][2]) == str(pawnYTemp):
                                     stopLooping = True
 
-                            if stopLoop:
+                            if stopLooping:
                                 break
 
                     pawnXTemp = pawnX
@@ -996,7 +996,7 @@ class main:
                                 elif str(blackBoard[pawnBlack][0][0]) == str(pawnXTemp) and str(blackBoard[pawnBlack][0][2]) == str(pawnYTemp):
                                     stopLooping = True
 
-                            if stopLoop:
+                            if stopLooping:
                                 break
                                     
 
@@ -1026,7 +1026,7 @@ class main:
                                 elif str(blackBoard[pawnBlack][0][0]) == str(pawnXTemp) and str(blackBoard[pawnBlack][0][2]) == str(pawnYTemp):
                                     stopLooping = True
 
-                            if stopLoop:
+                            if stopLooping:
                                 break
 
                     pawnXTemp = pawnX
