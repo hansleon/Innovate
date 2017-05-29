@@ -1542,6 +1542,7 @@ class main:
         if startX == 9:
             startX = 7
 
+
         if passant:
             
             returnVar = str(startX) + " " + str(startY) + "-" + str(eindX) + " " + str(eindY) + "X"
