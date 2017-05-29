@@ -118,9 +118,11 @@ class main:
 
             # Alleen wanneer we de move die we moeten doen wordt het uitgevoerd
             if currentMove < len(moves):
+                
                 # De calcCord methode wordt uitgevoerd
-                print(moves[currentMove])
                 cords = self.calcCor(moves[currentMove], player, white, black, graveyardPos)
+                print(white)
+                print(black)
 
                 print(cords)
 
@@ -474,7 +476,7 @@ class main:
         promotie = False
 
         if "#" in move:
-            print("de game is over en moet gereset worden")
+            move = move[:-1]
 
 
 
@@ -490,9 +492,6 @@ class main:
             move = move[:-1]
             promotiePawn = promotieLetter + "1"
             promotieY = graveyard[promotiePawn][:-1]
-
-        print(promotie)
-        print(promotieY)
 
         # prepareert coordinaten van de eindpositie in stringvorm
         place = list(move)
@@ -1540,7 +1539,8 @@ class main:
                         
                         graveyardY = int(graveyardPos[2])
 
-        print(promotieY)
+        if startX == 9:
+            startX = 7
 
         if passant:
             
