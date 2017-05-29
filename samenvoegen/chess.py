@@ -118,8 +118,11 @@ class main:
 
             # Alleen wanneer we de move die we moeten doen wordt het uitgevoerd
             if currentMove < len(moves):
+                
                 # De calcCord methode wordt uitgevoerd
                 cords = self.calcCor(moves[currentMove], player, white, black, graveyardPos)
+                print(white)
+                print(black)
 
                 print(cords)
 
@@ -473,7 +476,6 @@ class main:
         promotie = False
 
         if "#" in move:
-            print("de game is over en moet gereset worden")
             move = move[:-1]
 
 
@@ -1536,6 +1538,10 @@ class main:
                     else:
                         
                         graveyardY = int(graveyardPos[2])
+
+        if startX == 9:
+            startX = 7
+
 
         if passant:
             
