@@ -3,7 +3,6 @@ import json
 import time
 import string
 
-
 class main:
 
     def __init__(self):

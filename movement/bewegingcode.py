@@ -14,8 +14,7 @@ class Movement:
         #is het stuk nog niet geslagen vul dan 0 in. Zo ja vul de y in van de positie van dit stuk
         #rokade 0 is geen, 1 is korte rokade, 2 is lange rokade
         #startx, starty, endx, endy, slag, slagx, slagy, promotie, rokade, beurt in string, posx, posy.
-        #posx en posy zijn fixt en worden steeds gereturned voor de volgende stap
-
+        #posx en posy zijn fixt
         posx = 0
         posy = 0
         
