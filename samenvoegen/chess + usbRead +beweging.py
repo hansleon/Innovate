@@ -6,28 +6,26 @@ import string
 class usbReader:
     
     def __init__(self):
-##        boole = True
-##        while boole:
-##            time.sleep(3)
-##            try:
-##                path ='/media/pi/schaakbord/gameid.txt'
-##                days = open(path,'r')
-##                lijst = days.read()
-##                while not lijst:
-##                    path ='/media/pi/schaakbord/gameid.txt'
-##                    days = open(path,'r')
-##                    lijst = days.read()
-##                    print(gameID)
-##                    print("file is empty")
-##                    time.sleep(3)
-##                else:
-##                    main(gameID)
-##                    print("started")
-##                    boole = False
-##            except Exception: 
-##                print("Path is not correct")
-
-        main("kaeep4bL")
+        boole = True
+        while boole:
+            time.sleep(3)
+            try:
+                path ='/media/pi/schaakbord/gameid.txt'
+                days = open(path,'r')
+                lijst = days.read()
+                while not lijst:
+                    path ='/media/pi/schaakbord/gameid.txt'
+                    days = open(path,'r')
+                    lijst = days.read()
+                    print(gameID)
+                    print("file is empty")
+                    time.sleep(3)
+                else:
+                    main(gameID)
+                    print("started")
+                    boole = False
+            except Exception: 
+                print("Path is not correct")
 
 class main:
 
@@ -1500,9 +1498,9 @@ class main:
 
             # We kijken wat de array voor de tegenstander is en zetten deze in een variabel
             if player == "black":
-                enemyBoard = blackBoard
-            elif player == "white":
                 enemyBoard = whiteBoard
+            elif player == "white":
+                enemyBoard = blackBoard            
                 
             # Er wordt door alle pionnen van de tegenstander geloopt   
             for pawn in enemyBoard:
@@ -1526,9 +1524,44 @@ class main:
 
                     break
 
+            else:
+
+                if passant:
+
+                    if player == "black":
+                        endCords = str(eindX) + " " + str(eindY + 1)
+                    elif player == "white":
+                        endCords = str(eindX) + " " + str(eindY - 1)
+
+                        for pawn in enemyBoard:
+
+                            # Er wordt door alle pionnen van de tegenstander geloopt   
+                            for pawn in enemyBoard:
+
+                                # We kijken welke pion wordt geslagen en zorgen dat de coördinaten voor de pion in de graveyard wordt berekent
+                                if enemyBoard[pawn][0] == endCords:
+
+                                    graveyardPos = graveyard[pawn]
+                                    
+                                    graveyardX = int(graveyardPos[:-2])
+
+                                    if graveyardX == 10:
+
+                                        graveyardY = int(graveyardPos[3])
+                                        
+                                    else:
+                                        
+                                        graveyardY = int(graveyardPos[2])
+
+                                    break
+
+                            
+
         # Ergens zit een bug waardoor startX 7 soms naar 9 wordt gezet, hiernaar moet nog worden gekeken
         if startX == 9:
             startX = 7
+
+        print(passant)
 
 
         if passant:
@@ -1676,6 +1709,8 @@ class main:
         return(whiteActual, blackActual)
 
     def Set(self, inputstartx, inputstarty, inputendx, inputendy, inputslagx, inputslagy, promotie, rokade, passant, beurt, posx, posy):
+        print(passant)
+
         inputstartx = int(inputstartx)
         inputstarty = int(inputstarty)
 
@@ -1685,222 +1720,151 @@ class main:
         inputslagx = int(inputslagx)
         inputslagy = int(inputslagy)
 
-        posx = int(posx)
-        posy = int(posy)
+        elektro = False
         
         startx, starty, endx, endy, slagx, slagy = self.Omrekenen(inputstartx, inputstarty, inputendx, inputendy, inputslagx, inputslagy, beurt)
-        #check voor rokade, promotie, slag. Zo nee, doe de move, zo ja voer de de taak uit
         if(rokade == 0):
-            if(promotie == 0):                
-                #als de inputslagx of inputslagy niet nul is betekend het dat er coördinaten zijn voor een plek in de graveyard.
-                #hierdoor weet het systeem dat er een slag is.
-                if(inputslagx != 0 or inputslagy != 0):
-                    #de slag functie word later uitgelegt
-                    posx, posy = self.Slag(endx, endy, posx, posy, slagx, slagy, 0 , beurt)
-                #in deze functie word de stap gezet
-                posx, posy = self.Move(posx, posy, startx, starty, endx, endy, beurt)
+            
+            if(promotie == 0):
                 
-            #als er wel een promotie is gaat de code hier verder.
+                print(passant)
+                print(inputslagx, inputslagy)
+                
+                if(inputslagx != 0 and inputslagy != 0):
+                    print(passant)
+                    if(passant == True):
+                        print("passant = true")
+                        if(beurt == "white"):
+                            endy -= 2
+                        if(beurt == "black"):
+                            endy += 2
+                                          
+                    posx, posy = self.Slag(endx, endy, posx, posy, slagx, slagy, 0 , beurt, elektro)
+                posx, posy, moveh = self.Moveh(startx, starty, endx, endy, posx, posy, elektro)
+                if(moveh == False):
+                    if(passant):
+                        if(beurt == "white"):
+                            endy += 2
+                        if(beurt == "black"):
+                            endy -= 2
+                    posx, posy = self.Move(posx, posy, startx, starty, endx, endy, beurt, elektro)
             if(promotie != 0):
-                
-                #de pion word eerst naar de laatste positie gebracht
-                posx, posy = self.Move(posx, posy, startx, starty, endx, endy, beurt)
-                
-                #het variable promotie is de y coördinaat van de graveyard waar het geslagen stuk heen moet
-                y3 = promotie * 2
-
-                #voor elke partij word hier de coördinaten gegeven van bepaalde posities
+                posx, posy = self.Move(posx, posy, startx, starty, endx, endy, beurt, elektro)
+                promotie *= 2
+                y3 = promotie
                 if(beurt == "white"):
-                    #x is de x-as positie tussen het scaakbord en de witte graveyard
                     x = 4
-
-                    #x2 is de x-as positie waar de geslagen stukken staan in de witte graveyard
                     x2 = 2
-
-                    #y is de y-as positie die boven het bord langs loopt
                     y = 18
-
-                    #y2 is de y-as positie waar het nieuwe stuk word neer gezet
                     y2 = 16
-
-                    #deze variable zorgt dat het geslagen stuk niet naar de tegenpartij zijn graveyard gaat
-                    #dit is nodig omdat de slag functie normaal gesproken het stuk naar de andere beurt, ten opzichte van de huidige beurt, zijn graveyard te sturen
                     beurtint = 1
-                    
                 if(beurt == "black"):
-                    #hier geld alles precies het zelfde alleen dan voor zwart
                     x = 22
                     x2 = 24
                     y = 0
                     y2 = 2
                     beurtint = 2
-
-                posx, posy = self.Slag(endx, endy, posx, posy, slagx, slagy, beurtint, beurt)
+                    
+                posx, posy = self.Slag(endx, endy, posx, posy, slagx, slagy, beurtint, beurt, elektro)
                 posx, posy = self.Beweegposxy(posx, posy, x2, y3)
-                self.Elektromagneet(1)
-                
+                elektro = self.Elektromagneet(1, elektro)
                 posx, posy = self.Beweegposxy(posx, posy, x, posy)
                 posx, posy = self.Beweegposxy(posx, posy, posx, y)
                 posx, posy = self.Beweegposxy(posx, posy, endx, posy)
                 posx, posy = self.Beweegposxy(posx, posy, posx, y2)
-                self.Elektromagneet(0)
+                elektro = self.Elektromagneet(0, elektro)
         
-        #rokade 1 is korte rokade
-        #rokade 2 is de lange rokade
-        #X-as positie bepaalt voor koning en toren
+                    
         if(rokade == 1):
-            #x1 = x as plek waar de koning moet komen te staan
             x1 = 18
-
-            #x2 = x as plek waar de toren staat
             x2 = 20
-
-            #x3 = x as plek waar de toeren moet komen te staan
             x3 = 16
-
-        #hier geld het zelfde als bij de vorige if statement
         if(rokade == 2):
             x1 = 10
             x2 = 6
-            x3 = 12
-
-        #Y-as positie bepaalt voor koning en toren
+            x3 = 12   
         if(beurt == "white"):
-            #de y-as hoogte waarop de stukken staan en moeten komen
             y1 = 2
-
-            #de y-as hoogte waar langs de stukken langs elkaar kunnen gaan
             y2 = 0
-
-        #hier geld weer het zelfde als wit
         if(beurt == "black"):
             y1 = 16
             y2 = 18
-
-        #hier word de rokade uitgevoerd met de zojuist geselecteerde coördinaten
-        if(rokade != 0):
-            #14 is in x-as positie van de koning
+        if(rokade != 0): 
             posx, posy = self.Beweegposxy(posx, posy, 14, y1)
-            self.Elektromagneet(1)
+            elektro = self.Elektromagneet(1, elektro)
             
             posx, posy = self.Beweegposxy(posx, posy, x1, y1)
-            self.Elektromagneet(0)
+            elektro = self.Elektromagneet(0, elektro)
             
             posx, posy = self.Beweegposxy(posx, posy, x2, y1)
-            self.Elektromagneet(1)
+            elektro = self.Elektromagneet(1, elektro)
             
             posx, posy = self.Beweegposxy(posx, posy, x2, y2)
             posx, posy = self.Beweegposxy(posx, posy, x3, y2)
             posx, posy = self.Beweegposxy(posx, posy, x3, y1)
-            self.Elektromagneet(0)
+            elektro = self.Elektromagneet(0, elektro)
         return posx, posy
-    
-    #input voor de Slag methode:
-    #endx en endy is de xy - coördinaat waar het stuk van de partij dat aan de beurt is heen moet
-    #posx en posy is de xy - coördinaat waar de elektromagneet staat
-    #slagx, slagy is de xy - coördinaat van de graveyard waar het geslagen stuk heen moet
-    #beurt is nodig voor de promotie functie zodat het stuk terug gaat naar zijn eigen graveyard inplaat van naar de tegenstander
-    #beurtstring geeft aan wie de huidige beurt heeft, wit of zwart
-    def Slag(self, endx, endy, posx, posy, slagx, slagy, beurt, beurtstring):
+
+
+
+            
+    def Slag(self, endx, endy, posx, posy, slagx, slagy, beurt, beurtstring, elektro):
+
+        endx = int(endx)
+        endy = int(endy)
+
+        posx = int(posx)
+        posy = int(posy)
 
         slagx = int(slagx)
         slagy = int(slagy)
-
-        endx = int(endx)
-        endy = int(endy)
-
-        posx = int(posx)
-        posy = int(posy)
         
-        print("slag is true")            
         posx, posy = self.Beweegposxy(posx, posy, endx, endy)
-        self.Elektromagneet(1)
-        
+        elektro = self.Elektromagneet(1, elektro)
         posx, posy = self.Beweegposxy(posx, posy, posx, endy + 1)
 
         if(beurt == 0):
-
-            #als de huidige beurt wit aan zet is moet het stuk dus naar de zwarte graveyard toe en andersom
             if(beurtstring == "white"):
                 posx, posy = self.Beweegposxy(posx, posy, 22, posy)
-                
             if(beurtstring == "black" ):
                 posx, posy = self.Beweegposxy(posx, posy, 4, posy)
-
-            #x is de x-as coördinaat van het geslagen stuk in de graveyard
             x = slagx
-
-        
         if(beurt == 1):
-            #4 is de x-coördinaat tussen het schaakbord en de witte graveyard
-            #hier moet het stuk langs als het een promotie heeft gehad
             posx, posy = self.Beweegposxy(posx, posy, 4, posy)
-            x = 0
-            
+            x = 0   
         if(beurt == 2):
-            #hier geld het zelfde maar dan voor zwart
             posx, posy = self.Beweegposxy(posx, posy, 22, posy)
             x = 26
-
-        #hier word de rest van de beweging afgemaakt om er voor te zorgen dat het geslagen stuk op de goede plek komt
         posx, posy = self.Beweegposxy(posx, posy, posx, slagy + 1)
         posx, posy = self.Beweegposxy(posx, posy, x, posy)
         posx, posy = self.Beweegposxy(posx, posy, posx, slagy)
-        self.Elektromagneet(0)
-        
+        elektro = self.Elektromagneet(0, elektro)
         return posx, posy
 
-    #input voor de Move methode
-    #posx en posy is de xy-coördinaat van de huidige plek van de elektromagneet
-    #startx en starty is de xy-coördinaat van de start positie van de zet
-    #endx en endy is de xy-coördinaat van de eind positie van de zet
-    def Move(self, posx, posy, startx, starty, endx, endy, beurt):
-
-        startx = int(startx)
-        starty = int(starty)
+    def Move(self, posx, posy, startx, starty, endx, endy, beurt, elektro):
 
         endx = int(endx)
         endy = int(endy)
 
         posx = int(posx)
         posy = int(posy)
-        print("eerste")
-        print(posx, posy, startx, starty, endx, endy)
 
-        #zet de elektromagneet onder het juiste stuk
+        startx = int(startx)
+        starty = int(starty)
+        
         posx, posy = self.Beweegposxy(posx, posy, startx, starty)
-
-        print("tweede")        
-        print(posx, posy, startx, starty, endx, endy)
         
-        #eerst word er gecheckt of de zet een paard is, dit moet omdat het paard een andere beweging maakt
-        moveh, posx, posy = self.Moveh(startx, starty, endx, endy, posx, posy)
+        #zet de elektromagneet aan
+        elektro = self.Elektromagneet(1, elektro)
+        
+        #beweegt de elektromagneet naar de eindbestemming
+        posx, posy = self.Beweegposxy(posx, posy, endx, endy)
 
-        print("derde")        
-        print(posx, posy, startx, starty, endx, endy)
-        #als de self.Moveh functie false returned kan de zet als nog gedaan worden
-        if(moveh == False):
-
-
-            #zet de elektromagneet aan
-            self.Elektromagneet(1)
-
-            #beweegt de elektromagneet naar de eindbestemming
-            posx, posy = self.Beweegposxy(posx, posy, endx, endy)
-
-            #zet de elektromagneet uit
-            self.Elektromagneet(0)
-            
+        #zet de elektromagneet uit
+        elektro = self.Elektromagneet(0, elektro)
         return posx, posy
 
-    #input voor de Moveh methode
-    #startx en starty is de xy-coördinaat van de huidige plek van de elektromagneet
-    #endx en endy is de xy-coördinaat van de eind positie van de zet
-    #posx en posy is de xy-coördinaat van de huidige plek van de elektromagneet
-    def Moveh(self, startx, starty, endx, endy, posx, posy):
-        print(startx, starty, endx, endy, posx, posy)
-        startx = int(startx)
-        starty = int(starty)
+    def Moveh(self, startx, starty, endx, endy, posx, posy, elektro):
 
         endx = int(endx)
         endy = int(endy)
@@ -1908,19 +1872,18 @@ class main:
         posx = int(posx)
         posy = int(posy)
 
-        #berekent de xy coördinaat waar het stuk moet eindigen
+        startx = int(startx)
+        starty = int(starty)
+        
         movementx = endx - startx
         movementy = endy - starty
-
-        #hier word gecheckt of de zet een paarde sprong is
         if((movementx == 2 and movementy == 4) or (movementx == 4 and movementy == 2)
            or (movementx == 4 and movementy == 2) or (movementx == 4 and movementy == -2)
            or (movementx == 2 and movementy == -4) or (movementx == -2 and movementy == -4)
            or (movementx == -4 and movementy == -2) or (movementx == -4 and movementy == 2)
            or (movementx == -2 and movementy == 4)):
-
-            #hier word doormiddel van elke sprong die het paard kan maken
-            #de juiste zetten uitgevoert die nodig zijn voor de huidige paardesprong
+            posx, posy = self.Beweegposxy(posx, posy, startx, starty)
+            elektro = self.Elektromagneet(1, elektro)
             if(movementx == 2 or movementx == -2):
                 x = movementx / 2
             else:
@@ -1937,77 +1900,69 @@ class main:
                 y2 = movementy
             else:
                 y2 = 0
-                
             posx, posy = self.Beweegposxy(posx, posy, posx + x, posy + y)
             posx, posy = self.Beweegposxy(posx, posy, posx + x2, posy + y2)
             posx, posy = self.Beweegposxy(posx, posy, posx + x, posy + y)
-            
-            print("horse = true")
-            print(startx, starty, endx, endy, posx, posy)
-            return True, posx, posy
+            elektro = self.Elektromagneet(0, elektro)
+            return posx, posy, True
         else:
-            print("horse = false")
-            print(startx, starty, endx, endy, posx, posy)
-            return False, posx, posy
+            return posx, posy, False
+
         
 
-    #input voor de Omreken methode
-    #inputstartx en inputstarty is de xy-coördinaat van het spelbord, deze kan alleen maar tussen de 1, 8 zitten(9 en 10 zijn voor de graveyard).
-    #inputendx en inputendy is de xy-coördinaat van het spelbord, deze kan alleen maar tussen de 1 - 8 zitten
-    #beurt geeft aan wie er aan de beurt is
     def Omrekenen(self, inputstartx, inputstarty, inputendx, inputendy, inputslagx, inputslagy, beurt):
+
+        inputendx = int(inputendx)
+        inputendy = int(inputendy)
+
+        inputslagx = int(inputslagx)
+        inputslagy = int(inputslagy)
+
         inputstartx = int(inputstartx)
         inputstarty = int(inputstarty)
-
+                 
         startx = (inputstartx + 2) * 2
         starty = inputstarty * 2
         
-        endx = (int(inputendx) + 2) * 2
-        endy = int(inputendy) * 2
+        endx = (inputendx + 2) * 2
+        endy = inputendy * 2
+        print("");
         print("beurt = " + str(beurt))
-        
         if(inputslagx == 9):
-            
             if(beurt == "black"):
                 slagx = 0
-                
             if(beurt == "white"):
                 slagx = 26
-                
         if(inputslagx == 10):
-            
             if(beurt == "black"):
                 slagx = 2
-                
             if(beurt == "white"):
                 slagx = 24
-                
         if(inputslagx == 0):
-            
             slagx = 0
-            
         slagy = inputslagy * 2
-        
         return startx, starty, endx, endy, slagx, slagy
 
-    #input voor de Beweegposxy funtie
-    #posx em posy is huidige xy-coördinaat van de elektromagneet
-    #x, y
     def Beweegposxy(self, posx, posy, x, y):
-        print(posx, posy, x, y)
+
         posx = int(posx)
         posy = int(posy)
+
         x = int(x)
         y = int(y)
         
         movementx = x - posx
         movementy = y - posy
-        posx += posx + movementx
-        posy += posy + movementy
-        
-        self.Motorx(movementx)
-        self.Motory(movementy)
+        posx += movementx
+        posy += movementy
+        if(movementx != 0):
+            self.Motorx(movementx)
+        if(movementy != 0): 
+            self.Motory(movementy)
         print("posx = " + str(posx) + " posy = " + str(posy))
+        x = int((posx/2)-2)
+        y = int((posy/2))
+        print("x-as " + str(x) + " y-as " + str(y))
         return posx, posy
 
     def Motorx(self, x):
@@ -2016,13 +1971,14 @@ class main:
     def Motory(self, y):
         print("motor y-as beweeg " + str(y))
 
-    def Elektromagneet(self, status):
-        if(status == 0):
+    def Elektromagneet(self, status, elektro):
+        if(status == 0 and elektro == True):
             print("Deactiveer de elektromagneet")
-        elif(status == 1):
+            elektro = False
+        elif(status == 1 and elektro == False):
             print("Activeer de elektromagneet")
-        else:
-            print("Error onjuiste data")
+            elektro = True
+        return elektro
 
     
     
