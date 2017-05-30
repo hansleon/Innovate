@@ -146,7 +146,7 @@ class Movement:
         posx, posy = self.Beweegposxy(posx, posy, startx, starty)
         
         #zet de elektromagneet aan
-        selektro = self.Elektromagneet(1, elektro)
+        elektro = self.Elektromagneet(1, elektro)
         
         #beweegt de elektromagneet naar de eindbestemming
         posx, posy = self.Beweegposxy(posx, posy, endx, endy)
