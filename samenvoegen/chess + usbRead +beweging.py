@@ -12,11 +12,11 @@ class usbReader:
             try:
                 path ='/media/pi/schaakbord/gameid.txt'
                 days = open(path,'r')
-                lijst = days.read()
-                while not lijst:
+                gameID = days.read()
+                while not gameID:
                     path ='/media/pi/schaakbord/gameid.txt'
                     days = open(path,'r')
-                    lijst = days.read()
+                    gameID = days.read()
                     print(gameID)
                     print("file is empty")
                     time.sleep(3)
