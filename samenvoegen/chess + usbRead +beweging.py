@@ -6,26 +6,28 @@ import string
 class usbReader:
     
     def __init__(self):
-        boole = True
-        while boole:
-            time.sleep(3)
-            try:
-                path ='/media/pi/schaakbord/gameid.txt'
-                days = open(path,'r')
-                gameID = days.read()
-                while not gameID:
-                    path ='/media/pi/schaakbord/gameid.txt'
-                    days = open(path,'r')
-                    gameID = days.read()
-                    print(gameID)
-                    print("file is empty")
-                    time.sleep(3)
-                else:
-                    main(gameID)
-                    print("started")
-                    boole = False
-            except Exception: 
-                print("Path is not correct")
+##        boole = True
+##        while boole:
+##            time.sleep(3)
+##            try:
+##                path ='/media/pi/schaakbord/gameid.txt'
+##                days = open(path,'r')
+##                gameID = days.read()
+##                while not gameID:
+##                    path ='/media/pi/schaakbord/gameid.txt'
+##                    days = open(path,'r')
+##                    gameID = days.read()
+##                    print(gameID)
+##                    print("file is empty")
+##                    time.sleep(3)
+##                else:
+##                    main(gameID)
+##                    print("started")
+##                    boole = False
+##            except Exception: 
+##                print("Path is not correct")
+
+        main("T8Y5WOoD")
 
 class main:
 
@@ -349,6 +351,7 @@ class main:
 
                 # We runnen de reset functie om het bord naar originele posities te resetten
                 newArrays = self.resetBoard(white, black, posx, posy)
+                print(posx, posy)
                 white, black = newArrays
                 self.printChessBoard(white, black)
                 
@@ -1581,7 +1584,8 @@ class main:
 
     # roep deze functie aan om het spel opnieuw klaar te zetten
     def resetBoard(self, white, black, posx, posy):
-
+        print("resetboard")
+        print(posx, posy)
         # dit zet de array op volgorde zodat erdoor heen kan worden gegaan op volgorde van de for loop
         whiteConverted = {
             "R1" : [white["R1"][0], "K1"],
@@ -1675,7 +1679,8 @@ class main:
                 print("Pion is nooit bewogen")
                                               
             else:
-                posx, posy = self.Set(startX, startY, eindX, eindY, 0, 0, 0, 0, False, "White", posx, posy)
+                print(startX, startY, posx, posy, eindX, eindY)
+                posx, posy, elektro = self.Slag(startX, startY, posx, posy, eindX, eindY, 0, "White", False)
             
             eindX += 1
             count += 1
@@ -1697,7 +1702,7 @@ class main:
             if (int(startX) == int(eindX)) & (int(startY) == int(eindY)):
                 print("Pion is nooit bewogen")
             else:
-                posx, posy = self.Set(startX, startY, eindX, eindY, 0, 0, 0, 0, False, "Black", posx, posy)
+                posx, posy, elektro = self.Slag(startX, startY, posx, posy, eindX, eindY, 0, "Black", False)
 
             eindX += 1
             count += 1
@@ -1709,7 +1714,6 @@ class main:
         return(whiteActual, blackActual)
 
     def Set(self, inputstartx, inputstarty, inputendx, inputendy, inputslagx, inputslagy, promotie, rokade, passant, beurt, posx, posy):
-        print(passant)
 
         inputstartx = int(inputstartx)
         inputstarty = int(inputstarty)
@@ -1721,43 +1725,50 @@ class main:
         inputslagy = int(inputslagy)
 
         elektro = False
-        
         startx, starty, endx, endy, slagx, slagy = self.Omrekenen(inputstartx, inputstarty, inputendx, inputendy, inputslagx, inputslagy, beurt)
         if(rokade == 0):
             
             if(promotie == 0):
                 
-                print(passant)
-                print(inputslagx, inputslagy)
-                
                 if(inputslagx != 0 and inputslagy != 0):
-                    print(passant)
+
                     if(passant == True):
-                        print("passant = true")
+
                         if(beurt == "white"):
                             endy -= 2
+
                         if(beurt == "black"):
                             endy += 2
                                           
-                    posx, posy = self.Slag(endx, endy, posx, posy, slagx, slagy, 0 , beurt, elektro)
-                posx, posy, moveh = self.Moveh(startx, starty, endx, endy, posx, posy, elektro)
+                    posx, posy, elektro = self.Slag(endx, endy, posx, posy, slagx, slagy, 0 , beurt, elektro)
+
+                posx, posy, moveh, elektro = self.Moveh(startx, starty, endx, endy, posx, posy, elektro)
+
                 if(moveh == False):
+
                     if(passant):
+
                         if(beurt == "white"):
                             endy += 2
+
                         if(beurt == "black"):
                             endy -= 2
-                    posx, posy = self.Move(posx, posy, startx, starty, endx, endy, beurt, elektro)
+
+                    posx, posy, elektro = self.Move(posx, posy, startx, starty, endx, endy, beurt, elektro)
+
             if(promotie != 0):
-                posx, posy = self.Move(posx, posy, startx, starty, endx, endy, beurt, elektro)
+
+                posx, posy, elektro = self.Move(posx, posy, startx, starty, endx, endy, beurt, elektro)
                 promotie *= 2
                 y3 = promotie
+
                 if(beurt == "white"):
                     x = 4
                     x2 = 2
                     y = 18
                     y2 = 16
                     beurtint = 1
+
                 if(beurt == "black"):
                     x = 22
                     x2 = 24
@@ -1765,7 +1776,7 @@ class main:
                     y2 = 2
                     beurtint = 2
                     
-                posx, posy = self.Slag(endx, endy, posx, posy, slagx, slagy, beurtint, beurt, elektro)
+                posx, posy, elektro = self.Slag(endx, endy, posx, posy, slagx, slagy, beurtint, beurt, elektro)
                 posx, posy = self.Beweegposxy(posx, posy, x2, y3)
                 elektro = self.Elektromagneet(1, elektro)
                 posx, posy = self.Beweegposxy(posx, posy, x, posy)
@@ -1779,16 +1790,20 @@ class main:
             x1 = 18
             x2 = 20
             x3 = 16
+
         if(rokade == 2):
             x1 = 10
             x2 = 6
             x3 = 12   
+
         if(beurt == "white"):
             y1 = 2
             y2 = 0
+
         if(beurt == "black"):
             y1 = 16
             y2 = 18
+
         if(rokade != 0): 
             posx, posy = self.Beweegposxy(posx, posy, 14, y1)
             elektro = self.Elektromagneet(1, elektro)
@@ -1839,7 +1854,7 @@ class main:
         posx, posy = self.Beweegposxy(posx, posy, x, posy)
         posx, posy = self.Beweegposxy(posx, posy, posx, slagy)
         elektro = self.Elektromagneet(0, elektro)
-        return posx, posy
+        return posx, posy, elektro
 
     def Move(self, posx, posy, startx, starty, endx, endy, beurt, elektro):
 
@@ -1862,7 +1877,7 @@ class main:
 
         #zet de elektromagneet uit
         elektro = self.Elektromagneet(0, elektro)
-        return posx, posy
+        return posx, posy, elektro
 
     def Moveh(self, startx, starty, endx, endy, posx, posy, elektro):
 
@@ -1904,14 +1919,12 @@ class main:
             posx, posy = self.Beweegposxy(posx, posy, posx + x2, posy + y2)
             posx, posy = self.Beweegposxy(posx, posy, posx + x, posy + y)
             elektro = self.Elektromagneet(0, elektro)
-            return posx, posy, True
+            return posx, posy, True, elektro
         else:
-            return posx, posy, False
-
-        
+            return posx, posy, False, elektro
 
     def Omrekenen(self, inputstartx, inputstarty, inputendx, inputendy, inputslagx, inputslagy, beurt):
-
+     
         inputendx = int(inputendx)
         inputendy = int(inputendy)
 
@@ -1978,7 +1991,7 @@ class main:
         elif(status == 1 and elektro == False):
             print("Activeer de elektromagneet")
             elektro = True
-        return elektro
+        return elektro    
 
     
     
