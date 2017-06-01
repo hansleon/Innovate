@@ -27,7 +27,7 @@ class usbReader:
 ##            except Exception: 
 ##                print("Path is not correct")
 
-        main("T8Y5WOoD")
+        main("WMoa4kd7")
 
 class main:
 
@@ -544,7 +544,8 @@ class main:
             promotie = True
             moveLetter = list(move)
             promotieLetter = moveLetter[-1]
-            move = move[:-1]
+            move = move[:-2]
+            print(move)
             promotiePawn = promotieLetter + "1"
             promotieY = graveyard[promotiePawn][:-1]
 
@@ -1668,7 +1669,7 @@ class main:
         eindX = 1
         eindY = 1
         count = 1
-        
+        elektro = False
         for pos in whiteConverted:
             place = list(white[pos][0])
 
@@ -1680,7 +1681,11 @@ class main:
                                               
             else:
                 print(startX, startY, posx, posy, eindX, eindY)
-                posx, posy, elektro = self.Slag(startX, startY, posx, posy, eindX, eindY, 0, "White", False)
+                startX = int(startX)
+                startY = int(startY)
+                eindX = int(eindX)
+                eindY = int(eindY)
+                posx, posy, elektro = self.Reset((startX+2)*2, startY*2, (eindX+2)*2, eindY*2, posx, posy, elektro)
             
             eindX += 1
             count += 1
@@ -1702,8 +1707,12 @@ class main:
             if (int(startX) == int(eindX)) & (int(startY) == int(eindY)):
                 print("Pion is nooit bewogen")
             else:
-                posx, posy, elektro = self.Slag(startX, startY, posx, posy, eindX, eindY, 0, "Black", False)
-
+                startX = int(startX)
+                startY = int(startY)
+                eindX = int(eindX)
+                eindY = int(eindY)
+                posx, posy, elektro = self.Reset((startX+2)*2, startY*2, (eindX+2)*2, eindY*2, posx, posy, elektro)
+            
             eindX += 1
             count += 1
             if eindX is 9:
@@ -1855,6 +1864,17 @@ class main:
         posx, posy = self.Beweegposxy(posx, posy, posx, slagy)
         elektro = self.Elektromagneet(0, elektro)
         return posx, posy, elektro
+
+    def Reset(self, startx, starty, endx, endy, posx, posy, elektro):
+        posx, posy = self.Beweegposxy(posx, posy, startx, starty)
+        elektro = self.Elektromagneet(1, elektro)
+        posx, posy = self.Beweegposxy(posx, posy, posx + 1, posy)
+        posx, posy = self.Beweegposxy(posx, posy, posx, endy + 1) 
+        posx, posy = self.Beweegposxy(posx, posy, endx, posy)
+        posx, posy = self.Beweegposxy(posx, posy, posx, endy)
+        elektro = self.Elektromagneet(0, elektro)
+        return posx, posy, elektro
+        
 
     def Move(self, posx, posy, startx, starty, endx, endy, beurt, elektro):
 
