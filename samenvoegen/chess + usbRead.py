@@ -3,21 +3,45 @@ import json
 import time
 import string
 
+class usbReader:
+    
+    def __init__(self):
+        boole = True
+        while boole:
+            time.sleep(3)
+            try:
+                path ='/media/pi/schaakbord/gameid.txt'
+                days = open(path,'r')
+                lijst = days.read()
+                while not lijst:
+                    path ='/media/pi/schaakbord/gameid.txt'
+                    days = open(path,'r')
+                    lijst = days.read()
+                    print(gameID)
+                    print("file is empty")
+                    time.sleep(3)
+                else:
+                    main(gameID)
+                    print("started")
+                    boole = False
+            except Exception: 
+                print("Path is not correct")
+
 class main:
 
-    def __init__(self):
+    def __init__(self, gameID):
 
         # Deze variabel wordt op true gezet wanneer het bord moet worden gestopt.
         stopBoard = False
 
         # De path van de file die je wilt lezen (Hierin staat het gameID)
-        path = "gameID.txt"
+        # path = "gameID.txt"
 
         # Hiermee open je het bestand en geef je aan dat je het wilt lezen (r = read)
-        gameIDFile = open(path,"r")
+        # gameIDFile = open(path,"r")
 
         # Hier lees je de inhoud van de file
-        gameID = gameIDFile.read()
+        # gameID = gameIDFile.read()
 
         # Deze try-except checked of er om de een of andere manier geen json kan worden opgehaalt, dit kan zijn omdat de gameID fout is maar ook wanneer geen internet beschikbaar is
         try:
@@ -1647,4 +1671,4 @@ class main:
             
         
         
-main()
+usbReader()

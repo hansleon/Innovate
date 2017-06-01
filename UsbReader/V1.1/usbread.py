@@ -3,21 +3,43 @@ import json
 import time
 import string
 
+class gameID:
+    def __init__(self):
+        boole = True
+        while boole:
+            time.sleep(3)
+            try:
+                path ='/media/pi/schaakbord/gameid.txt'
+                days = open(path,'r')
+                lijst = days.read()
+                while not lijst:
+                    path ='/media/pi/schaakbord/gameid.txt'
+                    days = open(path,'r')
+                    lijst = days.read()
+                    print(lijst)
+                    print("file is empty")
+                    time.sleep(3)
+                else:
+                    main(lijst)
+                    print("started")
+                    boole = False
+            except Exception: 
+                print("Path is not correct")
+
 class main:
 
-    def __init__(self):
-
+    def __init__(self, gameID):
+        
+        print(gameID)
+                       
         # Deze variabel wordt op true gezet wanneer het bord moet worden gestopt.
         stopBoard = False
 
         # De path van de file die je wilt lezen (Hierin staat het gameID)
-        path = "gameID.txt"
+        #path = "gameID.txt"
 
         # Hiermee open je het bestand en geef je aan dat je het wilt lezen (r = read)
-        gameIDFile = open(path,"r")
-
-        # Hier lees je de inhoud van de file
-        gameID = gameIDFile.read()
+        #gameIDFile = open(path,"r")
 
         # Deze try-except checked of er om de een of andere manier geen json kan worden opgehaalt, dit kan zijn omdat de gameID fout is maar ook wanneer geen internet beschikbaar is
         try:
@@ -117,9 +139,10 @@ class main:
 
             # Alleen wanneer we de move die we moeten doen wordt het uitgevoerd
             if currentMove < len(moves):
-                
                 # De calcCord methode wordt uitgevoerd
                 cords = self.calcCor(moves[currentMove], player, white, black, graveyardPos)
+
+                print(cords)
 
                 # We checken op bijzonderheden als een rokade (#) of promotiee (&)
                 if "#" in cords:
@@ -140,9 +163,9 @@ class main:
                     # We kijken of de speler wit of zwart is en verzetten daarna de 2e pion
                     if player == "white":
                         
-                        # We kijken welke pion op de beginpositie staat en die zetten we naar de eindpositie
                         for pawn in white:
 
+                            # We kijken welke pion op de beginpositie staat en die zetten we naar de eindpositie
                             if white[pawn][0] == cordOne:
                                 
                                 white[pawn][0] = cordTwo
@@ -227,18 +250,14 @@ class main:
 
                     # We splitsen de eerste helft van de array op op de -, deze coördinaten worden behandelt als een gewone zet
                     cord = cords[0].split("-")
-                    
-                    # We halen de X en Y coördinaten uit het variabel cords
+
                     eindX = cord[1][0]
                     eindY = cord[1][2]
 
-                    # We kijken of de speler wit of zwart is
                     if player == "white":
-                        
-                        # Wanneer passant wordt geslagen door wit is het altijd de pion op de eindY min 1
+
                         passantCord = str(eindX) + " " + str(int(eindY) - 1)
 
-                        # We kijken welke zwarte pion hier staat en deze verplaatsen we naar de graveyard
                         for pawn in black:
 
                             if black[pawn][0] == passantCord:
@@ -248,17 +267,14 @@ class main:
                         
                     elif player == "black":
 
-                        # Wanneer passant wordt geslagen door wit is het altijd de pion op de eindY min 1
                         passantCord = str(eindX) + " " + str(int(eindY) + 1)
 
-                        # We kijken welke zwarte pion hier staat en deze verplaatsen we naar de graveyard
                         for pawn in white:
 
                             if white[pawn][0] == passantCord:
 
                                 white[pawn][0] = graveyardPos[pawn]
-
-                # Wanneer er niks speciaals is splitten we de coördinaten gewoon op de - en deze coördinaten behandelen we verder hieronder
+                                
                 else:
                     
                     cord = cords.split("-")
@@ -269,34 +285,34 @@ class main:
                 cordTwo = cord[1]
                 
                 # Er wordt door zowel de white als de black array geloopt
-                for pawn in white:
+                for pawnWhite, pawnBlack in zip(white, black):
 
                     # Eerst wordt gekeken of de beurt gezet is door wit of zwart
                     if player == "white":
 
                         # Er wordt gechecked of de positie waar de pion naar verplaatst bezet is door een zwarte pion
-                        if black[pawn][0] == cordTwo:
+                        if black[pawnBlack][0] == cordTwo:
 
                             # Als de positie bezet is door een pion wordt die pion in de "Graveyard" op zijn eigen plek gezet en wordt de eventuele promotie weggehaalt
-                            black[pawn][1] = pawn
-                            black[pawn][0] = graveyardPos[pawn]
+                            black[pawnBlack][1] = pawnBlack
+                            black[pawnBlack][0] = graveyardPos[pawnBlack]
 
                         # Wanneer de plek vrijgemaakt is kunnen we de pion die moet worden verplaatst verplaatsen
-                        if white[pawn][0] == cordOne:
-                            white[pawn][0] = cordTwo
+                        if white[pawnWhite][0] == cordOne:
+                            white[pawnWhite][0] = cordTwo
 
                     elif player == "black":
 
                         # Er wordt gechecked of de positie waar de pion naar verplaatst bezet is door een witte pion        
-                        if white[pawn][0] == cordTwo:
+                        if white[pawnWhite][0] == cordTwo:
 
                             ## Als de positie bezet is door een pion wordt die pion in de "Graveyard" op zijn eigen plek gezet en wordt de eventuele promotie weggehaalt
-                            white[pawn][1] = pawn
-                            white[pawn][0] = graveyardPos[pawn]
+                            white[pawnWhite][1] = pawnWhite
+                            white[pawnWhite][0] = graveyardPos[pawnWhite]
 
                         # Wanneer de plek vrijgemaakt is kunnen we de pion die moet worden verplaatst verplaatsen
-                        if black[pawn][0] == cordOne:
-                            black[pawn][0] = cordTwo
+                        if black[pawnBlack][0] == cordOne:
+                            black[pawnBlack][0] = cordTwo
                 
 
                 # Wanneer de zet is gedaan gaan we naar de volgende move
@@ -311,19 +327,11 @@ class main:
                 # De printChessBoard is een debug method, deze printen we voor een visuele representatie
                 self.printChessBoard(white, black)
 
-            # Wanneer we bij een stap zijn die nog niet is gezet (Het potje is dus afgelopen of nog bezig) checken we of het potje al klaar is
-            elif data["status"] != "started":
-                
-                print("Game is klaar.")
-                print("De game wordt gereset")
-
-                # We runnen de reset functie om het bord naar originele posities te resetten
-                newArrays = self.resetBoard(white, black)
-                white, black = newArrays
-                self.printChessBoard(white, black)
-                
-                input("Press enter to continue...")
-                break
+            else:
+                if data["status"] != "started":
+                    print("Game is done.")
+                    input("Press Enter to continue...")
+                    break
                 
 
     # De printChessBoard() method geeft een visuele representatie van de posities van alle pionnen
@@ -349,15 +357,13 @@ class main:
             while x <= 8:
 
                 # Deze for-loop looped door alle witte en zwarte stukken door om te kijken of de plek bezet is
-                for pawn in white:
-                    
+                for pawnWhite, pawnBlack in zip(white, black):
                     # Wanneer de plek van de pion gelijk is aan de plek van de geconcate string van de variabelen x en y wordt deze toegevoegd aan de string en wordt spaceIsset op true gezet
-                    if white[pawn][0] == str(x) + " " + str(y):
-                        board += "w" + white[pawn][1]
+                    if white[pawnWhite][0] == str(x) + " " + str(y):
+                        board += "w" + white[pawnWhite][1]
                         break
-                    
-                    elif black[pawn][0] == str(x) + " " + str(y):
-                        board += "b" + black[pawn][1]
+                    elif black[pawnBlack][0] == str(x) + " " + str(y):
+                        board += "b" + black[pawnBlack][1]
                         break
 
                 # Wanneer de for loop niet wordt gebreaked (De plek is dus leeg) wordt "--" ingevuld
@@ -454,55 +460,46 @@ class main:
         print(graveyard)
 
     def calcCor(self, move, player, whiteBoard, blackBoard, graveyard):
-
-        # We initialiseren alle variabelen zodat ze altijd een waarde hebben
-
-        # i is voor de index van de pion
+        
         i = 0
 
-        # AmountOfPawns is een variabel waarin we het aantal mogelijkheden opslaan, dit is om te voorkomen dat de verkeerde pion wordt bewogen
-        amountOfPawns = 0
-
-        # Met deze variabelen geef je bijzonderheden mee
-        slagen = False
-        passant = False
-        promotie = False
-
-        # In deze variabelen worden de coördinaten van de beweging van de pion opgeslagen
+        slaan = False
+        
         startX = 0
         startY = 0
         eindX = 0
         eindY = 0
 
-        # Hierin worden de coördinaten van een pion opgeslagen wanneer hij geslagen is
         graveyardX = 0
         graveyardY = 0
+        
+        nul = 0
         
         grave = 0
         graveX = 0
         graveY = 0
-
-        # Wanneer er promotie is zijn dit gegevens die moeten worden meegegevens, promotieY is de positie van de pion in de graveyard en promotieLetter is waarnaar gepromoveerd wordt
+        
         promotieY = 0
         promotieLetter = 0
-
-        # Dit zijn de coördinaten van de pion die passant wordt geslagen
+        
         passantX = 0
         passantY = 0
         
         rokade = 0
+        
+        passant = False
+        
         returnString = "0"
         
-        
-        # Mat staan wordt anders verwerkt in de code, we halen daarom de # uit de move en doen hier verder niks mee
+        promotie = False
+
         if "#" in move:
+            print("de game is over en moet gereset worden")
             move = move[:-1]
 
-        # Wanneer move een x bevat wordt iets geslagen, we zetten dus het variabel hiervoor
-        if "x" in move:
-            slagen = True
 
-        # Voor ons systeem is schaakstaan niet echt van belang. We halen daarom de + uit de move en doen hier verder niks mee
+
+        # problemen met schaak staan voorkomen
         if "+" in move:
             move = move[:-1]
 
@@ -519,128 +516,47 @@ class main:
         place = list(move)
         place[0] = self.letterToNumber(place[0])
         moveStr = str(place[-2]) + " " + str(place[-1])
-
-        # We checken of de speler zwart of wit is    
+            
         if player == "black":
             playerBoard = blackBoard
         else:
             playerBoard = whiteBoard
 
-        # We splitten de move op voor stringbewerking
-        moveSplit = list(move)
+        slagen = False
+        if "x" in move:
+            slagen = True
 
-        if "O-O" not in move:
-            # We splitten de coördinaten op in een X en een Y
+        if "+" in move:
+            move = move[:-1]
+
+        if "B" in move:
+            
+            moveSplit = list(move)
+
             movementX = int(self.letterToNumber(moveSplit[-2]))
             movementY = int(moveSplit[-1])
 
+            amountOfPawns = 0
 
-        # We kijken of de zet een bischop bevat    
-        if "B" in move:
-
-            # We loopen door alle pionnen van de speler die aan de beurt is
             for pawn in playerBoard:
 
-                # We kijken alleen naar de pionnen waarbij de waarde in de array een B bevat (Dit is zodat gepromoveerde pionnen ook werken)
                 if "B" in playerBoard[pawn][1]:
-
-                    # We zetten pawnX en pawnY naar de coördinaten
+                    
                     pawnX = int(playerBoard[pawn][0][:-2])
                     pawnY = int(playerBoard[pawn][0][-1])
 
-                    # stopLoop is een variabel om ervoor te zorgen dat de buitenste loop wordt gestopt wanneer er een pion in het pad staat (Een bisschop kan niet over pionnen heen bewegen)
                     stopLoop = False
 
-                    # Deze pawnX en Y zijn ervoor om te worden "increment", een bisschop beweegt steeds één vakje vertical
-                    pawnXTemp = pawnX
-                    pawnYTemp = pawnY
-
-                    # We loopen door alle mogelijkheden, wanneer het buiten het bord is stoppen we de loop
-                    while pawnXTemp < 9 and pawnXTemp > 0 and pawnYTemp < 9 and pawnYTemp > 0:
-
-                        # We "incrementen" de X en Y
-                        pawnXTemp += 1
-                        pawnYTemp += 1
-
-                        # We kijken of de X en Y nog op het bord zitten
-                        if (pawnXTemp < 9) or (pawnYTemp < 9):
-                            
-                            # We kijken of we de juiste positie gevonden hebben, dan zetten we de variabelen om en incrementen we amountOfPawns
-                            if str(pawnXTemp) == str(movementX) and str(pawnYTemp) == str(movementY):
-                                startX = pawnX
-                                startY = pawnY
-                                eindX = movementX
-                                eindY = movementY
-                                amountOfPawns += 1
-
-                            # We loopen door beide arrays om te kijken of de positie bezet is, wanneer deze bezet is zetten we stopLoop op True om de loop te stoppen
-                            for pawn in whiteBoard:
-                                
-                                if str(whiteBoard[pawn][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawn][0][-1]) == str(pawnYTemp):
-                                    stopLoop = False
-                                    
-                                elif str(blackBoard[pawn][0][0]) == str(pawnXTemp) and str(blackBoard[pawn][0][-1]) == str(pawnYTemp):
-                                    stopLoop = False
-
-                            # We stoppen de loop wanneer stopLoop True is
-                            if stopLoop:
-                                break
-                                    
-
-                    # We zetten de variabelen terug om ze weer te gebruiken
-                    stopLoop = False
-                    pawnXTemp = pawnX
-                    pawnYTemp = pawnY
-
-                    # We loopen door alle mogelijkheden, wanneer het buiten het bord is stoppen we de loop
-                    while pawnXTemp < 9 and pawnXTemp > 0 and pawnYTemp < 9 and pawnYTemp > 0:
-
-                        # We "incrementen" de X en Y
-                        pawnXTemp -= 1
-                        pawnYTemp += 1
-
-                        # We kijken of de X en Y nog op het bord zitten
-                        if (pawnXTemp > 0) or (pawnYTemp < 9):
-
-                            # We kijken of we de juiste positie gevonden hebben, dan zetten we de variabelen om en incrementen we amountOfPawns
-                            if str(pawnXTemp) == str(movementX) and str(pawnYTemp) == str(movementY):
-                                startX = pawnX
-                                startY = pawnY
-                                eindX = movementX
-                                eindY = movementY
-                                amountOfPawns += 1
-
-                            # We loopen door beide arrays om te kijken of de positie bezet is, wanneer deze bezet is zetten we stopLoop op True om de loop te stoppen
-                            for pawn in whiteBoard:
-                                
-                                if str(whiteBoard[pawn][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawn][0][-1]) == str(pawnYTemp):
-                                    stopLoop = False
-                                    
-                                elif str(blackBoard[pawn][0][0]) == str(pawnXTemp) and str(blackBoard[pawn][0][-1]) == str(pawnYTemp):
-                                    stopLoop = False
-
-                            # We stoppen de loop wanneer stopLoop True is
-                            if stopLoop:
-                                break
-                                
-
-                    # We zetten de variabelen terug om ze weer te gebruiken
-                    stopLoop = False
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
                     
-
-                    # We loopen door alle mogelijkheden, wanneer het buiten het bord is stoppen we de loop
                     while pawnXTemp < 9 and pawnXTemp > 0 and pawnYTemp < 9 and pawnYTemp > 0:
-
-                        # We "incrementen" de X en Y
+                        
                         pawnXTemp += 1
-                        pawnYTemp -= 1
+                        pawnYTemp += 1
 
-                        # We kijken of de X en Y nog op het bord zitten
-                        if (pawnXTemp < 9) or (pawnYTemp > 0):
-
-                            # We kijken of we de juiste positie gevonden hebben, dan zetten we de variabelen om en incrementen we amountOfPawns
+                        if (pawnXTemp < 9) or (pawnYTemp < 9):
+                        
                             if str(pawnXTemp) == str(movementX) and str(pawnYTemp) == str(movementY):
                                 startX = pawnX
                                 startY = pawnY
@@ -648,35 +564,30 @@ class main:
                                 eindY = movementY
                                 amountOfPawns += 1
 
-                            # We loopen door beide arrays om te kijken of de positie bezet is, wanneer deze bezet is zetten we stopLoop op True om de loop te stoppen
-                            for pawn in whiteBoard:
+                            for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
                                 
-                                if str(whiteBoard[pawn][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawn][0][-1]) == str(pawnYTemp):
+                                if str(whiteBoard[pawnWhite][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
                                     stopLoop = False
                                     
-                                elif str(blackBoard[pawn][0][0]) == str(pawnXTemp) and str(blackBoard[pawn][0][-1]) == str(pawnYTemp):
+                                elif str(blackBoard[pawnBlack][0][0]) == str(pawnXTemp) and str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
                                     stopLoop = False
 
-                            # We stoppen de loop wanneer stopLoop True is
                             if stopLoop:
                                 break
-                                
-                    # We zetten de variabelen terug om ze weer te gebruiken
-                    stopLoop = False
+                                    
+
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
 
-                    # We loopen door alle mogelijkheden, wanneer het buiten het bord is stoppen we de loop
+                    stopLoop = False
+
                     while pawnXTemp < 9 and pawnXTemp > 0 and pawnYTemp < 9 and pawnYTemp > 0:
-
-                        # We "incrementen" de X en Y
+                        
                         pawnXTemp -= 1
-                        pawnYTemp -= 1
-
-                        # We kijken of de X en Y nog op het bord zitten
-                        if (pawnXTemp > 0) or (pawnYTemp > 0):
-
-                            # We kijken of we de juiste positie gevonden hebben, dan zetten we de variabelen om en incrementen we amountOfPawns
+                        pawnYTemp += 1
+                        
+                        if (pawnXTemp > 0) or (pawnYTemp < 9):
+                        
                             if str(pawnXTemp) == str(movementX) and str(pawnYTemp) == str(movementY):
                                 startX = pawnX
                                 startY = pawnY
@@ -684,30 +595,95 @@ class main:
                                 eindY = movementY
                                 amountOfPawns += 1
 
-                            # We loopen door beide arrays om te kijken of de positie bezet is, wanneer deze bezet is zetten we stopLoop op True om de loop te stoppen
-                            for pawn in whiteBoard:
+                            for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
                                 
-                                if str(whiteBoard[pawn][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawn][0][-1]) == str(pawnYTemp):
+                                if str(whiteBoard[pawnWhite][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
                                     stopLoop = False
                                     
-                                elif str(blackBoard[pawn][0][0]) == str(pawnXTemp) and str(blackBoard[pawn][0][-1]) == str(pawnYTemp):
+                                elif str(blackBoard[pawnBlack][0][0]) == str(pawnXTemp) and str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
                                     stopLoop = False
 
-                            # We stoppen de loop wanneer stopLoop True is
                             if stopLoop:
                                 break
                                 
-            # We geven de pawnType mee en returnen het resultaat uit de pieceCheck method die de uiteindelijke coördinaten en bijzonderheden bepaalt                
+
+                    pawnXTemp = pawnX
+                    pawnYTemp = pawnY
+
+                    stopLoop = False
+
+                    while pawnXTemp < 9 and pawnXTemp > 0 and pawnYTemp < 9 and pawnYTemp > 0:
+
+                        pawnXTemp += 1
+                        pawnYTemp -= 1
+                        
+                        if (pawnXTemp < 9) or (pawnYTemp > 0):
+                        
+                            if str(pawnXTemp) == str(movementX) and str(pawnYTemp) == str(movementY):
+                                startX = pawnX
+                                startY = pawnY
+                                eindX = movementX
+                                eindY = movementY
+                                amountOfPawns += 1
+
+                            for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
+                                
+                                if str(whiteBoard[pawnWhite][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
+                                    stopLoop = False
+                                    
+                                elif str(blackBoard[pawnBlack][0][0]) == str(pawnXTemp) and str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
+                                    stopLoop = False
+
+                            if stopLoop:
+                                break
+                                
+
+                    pawnXTemp = pawnX
+                    pawnYTemp = pawnY
+
+                    stopLoop = False
+
+                    while pawnXTemp < 9 and pawnXTemp > 0 and pawnYTemp < 9 and pawnYTemp > 0:
+
+                        pawnXTemp -= 1
+                        pawnYTemp -= 1
+                        
+                        if (pawnXTemp > 0) or (pawnYTemp > 0):
+                        
+                            if str(pawnXTemp) == str(movementX) and str(pawnYTemp) == str(movementY):
+                                startX = pawnX
+                                startY = pawnY
+                                eindX = movementX
+                                eindY = movementY
+                                amountOfPawns += 1
+
+                            for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
+                                
+                                if str(whiteBoard[pawnWhite][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
+                                    stopLoop = False
+                                    
+                                elif str(blackBoard[pawnBlack][0][0]) == str(pawnXTemp) and str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
+                                    stopLoop = False
+
+                            if stopLoop:
+                                break
+                                
+                            
             pawnType = "B"
             return(self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, startX, startY, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, passant, player,promotieLetter, i))
+
         
-        # Wanneer R in de move staat hebben we een Rook
         elif "R" in move:
 
-            # We loopen door alle pionnen van de speler die aan de beurt is
+            moveSplit = list(move)
+
+            movementX = int(self.letterToNumber(moveSplit[-2]))
+            movementY = int(moveSplit[-1])
+
+            amountOfPawns = 0
+
             for pawn in playerBoard:
 
-                # We kijken alleen naar de pionnen waarbij de waarde in de array een R bevat (Dit is zodat gepromoveerde pionnen ook werken)
                 if "R" in playerBoard[pawn][1]:
                     
                     pawnX = int(playerBoard[pawn][0][:-2])
@@ -731,12 +707,12 @@ class main:
                                 eindY = movementY
                                 amountOfPawns += 1
 
-                            for pawn in whiteBoard:
+                            for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
 
-                                if str(whiteBoard[pawn][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawn][0][-1]) == str(pawnYTemp):
+                                if str(whiteBoard[pawnWhite][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
                                     stopLoop = True
                                     
-                                elif str(blackBoard[pawn][0][:-2]) == str(pawnXTemp) and str(blackBoard[pawn][0][2]) == str(pawnYTemp):
+                                elif str(blackBoard[pawnBlack][0][:-2]) == str(pawnXTemp) and str(blackBoard[pawnBlack][0][2]) == str(pawnYTemp):
                                     stopLoop = True
 
                             if stopLoop:
@@ -760,12 +736,12 @@ class main:
                                 eindY = movementY
                                 amountOfPawns += 1
 
-                            for pawn in whiteBoard:
+                            for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
 
-                                if str(whiteBoard[pawn][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawn][0][-1]) == str(pawnYTemp):
+                                if str(whiteBoard[pawnWhite][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
                                     stopLoop = True
                                     
-                                elif str(blackBoard[pawn][0][:-2]) == str(pawnXTemp) and str(blackBoard[pawn][0][2]) == str(pawnYTemp):
+                                elif str(blackBoard[pawnBlack][0][:-2]) == str(pawnXTemp) and str(blackBoard[pawnBlack][0][2]) == str(pawnYTemp):
                                     stopLoop = True
 
                             if stopLoop:
@@ -789,12 +765,12 @@ class main:
                                 eindY = movementY
                                 amountOfPawns += 1
 
-                            for pawn in whiteBoard:
+                            for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
 
-                                if str(whiteBoard[pawn][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawn][0][-1]) == str(pawnYTemp):
+                                if str(whiteBoard[pawnWhite][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
                                     stopLoop = True
                                     
-                                elif str(blackBoard[pawn][0][:-2]) == str(pawnXTemp) and str(blackBoard[pawn][0][2]) == str(pawnYTemp):
+                                elif str(blackBoard[pawnBlack][0][:-2]) == str(pawnXTemp) and str(blackBoard[pawnBlack][0][2]) == str(pawnYTemp):
                                     stopLoop = True
 
                             if stopLoop:
@@ -819,12 +795,12 @@ class main:
                                 eindY = movementY
                                 amountOfPawns += 1
 
-                            for pawn in whiteBoard:
+                            for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
 
-                                if str(whiteBoard[pawn][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawn][0][-1]) == str(pawnYTemp):
+                                if str(whiteBoard[pawnWhite][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
                                     stopLoop = True
                                     
-                                elif str(blackBoard[pawn][0][:-2]) == str(pawnXTemp) and str(blackBoard[pawn][0][2]) == str(pawnYTemp):
+                                elif str(blackBoard[pawnBlack][0][:-2]) == str(pawnXTemp) and str(blackBoard[pawnBlack][0][2]) == str(pawnYTemp):
                                     stopLoop = True
 
                             if stopLoop:
@@ -841,6 +817,12 @@ class main:
             return(self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, startX, startY, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, passant, player, promotieLetter, i))
 
         elif "Q" in move:
+
+            moveSplit = list(move)
+            movementX = int(self.letterToNumber(moveSplit[-2]))
+            movementY = int(moveSplit[-1])
+
+            amountOfPawns = 0
 
             for pawn in playerBoard:
 
@@ -868,12 +850,12 @@ class main:
                                 eindY = movementY
                                 amountOfPawns += 1
 
-                            for pawn in whiteBoard:
+                            for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
                                 
-                                if str(whiteBoard[pawn][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawn][0][-1]) == str(pawnYTemp):
+                                if str(whiteBoard[pawnWhite][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
                                     stopLoop = False
                                     
-                                elif str(blackBoard[pawn][0][:-2]) == str(pawnXTemp) and str(whiteBoard[pawn][0][-1]) == str(pawnYTemp):
+                                elif str(blackBoard[pawnBlack][0][:-2]) == str(pawnXTemp) and str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
                                     stopLoop = False
 
                             if stopLoop:
@@ -899,12 +881,12 @@ class main:
                                 eindY = movementY
                                 amountOfPawns += 1
 
-                            for pawn in whiteBoard:
+                            for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
                                 
-                                if str(whiteBoard[pawn][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawn][0][-1]) == str(pawnYTemp):
+                                if str(whiteBoard[pawnWhite][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
                                     stopLoop = False
                                     
-                                elif str(blackBoard[pawn][0][:-2]) == str(pawnXTemp) and str(whiteBoard[pawn][0][-1]) == str(pawnYTemp):
+                                elif str(blackBoard[pawnBlack][0][:-2]) == str(pawnXTemp) and str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
                                     stopLoop = False
 
                             if stopLoop:
@@ -930,12 +912,12 @@ class main:
                                 eindY = movementY
                                 amountOfPawns += 1
 
-                            for pawn in whiteBoard:
+                            for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
                                 
-                                if str(whiteBoard[pawn][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawn][0][-1]) == str(pawnYTemp):
+                                if str(whiteBoard[pawnWhite][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
                                     stopLoop = False
                                     
-                                elif str(blackBoard[pawn][0][:-2]) == str(pawnXTemp) and str(whiteBoard[pawn][0][-1]) == str(pawnYTemp):
+                                elif str(blackBoard[pawnBlack][0][:-2]) == str(pawnXTemp) and str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
                                     stopLoop = False
 
                             if stopLoop:
@@ -961,12 +943,12 @@ class main:
                                 eindY = movementY
                                 amountOfPawns += 1
 
-                            for pawn in whiteBoard:
+                            for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
                                 
-                                if str(whiteBoard[pawn][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawn][0][-1]) == str(pawnYTemp):
+                                if str(whiteBoard[pawnWhite][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
                                     stopLoop = False
                                     
-                                elif str(blackBoard[pawn][0][:-2]) == str(pawnXTemp) and str(whiteBoard[pawn][0][-1]) == str(pawnYTemp):
+                                elif str(blackBoard[pawnBlack][0][:-2]) == str(pawnXTemp) and str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
                                     stopLoop = False
 
                             if stopLoop:
@@ -990,12 +972,12 @@ class main:
                                 eindY = movementY
                                 amountOfPawns += 1
 
-                            for pawn in whiteBoard:
+                            for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
 
-                                if str(whiteBoard[pawn][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawn][0][-1]) == str(pawnYTemp):
+                                if str(whiteBoard[pawnWhite][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
                                     stopLoop = True
                                     
-                                elif str(blackBoard[pawn][0][:-2]) == str(pawnXTemp) and str(blackBoard[pawn][0][2]) == str(pawnYTemp):
+                                elif str(blackBoard[pawnBlack][0][:-2]) == str(pawnXTemp) and str(blackBoard[pawnBlack][0][2]) == str(pawnYTemp):
                                     stopLoop = True
 
                             if stopLoop:
@@ -1019,12 +1001,12 @@ class main:
                                 eindY = movementY
                                 amountOfPawns += 1
 
-                            for pawn in whiteBoard:
+                            for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
 
-                                if str(whiteBoard[pawn][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawn][0][-1]) == str(pawnYTemp):
+                                if str(whiteBoard[pawnWhite][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
                                     stopLoop = True
                                     
-                                elif str(blackBoard[pawn][0][:-2]) == str(pawnXTemp) and str(blackBoard[pawn][0][2]) == str(pawnYTemp):
+                                elif str(blackBoard[pawnBlack][0][:-2]) == str(pawnXTemp) and str(blackBoard[pawnBlack][0][2]) == str(pawnYTemp):
                                     stopLoop = True
 
                             if stopLoop:
@@ -1048,12 +1030,12 @@ class main:
                                 eindY = movementY
                                 amountOfPawns += 1
 
-                            for pawn in whiteBoard:
+                            for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
 
-                                if str(whiteBoard[pawn][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawn][0][-1]) == str(pawnYTemp):
+                                if str(whiteBoard[pawnWhite][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
                                     stopLoop = True
                                     
-                                elif str(blackBoard[pawn][0][:-2]) == str(pawnXTemp) and str(blackBoard[pawn][0][2]) == str(pawnYTemp):
+                                elif str(blackBoard[pawnBlack][0][:-2]) == str(pawnXTemp) and str(blackBoard[pawnBlack][0][2]) == str(pawnYTemp):
                                     stopLoop = True
 
                             if stopLoop:
@@ -1078,12 +1060,12 @@ class main:
                                 eindY = movementY
                                 amountOfPawns += 1
 
-                            for pawn in whiteBoard:
+                            for pawnWhite, pawnBlack in zip(whiteBoard, blackBoard):
 
-                                if str(whiteBoard[pawn][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawn][0][-1]) == str(pawnYTemp):
+                                if str(whiteBoard[pawnWhite][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawnWhite][0][-1]) == str(pawnYTemp):
                                     stopLoop = True
                                     
-                                elif str(blackBoard[pawn][0][:-2]) == str(pawnXTemp) and str(blackBoard[pawn][0][2]) == str(pawnYTemp):
+                                elif str(blackBoard[pawnBlack][0][:-2]) == str(pawnXTemp) and str(blackBoard[pawnBlack][0][2]) == str(pawnYTemp):
                                     stopLoop = True
 
                             if stopLoop:
@@ -1097,6 +1079,13 @@ class main:
 
 
         elif "N" in move:
+
+            moveSplit = list(move)
+
+            movementX = int(self.letterToNumber(moveSplit[-2]))
+            movementY = int(moveSplit[-1])
+
+            amountOfPawns = 0
 
             for pawn in playerBoard:
 
@@ -1166,6 +1155,13 @@ class main:
             return(self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, startX, startY, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, passant, player, promotieLetter, i))
                         
         elif "K" in move:
+
+            moveSplit = list(move)
+
+            movementX = int(self.letterToNumber(moveSplit[-2]))
+            movementY = int(moveSplit[-1])
+
+            amountOfPawns = 0
 
             for pawn in playerBoard:
 
@@ -1238,30 +1234,30 @@ class main:
             if promotie:
                 move = move[:-1]
                 moveSplit = list(move)
-                
+
             if move == "O-O":
                 rokade = 1
-
                 if player == "white":
-                    
                     return("5 1-7 1#8 1-6 1")
-                    # self.chielsmethod(0, 0, 0, 0, 0, 0, 0, rokade, 0, 0)
+                    # self.chielsmethod(nul, nul, nul, nul, nul, nul, nul, 1, nul, nul)
                 else:
-                    
                     return("5 8-7 8#8 8-6 8")
-                    # self.chielsmethod(0, 0, 0, 0, 0, 0, 0, rokade, 0, 0)
+                # self.chielsmethod(nul, nul, nul, nul, nul, nul, nul, 1, nul, nul)
 
             if move == "O-O-O":
                 rokade = 2
-                
                 if player == "white":
-                    
                     return("5 1-3 1#1 1-4 1")
-                    # self.chielsmethod(0, 0, 0, 0, 0, 0, 0, rokade, 0, 0)
-                    
+                    # self.chielsmethod(nul, nul, nul, nul, nul, nul, nul, 2, nul, nul)
                 else:
                     return("5 8-3 8#1 8-4 8")
-                    # self.chielsmethod(0, 0, 0, 0, 0, 0, 0, rokade, 0, 0)
+                    # self.chielsmethod(nul, nul, nul, nul, nul, nul, nul, 2, nul, nul)
+
+            moveSplit = list(move)
+            movementX = int(self.letterToNumber(moveSplit[-2]))
+            movementY = int(moveSplit[-1])
+
+            amountOfPawns = 0
 
             i = 1
             
@@ -1385,10 +1381,87 @@ class main:
             return 8
         else:
             return False
+
+    # roep deze functie aan om het spel opnieuw klaar te zetten
+    def resetBoard(self, black, white):
+
+        # dit zet de array op volgorde zodat erdoor heen kan worden gegaan op volgorde van de for loop
+        whiteConverted = {
+            "R1" : white["R1"],
+            "N1" : white["N1"],
+            "B1" : white["B1"],
+            "Q1" : white["Q1"],
+            "K1" : white["K1"],
+            "B2" : white["B2"],
+            "N2" : white["N2"],
+            "R2" : white["R2"],
+            "P1" : white["P1"],
+            "P2" : white["P2"],
+            "P3" : white["P3"],
+            "P4" : white["P4"],
+            "P5" : white["P5"],
+            "P6" : white["P6"],
+            "P7" : white["P7"],
+            "P8" : white["P8"],
+            }
+
+        blackConverted = {
+            "R1" : black["R1"],
+            "N1" : black["N1"],
+            "B1" : black["B1"],
+            "Q1" : black["Q1"],
+            "K1" : black["K1"],
+            "B2" : black["B2"],
+            "N2" : black["N2"],
+            "R2" : black["R2"],
+            "P1" : black["P1"],
+            "P2" : black["P2"],
+            "P3" : black["P3"],
+            "P4" : black["P4"],
+            "P5" : black["P5"],
+            "P6" : black["P6"],
+            "P7" : black["P7"],
+            "P8" : black["P8"],
+            }
+
+
+        x = 1
+        y = 1
+        count = 1
+
+        
+        for pos in whiteConverted:
+            place = list(white[pos])
+            
+            print(place[0], place[-1], x, y, nul, nul, nul, nul)
+            # self.chielsMethod(place[1], place[-1], x, y, nul, nul, nul, nul)
+
+            x += 1
+            count += 1
+            if x is 9:
+                x = 1
+            if count is 9:
+                y += 1
+
+        x = 1
+        y = 8
+        count = 1
+                
+        for pos in whiteConverted:
+            place = list(white[pos])
+            print(place[0], place[-1], x, y, nul, nul, nul, nul)
+            
+            # self.chielsMethod(place[1], place[-1], x, y, nul, nul, nul, nul)
+
+            x += 1
+            count += 1
+            if x is 9:
+                x = 1
+            if count is 9:
+                y -= 1
           
     def pieceCheck(self, amountOfPawns, move, playerBoard, graveyard, startX, startY, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, passant, player, promotieLetter, i):
-
-        # We initialiseren alle variabelen
+        
         eindX = movementX
         eindY = movementY
 
@@ -1397,11 +1470,9 @@ class main:
 
         graveyardX = 0
         graveyardY = 0
-
-        # We kijken of er meerdere mogelijkheden zijn
+        
         if amountOfPawns > 1:
-
-            # Wanneer de move een x bevat moet de stringbewerking anders worden toegepast
+            
             if "x" in move:
                 
                 checkMove = move[1:-3]                        
@@ -1410,14 +1481,11 @@ class main:
 
                 checkMove = move[1:-1]
                 checkMove = checkMove[0]
-                
-            # We kijken of de mogelijkheid moet worden berekent met met de X of Y coördinaat (X is in letter, Y in nummer)
-            if checkMove.isalpha():
 
-                # We zetten de letter om in een nummer
+            if checkMove.isalpha():
+                
                 checkMove = self.letterToNumber(checkMove)
 
-                # We loopen door alle pionnen van dit type en kijken welke het kan zijn
                 for pawn in playerBoard:
 
                     if pawnType in playerBoard[pawn][1]:
@@ -1441,8 +1509,7 @@ class main:
                             startY = int(playerBoard[pawn][0][-1])
                                                 
         else:
-
-            # We loopen door alle pionnen van dit type en kijken welke het kan zijn
+            
             for pawn in playerBoard:
 
                     if pawnType in playerBoard[pawn][1]:
@@ -1455,29 +1522,29 @@ class main:
 
                                 startX = int(playerBoard[pawn][0][:-2])
                                 startY = int(playerBoard[pawn][0][-1])
-
-        # Wanneer een andere pion wordt geslagen kijken we ook waar deze moet staan   
+            
         if slagen == True:
 
-            # We zetten de eindpositie om naar één variabel
-            endCords = str(eindX) + " " + str(eindY)
+            endCords = str(movementX) + " " + str(movementY)
 
-            # We zetten passant in eerste instantie op true
             passant = True
 
-            # We kijken wat de array voor de tegenstander is en zetten deze in een variabel
+            for whitePawn, blackPawn in zip(whiteBoard, blackBoard):
+                
+                if whiteBoard[whitePawn][0] == endCords or blackBoard[blackPawn][0] == endCords:
+                    passant = False
+                    break
+
             if player == "black":
                 enemyBoard = blackBoard
             elif player == "white":
                 enemyBoard = whiteBoard
                 
-            # Er wordt door alle pionnen van de tegenstander geloopt   
             for pawn in enemyBoard:
 
-                # We kijken welke pion wordt geslagne en zorgen dat de coördinaten voor de pion in de graveyard wordt berekent
-                if enemyBoard[pawn][0] == endCords:
+                defeatCords = str(eindX) + " " + str(eindY)
 
-                    passant = False
+                if enemyBoard[pawn][0] == defeatCords:
 
                     graveyardPos = graveyard[pawn]
                     
@@ -1491,160 +1558,19 @@ class main:
                         
                         graveyardY = int(graveyardPos[2])
 
-                    break
-
-        # Ergens zit een bug waardoor startX 7 soms naar 9 wordt gezet, hiernaar moet nog worden gekeken
-        if startX == 9:
-            startX = 7
-
-
         if passant:
-
-            # self.chielsMethod(startX, startY, eindX, eindY, 0, 0, 0, 0, True, player)
             
             returnVar = str(startX) + " " + str(startY) + "-" + str(eindX) + " " + str(eindY) + "X"
             return(returnVar)
         
         elif promotieY != 0:
             
-            # self.chielsMethod(startX, startY, eindX, eindY, 0, 0, 0, 0, False, player)
-            
             returnVar = str(startX) + " " + str(startY) + "-" + str(eindX) + " " + str(eindY) + "&=" + promotieLetter
             return(returnVar)
         
         else:
-
-            # self.chielsMethod(startX, startY, eindX, eindY, 0, 0, 0, 0, False, player)
             
             returnVar = str(startX) + " " + str(startY) + "-" + str(eindX) + " " + str(eindY)
             return(returnVar)
-
-    # roep deze functie aan om het spel opnieuw klaar te zetten
-    def resetBoard(self, white, black):
-
-        # dit zet de array op volgorde zodat erdoor heen kan worden gegaan op volgorde van de for loop
-        whiteConverted = {
-            "R1" : [white["R1"][0], "K1"],
-            "N1" : [white["N1"][0], "Q1"],
-            "B1" : [white["B1"][0], "B1"],
-            "Q1" : [white["Q1"][0], "B2"],
-            "K1" : [white["K1"][0], "N1"],
-            "B2" : [white["B2"][0], "N2"],
-            "N2" : [white["N2"][0], "R1"],
-            "R2" : [white["R2"][0], "R2"],
-            "P1" : [white["P1"][0], "P1"],
-            "P2" : [white["P2"][0], "P2"],
-            "P3" : [white["P3"][0], "P3"],
-            "P4" : [white["P4"][0], "P4"],
-            "P5" : [white["P5"][0], "P5"],
-            "P6" : [white["P6"][0], "P6"],
-            "P7" : [white["P7"][0], "P7"],
-            "P8" : [white["P8"][0], "P8"]
-            }
-
-        blackConverted = {
-            "R1" : [black["R1"][0], "K1"],
-            "N1" : [black["N1"][0], "Q1"],
-            "B1" : [black["B1"][0], "B1"],
-            "Q1" : [black["Q1"][0], "B2"],
-            "K1" : [black["K1"][0], "N1"],
-            "B2" : [black["B2"][0], "N2"],
-            "N2" : [black["N2"][0], "R1"],
-            "R2" : [black["R2"][0], "R2"],
-            "P1" : [black["P1"][0], "P1"],
-            "P2" : [black["P2"][0], "P2"],
-            "P3" : [black["P3"][0], "P3"],
-            "P4" : [black["P4"][0], "P4"],
-            "P5" : [black["P5"][0], "P5"],
-            "P6" : [black["P6"][0], "P6"],
-            "P7" : [black["P7"][0], "P7"],
-            "P8" : [black["P8"][0], "P8"]
-            }
-
-        whiteActual = {
-            "K1" : ["5 1", "K1"],
-            "Q1" : ["4 1", "Q1"],
-            "B1" : ["3 1", "B1"],
-            "B2" : ["6 1", "B2"],
-            "N1" : ["2 1", "N1"],
-            "N2" : ["7 1", "N2"],
-            "R1" : ["1 1", "R1"],
-            "R2" : ["8 1", "R2"],
-            "P1" : ["1 2", "P1"],
-            "P2" : ["2 2", "P2"],
-            "P3" : ["3 2", "P3"],
-            "P4" : ["4 2", "P4"],
-            "P5" : ["5 2", "P5"],
-            "P6" : ["6 2", "P6"],
-            "P7" : ["7 2", "P7"],
-            "P8" : ["8 2", "P8"]
-            }
-
-        blackActual = {
-            "K1" : ["5 8", "K1"],
-            "Q1" : ["4 8", "Q1"],
-            "B1" : ["3 8", "B1"],
-            "B2" : ["6 8", "B2"],
-            "N1" : ["2 8", "N1"],
-            "N2" : ["7 8", "N2"],
-            "R1" : ["1 8", "R1"],
-            "R2" : ["8 8", "R2"],
-            "P1" : ["1 7", "P1"],
-            "P2" : ["2 7", "P2"],
-            "P3" : ["3 7", "P3"],
-            "P4" : ["4 7", "P4"],
-            "P5" : ["5 7", "P5"],
-            "P6" : ["6 7", "P6"],
-            "P7" : ["7 7", "P7"],
-            "P8" : ["8 7", "P8"],
-            }
-
-
-
-        eindX = 1
-        eindY = 1
-        count = 1
         
-        for pos in whiteConverted:
-            place = list(white[pos][0])
-
-            startX = place[0]
-            startY = place[-1]
-            print(startX, startY, eindX, eindY, 0, 0, 0, 0, False, "White")
-            
-            # self.chielsMethod(startX, startY, eindX, eindY, 0, 0, 0, 0, False, "White")
-            
-            eindX += 1
-            count += 1
-            if eindX is 9:
-                eindX = 1
-            if count is 9:
-                eindY += 1
-
-        eindX = 1
-        eindY = 8
-        count = 1
-                
-        for pos in blackConverted:
-            place = list(white[pos][0])
-
-            startX = place[0]
-            startY = place[-1]
-            
-            print(startX, startY, eindX, eindY, 0, 0, 0, 0, False, "White")
-
-            # self.chielsMethod(startX, startY, eindX, eindY, 0, 0, 0, 0, False, "Black")
-
-            eindX += 1
-            count += 1
-            if eindX is 9:
-                eindX = 1
-            if count is 9:
-                eindY -= 1
-
-        return(whiteActual, blackActual)
-
-            
-        
-        
-main()
+gameID()

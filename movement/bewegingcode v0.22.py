@@ -37,6 +37,7 @@ class Movement:
 ##        posx, posy = self.Set(7,7,7,8,0,0,0,0,False,"black", posx ,posy)
 
     def Set(self, inputstartx, inputstarty, inputendx, inputendy, inputslagx, inputslagy, promotie, rokade, passant, beurt, posx, posy):
+        elektro = False
         startx, starty, endx, endy, slagx, slagy = self.Omrekenen(inputstartx, inputstarty, inputendx, inputendy, inputslagx, inputslagy, beurt)
         if(rokade == 0):
             
@@ -48,18 +49,18 @@ class Movement:
                             endy -= 2
                         if(beurt == "black"):
                             endy += 2
-                        
-                    posx, posy = self.slag(endx, endy, posx, posy, slagx, slagy, 0 , beurt)
-                posx, posy, moveh = self.Moveh(startx, starty, endx, endy, posx, posy)
+                                          
+                    posx, posy = self.Slag(endx, endy, posx, posy, slagx, slagy, 0 , beurt, elektro)
+                posx, posy, moveh = self.Moveh(startx, starty, endx, endy, posx, posy, elektro)
                 if(moveh == False):
                     if(passant):
                         if(beurt == "white"):
                             endy += 2
                         if(beurt == "black"):
                             endy -= 2
-                    posx, posy = self.Move(posx, posy, startx, starty, endx, endy, beurt)
+                    posx, posy = self.Move(posx, posy, startx, starty, endx, endy, beurt, elektro)
             if(promotie != 0):
-                posx, posy = self.Move(posx, posy, startx, starty, endx, endy, beurt)
+                posx, posy = self.Move(posx, posy, startx, starty, endx, endy, beurt, elektro)
                 promotie *= 2
                 y3 = promotie
                 if(beurt == "white"):
@@ -75,14 +76,14 @@ class Movement:
                     y2 = 2
                     beurtint = 2
                     
-                posx, posy = self.Slag(endx, endy, posx, posy, slagx, slagy, beurtint, beurt)
+                posx, posy = self.Slag(endx, endy, posx, posy, slagx, slagy, beurtint, beurt, elektro)
                 posx, posy = self.Beweegposxy(posx, posy, x2, y3)
-                self.Elektromagneet(1)
+                elektro = self.Elektromagneet(1, elektro)
                 posx, posy = self.Beweegposxy(posx, posy, x, posy)
                 posx, posy = self.Beweegposxy(posx, posy, posx, y)
                 posx, posy = self.Beweegposxy(posx, posy, endx, posy)
                 posx, posy = self.Beweegposxy(posx, posy, posx, y2)
-                self.Elektromagneet(0)
+                elektro = self.Elektromagneet(0, elektro)
         
                     
         if(rokade == 1):
@@ -101,26 +102,26 @@ class Movement:
             y2 = 18
         if(rokade != 0): 
             posx, posy = self.Beweegposxy(posx, posy, 14, y1)
-            self.Elektromagneet(1)
+            elektro = self.Elektromagneet(1, elektro)
             
             posx, posy = self.Beweegposxy(posx, posy, x1, y1)
-            self.Elektromagneet(0)
+            elektro = self.Elektromagneet(0, elektro)
             
             posx, posy = self.Beweegposxy(posx, posy, x2, y1)
-            self.Elektromagneet(1)
+            elektro = self.Elektromagneet(1, elektro)
             
             posx, posy = self.Beweegposxy(posx, posy, x2, y2)
             posx, posy = self.Beweegposxy(posx, posy, x3, y2)
             posx, posy = self.Beweegposxy(posx, posy, x3, y1)
-            self.Elektromagneet(0)
+            elektro = self.Elektromagneet(0, elektro)
         return posx, posy
 
 
 
             
-    def slag(self, endx, endy, posx, posy, slagx, slagy, beurt, beurtstring):
+    def Slag(self, endx, endy, posx, posy, slagx, slagy, beurt, beurtstring, elektro):
             posx, posy = self.Beweegposxy(posx, posy, endx, endy)
-            self.Elektromagneet(1)
+            elektro = self.Elektromagneet(1, elektro)
             posx, posy = self.Beweegposxy(posx, posy, posx, endy + 1)
 
             if(beurt == 0):
@@ -138,23 +139,23 @@ class Movement:
             posx, posy = self.Beweegposxy(posx, posy, posx, slagy + 1)
             posx, posy = self.Beweegposxy(posx, posy, x, posy)
             posx, posy = self.Beweegposxy(posx, posy, posx, slagy)
-            self.Elektromagneet(0)
+            elektro = self.Elektromagneet(0, elektro)
             return posx, posy
 
-    def Move(self, posx, posy, startx, starty, endx, endy, beurt):
+    def Move(self, posx, posy, startx, starty, endx, endy, beurt, elektro):
         posx, posy = self.Beweegposxy(posx, posy, startx, starty)
         
         #zet de elektromagneet aan
-        self.Elektromagneet(1)
+        elektro = self.Elektromagneet(1, elektro)
         
         #beweegt de elektromagneet naar de eindbestemming
         posx, posy = self.Beweegposxy(posx, posy, endx, endy)
 
         #zet de elektromagneet uit
-        self.Elektromagneet(0)
+        elektro = self.Elektromagneet(0, elektro)
         return posx, posy
 
-    def Moveh(self, startx, starty, endx, endy, posx, posy):
+    def Moveh(self, startx, starty, endx, endy, posx, posy, elektro):
         movementx = endx - startx
         movementy = endy - starty
         if((movementx == 2 and movementy == 4) or (movementx == 4 and movementy == 2)
@@ -163,6 +164,7 @@ class Movement:
            or (movementx == -4 and movementy == -2) or (movementx == -4 and movementy == 2)
            or (movementx == -2 and movementy == 4)):
             posx, posy = self.Beweegposxy(posx, posy, startx, starty)
+            elektro = self.Elektromagneet(1, elektro)
             if(movementx == 2 or movementx == -2):
                 x = movementx / 2
             else:
@@ -182,6 +184,7 @@ class Movement:
             posx, posy = self.Beweegposxy(posx, posy, posx + x, posy + y)
             posx, posy = self.Beweegposxy(posx, posy, posx + x2, posy + y2)
             posx, posy = self.Beweegposxy(posx, posy, posx + x, posy + y)
+            elektro = self.Elektromagneet(0, elektro)
             return posx, posy, True
         else:
             return posx, posy, False
@@ -194,6 +197,7 @@ class Movement:
         
         endx = (inputendx + 2) * 2
         endy = inputendy * 2
+        print("");
         print("beurt = " + str(beurt))
         if(inputslagx == 9):
             if(beurt == "black"):
@@ -215,10 +219,14 @@ class Movement:
         movementy = y - posy
         posx += movementx
         posy += movementy
-        
-        self.Motorx(movementx)
-        self.Motory(movementy)
+        if(movementx != 0):
+            self.Motorx(movementx)
+        if(movementy != 0): 
+            self.Motory(movementy)
         print("posx = " + str(posx) + " posy = " + str(posy))
+        x = int((posx/2)-2)
+        y = int((posy/2))
+        print("x-as " + str(x) + " y-as " + str(y))
         return posx, posy
 
     def Motorx(self, x):
@@ -227,12 +235,13 @@ class Movement:
     def Motory(self, y):
         print("motor y-as beweeg " + str(y))
 
-    def Elektromagneet(self, status):
-        if(status == 0):
+    def Elektromagneet(self, status, elektro):
+        if(status == 0 and elektro == True):
             print("Deactiveer de elektromagneet")
-        elif(status == 1):
+            elektro = False
+        elif(status == 1 and elektro == False):
             print("Activeer de elektromagneet")
-        else:
-            print("Error onjuiste data")
+            elektro = True
+        return elektro
 
 Movement()

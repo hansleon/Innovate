@@ -3,21 +3,48 @@ import json
 import time
 import string
 
+class usbReader:
+    
+    def __init__(self):
+        boole = True
+        while boole:
+            time.sleep(3)
+            try:
+                path ='/media/pi/schaakbord/gameid.txt'
+                days = open(path,'r')
+                gameID = days.read()
+                while not gameID:
+                    path ='/media/pi/schaakbord/gameid.txt'
+                    days = open(path,'r')
+                    gameID = days.read()
+                    print(gameID)
+                    print("file is empty")
+                    time.sleep(3)
+                else:
+                    main(gameID)
+                    print("started")
+                    boole = False
+            except Exception: 
+                print("Path is not correct")
+
 class main:
 
-    def __init__(self):
+    def __init__(self, gameID):
+
+        posx = 0
+        posy = 0
 
         # Deze variabel wordt op true gezet wanneer het bord moet worden gestopt.
         stopBoard = False
 
         # De path van de file die je wilt lezen (Hierin staat het gameID)
-        path = "gameID.txt"
+        # path = "gameID.txt"
 
         # Hiermee open je het bestand en geef je aan dat je het wilt lezen (r = read)
-        gameIDFile = open(path,"r")
+        # gameIDFile = open(path,"r")
 
         # Hier lees je de inhoud van de file
-        gameID = gameIDFile.read()
+        # gameID = gameIDFile.read()
 
         # Deze try-except checked of er om de een of andere manier geen json kan worden opgehaalt, dit kan zijn omdat de gameID fout is maar ook wanneer geen internet beschikbaar is
         try:
@@ -119,7 +146,10 @@ class main:
             if currentMove < len(moves):
                 
                 # De calcCord methode wordt uitgevoerd
-                cords = self.calcCor(moves[currentMove], player, white, black, graveyardPos)
+                cords, setCords = self.calcCor(moves[currentMove], player, white, black, graveyardPos, posx, posy)
+                posx, posy = setCords
+
+                print(cords)
 
                 # We checken op bijzonderheden als een rokade (#) of promotiee (&)
                 if "#" in cords:
@@ -318,7 +348,7 @@ class main:
                 print("De game wordt gereset")
 
                 # We runnen de reset functie om het bord naar originele posities te resetten
-                newArrays = self.resetBoard(white, black)
+                newArrays = self.resetBoard(white, black, posx, posy)
                 white, black = newArrays
                 self.printChessBoard(white, black)
                 
@@ -453,7 +483,7 @@ class main:
         print("graveyards:")
         print(graveyard)
 
-    def calcCor(self, move, player, whiteBoard, blackBoard, graveyard):
+    def calcCor(self, move, player, whiteBoard, blackBoard, graveyard, posx, posy):
 
         # We initialiseren alle variabelen zodat ze altijd een waarde hebben
 
@@ -699,7 +729,7 @@ class main:
                                 
             # We geven de pawnType mee en returnen het resultaat uit de pieceCheck method die de uiteindelijke coördinaten en bijzonderheden bepaalt                
             pawnType = "B"
-            return(self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, startX, startY, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, passant, player,promotieLetter, i))
+            return(self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, startX, startY, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, False, player,promotieLetter, i, posx, posy))
         
         # Wanneer R in de move staat hebben we een Rook
         elif "R" in move:
@@ -838,7 +868,7 @@ class main:
 
             pawnType = "R"
             
-            return(self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, startX, startY, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, passant, player, promotieLetter, i))
+            return(self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, startX, startY, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, False, player, promotieLetter, i, posx, posy))
 
         elif "Q" in move:
 
@@ -1093,7 +1123,7 @@ class main:
                     pawnYTemp = pawnY
 
             pawnType = "Q"        
-            return(self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, startX, startY, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, passant, player, promotieLetter, i))
+            return(self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, startX, startY, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, False, player, promotieLetter, i, posx, posy))
 
 
         elif "N" in move:
@@ -1163,7 +1193,7 @@ class main:
 
             pawnType = "N"
             
-            return(self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, startX, startY, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, passant, player, promotieLetter, i))
+            return(self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, startX, startY, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, False, player, promotieLetter, i, posx, posy))
                         
         elif "K" in move:
 
@@ -1231,7 +1261,7 @@ class main:
                         amountOfPawns += 1
 
             pawnType = "K"                        
-            return(self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, startX, startY, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, passant, player, promotieLetter, i))
+            return(self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, startX, startY, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, False, player, promotieLetter, i, posx, posy))
         
         else:
 
@@ -1243,25 +1273,26 @@ class main:
                 rokade = 1
 
                 if player == "white":
-                    
-                    return("5 1-7 1#8 1-6 1")
                     # self.chielsmethod(0, 0, 0, 0, 0, 0, 0, rokade, 0, 0)
+                    return("5 1-7 1#8 1-6 1", self.Set(startX, startY, eindX, eindY, graveyardX, graveyardY, 0, rokade, False, player, posx, posy))
+                    
                 else:
-                    
-                    return("5 8-7 8#8 8-6 8")
                     # self.chielsmethod(0, 0, 0, 0, 0, 0, 0, rokade, 0, 0)
+                    return("5 8-7 8#8 8-6 8", self.Set(startX, startY, eindX, eindY, graveyardX, graveyardY, 0, rokade, False, player, posx, posy))
+                    
 
             if move == "O-O-O":
                 rokade = 2
                 
                 if player == "white":
-                    
-                    return("5 1-3 1#1 1-4 1")
                     # self.chielsmethod(0, 0, 0, 0, 0, 0, 0, rokade, 0, 0)
+                    return("5 1-3 1#1 1-4 1", self.Set(startX, startY, eindX, eindY, graveyardX, graveyardY, 0, rokade, False, player, posx, posy))
+                    
                     
                 else:
-                    return("5 8-3 8#1 8-4 8")
                     # self.chielsmethod(0, 0, 0, 0, 0, 0, 0, rokade, 0, 0)
+                    return("5 8-3 8#1 8-4 8", self.Set(startX, startY, eindX, eindY, graveyardX, graveyardY, 0, rokade, False, player, posx, posy))
+                    
 
             i = 1
             
@@ -1362,7 +1393,7 @@ class main:
                                 
        
             pawnType = "P"
-            return(self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, startX, startY, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, passant, player, promotieLetter, i))
+            return(self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, startX, startY, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, passant, player, promotieLetter, i, posx, posy))
                                 
     # convert de letters van de x as naar cijfers
     def letterToNumber(self, letter):
@@ -1386,7 +1417,7 @@ class main:
         else:
             return False
           
-    def pieceCheck(self, amountOfPawns, move, playerBoard, graveyard, startX, startY, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, passant, player, promotieLetter, i):
+    def pieceCheck(self, amountOfPawns, move, playerBoard, graveyard, startX, startY, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, passant, player, promotieLetter, i, posx, posy):
 
         # We initialiseren alle variabelen
         eindX = movementX
@@ -1467,9 +1498,9 @@ class main:
 
             # We kijken wat de array voor de tegenstander is en zetten deze in een variabel
             if player == "black":
-                enemyBoard = blackBoard
-            elif player == "white":
                 enemyBoard = whiteBoard
+            elif player == "white":
+                enemyBoard = blackBoard            
                 
             # Er wordt door alle pionnen van de tegenstander geloopt   
             for pawn in enemyBoard:
@@ -1493,34 +1524,63 @@ class main:
 
                     break
 
+            else:
+
+                if passant:
+
+                    if player == "black":
+                        endCords = str(eindX) + " " + str(eindY + 1)
+                    elif player == "white":
+                        endCords = str(eindX) + " " + str(eindY - 1)
+
+                        for pawn in enemyBoard:
+
+                            # Er wordt door alle pionnen van de tegenstander geloopt   
+                            for pawn in enemyBoard:
+
+                                # We kijken welke pion wordt geslagen en zorgen dat de coördinaten voor de pion in de graveyard wordt berekent
+                                if enemyBoard[pawn][0] == endCords:
+
+                                    graveyardPos = graveyard[pawn]
+                                    
+                                    graveyardX = int(graveyardPos[:-2])
+
+                                    if graveyardX == 10:
+
+                                        graveyardY = int(graveyardPos[3])
+                                        
+                                    else:
+                                        
+                                        graveyardY = int(graveyardPos[2])
+
+                                    break
+
+                            
+
         # Ergens zit een bug waardoor startX 7 soms naar 9 wordt gezet, hiernaar moet nog worden gekeken
         if startX == 9:
             startX = 7
 
+        print(passant)
+
 
         if passant:
-
-            # self.chielsMethod(startX, startY, eindX, eindY, 0, 0, 0, 0, True, player)
             
             returnVar = str(startX) + " " + str(startY) + "-" + str(eindX) + " " + str(eindY) + "X"
-            return(returnVar)
+            return(returnVar, self.Set(startX, startY, eindX, eindY, graveyardX, graveyardY, 0, 0, True, player, posx, posy))
         
         elif promotieY != 0:
             
-            # self.chielsMethod(startX, startY, eindX, eindY, 0, 0, 0, 0, False, player)
-            
             returnVar = str(startX) + " " + str(startY) + "-" + str(eindX) + " " + str(eindY) + "&=" + promotieLetter
-            return(returnVar)
+            return(returnVar, self.Set(startX, startY, eindX, eindY, graveyardX, graveyardY, 0, 0, False, player, posx, posy))
         
         else:
-
-            # self.chielsMethod(startX, startY, eindX, eindY, 0, 0, 0, 0, False, player)
             
             returnVar = str(startX) + " " + str(startY) + "-" + str(eindX) + " " + str(eindY)
-            return(returnVar)
+            return(returnVar, self.Set(startX, startY, eindX, eindY, graveyardX, graveyardY, 0, 0, False, player, posx, posy))
 
     # roep deze functie aan om het spel opnieuw klaar te zetten
-    def resetBoard(self, white, black):
+    def resetBoard(self, white, black, posx, posy):
 
         # dit zet de array op volgorde zodat erdoor heen kan worden gegaan op volgorde van de for loop
         whiteConverted = {
@@ -1610,9 +1670,12 @@ class main:
 
             startX = place[0]
             startY = place[-1]
-            print(startX, startY, eindX, eindY, 0, 0, 0, 0, False, "White")
-            
-            # self.chielsMethod(startX, startY, eindX, eindY, 0, 0, 0, 0, False, "White")
+
+            if (int(startX) == int(eindX)) & (int(startY) == int(eindY)):
+                print("Pion is nooit bewogen")
+                                              
+            else:
+                posx, posy = self.Set(startX, startY, eindX, eindY, 0, 0, 0, 0, False, "White", posx, posy)
             
             eindX += 1
             count += 1
@@ -1626,14 +1689,15 @@ class main:
         count = 1
                 
         for pos in blackConverted:
-            place = list(white[pos][0])
+            place = list(black[pos][0])
 
             startX = place[0]
             startY = place[-1]
-            
-            print(startX, startY, eindX, eindY, 0, 0, 0, 0, False, "White")
 
-            # self.chielsMethod(startX, startY, eindX, eindY, 0, 0, 0, 0, False, "Black")
+            if (int(startX) == int(eindX)) & (int(startY) == int(eindY)):
+                print("Pion is nooit bewogen")
+            else:
+                posx, posy = self.Set(startX, startY, eindX, eindY, 0, 0, 0, 0, False, "Black", posx, posy)
 
             eindX += 1
             count += 1
@@ -1644,7 +1708,282 @@ class main:
 
         return(whiteActual, blackActual)
 
+    def Set(self, inputstartx, inputstarty, inputendx, inputendy, inputslagx, inputslagy, promotie, rokade, passant, beurt, posx, posy):
+        print(passant)
+
+        inputstartx = int(inputstartx)
+        inputstarty = int(inputstarty)
+
+        inputendx = int(inputendx)
+        inputendy = int(inputendy)
+
+        inputslagx = int(inputslagx)
+        inputslagy = int(inputslagy)
+
+        elektro = False
+        
+        startx, starty, endx, endy, slagx, slagy = self.Omrekenen(inputstartx, inputstarty, inputendx, inputendy, inputslagx, inputslagy, beurt)
+        if(rokade == 0):
+            
+            if(promotie == 0):
+                
+                print(passant)
+                print(inputslagx, inputslagy)
+                
+                if(inputslagx != 0 and inputslagy != 0):
+                    print(passant)
+                    if(passant == True):
+                        print("passant = true")
+                        if(beurt == "white"):
+                            endy -= 2
+                        if(beurt == "black"):
+                            endy += 2
+                                          
+                    posx, posy = self.Slag(endx, endy, posx, posy, slagx, slagy, 0 , beurt, elektro)
+                posx, posy, moveh = self.Moveh(startx, starty, endx, endy, posx, posy, elektro)
+                if(moveh == False):
+                    if(passant):
+                        if(beurt == "white"):
+                            endy += 2
+                        if(beurt == "black"):
+                            endy -= 2
+                    posx, posy = self.Move(posx, posy, startx, starty, endx, endy, beurt, elektro)
+            if(promotie != 0):
+                posx, posy = self.Move(posx, posy, startx, starty, endx, endy, beurt, elektro)
+                promotie *= 2
+                y3 = promotie
+                if(beurt == "white"):
+                    x = 4
+                    x2 = 2
+                    y = 18
+                    y2 = 16
+                    beurtint = 1
+                if(beurt == "black"):
+                    x = 22
+                    x2 = 24
+                    y = 0
+                    y2 = 2
+                    beurtint = 2
+                    
+                posx, posy = self.Slag(endx, endy, posx, posy, slagx, slagy, beurtint, beurt, elektro)
+                posx, posy = self.Beweegposxy(posx, posy, x2, y3)
+                elektro = self.Elektromagneet(1, elektro)
+                posx, posy = self.Beweegposxy(posx, posy, x, posy)
+                posx, posy = self.Beweegposxy(posx, posy, posx, y)
+                posx, posy = self.Beweegposxy(posx, posy, endx, posy)
+                posx, posy = self.Beweegposxy(posx, posy, posx, y2)
+                elektro = self.Elektromagneet(0, elektro)
+        
+                    
+        if(rokade == 1):
+            x1 = 18
+            x2 = 20
+            x3 = 16
+        if(rokade == 2):
+            x1 = 10
+            x2 = 6
+            x3 = 12   
+        if(beurt == "white"):
+            y1 = 2
+            y2 = 0
+        if(beurt == "black"):
+            y1 = 16
+            y2 = 18
+        if(rokade != 0): 
+            posx, posy = self.Beweegposxy(posx, posy, 14, y1)
+            elektro = self.Elektromagneet(1, elektro)
+            
+            posx, posy = self.Beweegposxy(posx, posy, x1, y1)
+            elektro = self.Elektromagneet(0, elektro)
+            
+            posx, posy = self.Beweegposxy(posx, posy, x2, y1)
+            elektro = self.Elektromagneet(1, elektro)
+            
+            posx, posy = self.Beweegposxy(posx, posy, x2, y2)
+            posx, posy = self.Beweegposxy(posx, posy, x3, y2)
+            posx, posy = self.Beweegposxy(posx, posy, x3, y1)
+            elektro = self.Elektromagneet(0, elektro)
+        return posx, posy
+
+
+
+            
+    def Slag(self, endx, endy, posx, posy, slagx, slagy, beurt, beurtstring, elektro):
+
+        endx = int(endx)
+        endy = int(endy)
+
+        posx = int(posx)
+        posy = int(posy)
+
+        slagx = int(slagx)
+        slagy = int(slagy)
+        
+        posx, posy = self.Beweegposxy(posx, posy, endx, endy)
+        elektro = self.Elektromagneet(1, elektro)
+        posx, posy = self.Beweegposxy(posx, posy, posx, endy + 1)
+
+        if(beurt == 0):
+            if(beurtstring == "white"):
+                posx, posy = self.Beweegposxy(posx, posy, 22, posy)
+            if(beurtstring == "black" ):
+                posx, posy = self.Beweegposxy(posx, posy, 4, posy)
+            x = slagx
+        if(beurt == 1):
+            posx, posy = self.Beweegposxy(posx, posy, 4, posy)
+            x = 0   
+        if(beurt == 2):
+            posx, posy = self.Beweegposxy(posx, posy, 22, posy)
+            x = 26
+        posx, posy = self.Beweegposxy(posx, posy, posx, slagy + 1)
+        posx, posy = self.Beweegposxy(posx, posy, x, posy)
+        posx, posy = self.Beweegposxy(posx, posy, posx, slagy)
+        elektro = self.Elektromagneet(0, elektro)
+        return posx, posy
+
+    def Move(self, posx, posy, startx, starty, endx, endy, beurt, elektro):
+
+        endx = int(endx)
+        endy = int(endy)
+
+        posx = int(posx)
+        posy = int(posy)
+
+        startx = int(startx)
+        starty = int(starty)
+        
+        posx, posy = self.Beweegposxy(posx, posy, startx, starty)
+        
+        #zet de elektromagneet aan
+        elektro = self.Elektromagneet(1, elektro)
+        
+        #beweegt de elektromagneet naar de eindbestemming
+        posx, posy = self.Beweegposxy(posx, posy, endx, endy)
+
+        #zet de elektromagneet uit
+        elektro = self.Elektromagneet(0, elektro)
+        return posx, posy
+
+    def Moveh(self, startx, starty, endx, endy, posx, posy, elektro):
+
+        endx = int(endx)
+        endy = int(endy)
+
+        posx = int(posx)
+        posy = int(posy)
+
+        startx = int(startx)
+        starty = int(starty)
+        
+        movementx = endx - startx
+        movementy = endy - starty
+        if((movementx == 2 and movementy == 4) or (movementx == 4 and movementy == 2)
+           or (movementx == 4 and movementy == 2) or (movementx == 4 and movementy == -2)
+           or (movementx == 2 and movementy == -4) or (movementx == -2 and movementy == -4)
+           or (movementx == -4 and movementy == -2) or (movementx == -4 and movementy == 2)
+           or (movementx == -2 and movementy == 4)):
+            posx, posy = self.Beweegposxy(posx, posy, startx, starty)
+            elektro = self.Elektromagneet(1, elektro)
+            if(movementx == 2 or movementx == -2):
+                x = movementx / 2
+            else:
+                x = 0
+            if(movementx == 4 or movementx == -4):
+                x2 = movementx
+            else:
+                x2 = 0
+            if(movementy == 2 or movementy == -2):
+                y = movementy / 2
+            else:
+                y = 0
+            if(movementy == 4 or movementy == -4):
+                y2 = movementy
+            else:
+                y2 = 0
+            posx, posy = self.Beweegposxy(posx, posy, posx + x, posy + y)
+            posx, posy = self.Beweegposxy(posx, posy, posx + x2, posy + y2)
+            posx, posy = self.Beweegposxy(posx, posy, posx + x, posy + y)
+            elektro = self.Elektromagneet(0, elektro)
+            return posx, posy, True
+        else:
+            return posx, posy, False
+
+        
+
+    def Omrekenen(self, inputstartx, inputstarty, inputendx, inputendy, inputslagx, inputslagy, beurt):
+
+        inputendx = int(inputendx)
+        inputendy = int(inputendy)
+
+        inputslagx = int(inputslagx)
+        inputslagy = int(inputslagy)
+
+        inputstartx = int(inputstartx)
+        inputstarty = int(inputstarty)
+                 
+        startx = (inputstartx + 2) * 2
+        starty = inputstarty * 2
+        
+        endx = (inputendx + 2) * 2
+        endy = inputendy * 2
+        print("");
+        print("beurt = " + str(beurt))
+        if(inputslagx == 9):
+            if(beurt == "black"):
+                slagx = 0
+            if(beurt == "white"):
+                slagx = 26
+        if(inputslagx == 10):
+            if(beurt == "black"):
+                slagx = 2
+            if(beurt == "white"):
+                slagx = 24
+        if(inputslagx == 0):
+            slagx = 0
+        slagy = inputslagy * 2
+        return startx, starty, endx, endy, slagx, slagy
+
+    def Beweegposxy(self, posx, posy, x, y):
+
+        posx = int(posx)
+        posy = int(posy)
+
+        x = int(x)
+        y = int(y)
+        
+        movementx = x - posx
+        movementy = y - posy
+        posx += movementx
+        posy += movementy
+        if(movementx != 0):
+            self.Motorx(movementx)
+        if(movementy != 0): 
+            self.Motory(movementy)
+        print("posx = " + str(posx) + " posy = " + str(posy))
+        x = int((posx/2)-2)
+        y = int((posy/2))
+        print("x-as " + str(x) + " y-as " + str(y))
+        return posx, posy
+
+    def Motorx(self, x):
+        print("motor x-as beweeg " + str(x))
+
+    def Motory(self, y):
+        print("motor y-as beweeg " + str(y))
+
+    def Elektromagneet(self, status, elektro):
+        if(status == 0 and elektro == True):
+            print("Deactiveer de elektromagneet")
+            elektro = False
+        elif(status == 1 and elektro == False):
+            print("Activeer de elektromagneet")
+            elektro = True
+        return elektro
+
+    
+    
+
             
         
         
-main()
+usbReader()
