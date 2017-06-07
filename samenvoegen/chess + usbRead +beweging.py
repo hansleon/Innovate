@@ -27,7 +27,7 @@ class usbReader:
 ##            except Exception: 
 ##                print("Path is not correct")
 
-        main("WMoa4kd7")
+        main("J2AJQ7OJ")
 
 class main:
 
@@ -1584,9 +1584,9 @@ class main:
             return(returnVar, self.Set(startX, startY, eindX, eindY, graveyardX, graveyardY, 0, 0, False, player, posx, posy))
 
     # roep deze functie aan om het spel opnieuw klaar te zetten
+    # roep deze functie aan om het spel opnieuw klaar te zetten
     def resetBoard(self, white, black, posx, posy):
-        print("resetboard")
-        print(posx, posy)
+
         # dit zet de array op volgorde zodat erdoor heen kan worden gegaan op volgorde van de for loop
         whiteConverted = {
             "R1" : [white["R1"][0], "K1"],
@@ -1663,63 +1663,215 @@ class main:
             "P7" : ["7 7", "P7"],
             "P8" : ["8 7", "P8"],
             }
+        
+        graveyardPos = {
+            "K1" : "10 4",
+            "Q1" : "10 5",
+            "B1" : "10 3",
+            "B2" : "10 6",
+            "N1" : "10 2",
+            "N2" : "10 7",
+            "R1" : "10 1",
+            "R2" : "10 8",
+            "P1" : "9 1",
+            "P2" : "9 2",
+            "P3" : "9 3",
+            "P4" : "9 4",
+            "P5" : "9 5",
+            "P6" : "9 6",
+            "P7" : "9 7",
+            "P8" : "9 8",
+            }
 
-
-
+        posx = str(posx)
+        posy = str(posy)
+        elektro = False
+        # voor wit:
         eindX = 1
         eindY = 1
         count = 1
-        elektro = False
+        graveX = 1
+        graveY = 1
+        
+
+        # gaat door elk stuk heen die gereset moet worden
         for pos in whiteConverted:
-            place = list(white[pos][0])
-
-            startX = place[0]
-            startY = place[-1]
-
-            if (int(startX) == int(eindX)) & (int(startY) == int(eindY)):
-                print("Pion is nooit bewogen")
-                                              
-            else:
-                print(startX, startY, posx, posy, eindX, eindY)
-                startX = int(startX)
-                startY = int(startY)
-                eindX = int(eindX)
-                eindY = int(eindY)
-                posx, posy, elektro = self.Reset((startX+2)*2, startY*2, (eindX+2)*2, eindY*2, posx, posy, elektro)
             
+            print(pos)
+            finished = False
+            noMove = False
+
+            eindXY = whiteActual[pos][0]
+            eindXYList = eindXY.split()
+            eindX2 = eindXYList[0]
+            eindY2 = eindXYList[-1]
+                        
+            for pos2 in whiteConverted:
+
+                startXY = whiteConverted[pos2][0]
+
+                #als dit werkt dan staat er wat op de eindpositie van het stuk
+                if startXY in eindXY:
+
+                    #deze kijkt of het stuk verplaatst moet worden, bij zwart moet dit bij de "for pos2 in blackConverted"
+                    if pos in pos2:
+
+                        
+                        print("0 0 0 0 0 0", elektro, "hier wordt niets verplaatst")
+                        finished = True
+                        noMove = True
+                        
+                    else:
+                        
+                        if noMove is False:
+                            
+                            graveXY = graveyardPos[pos2].split()
+                            graveX = graveXY[0]
+                            graveY = graveXY[-1]
+                            
+                            print(eindX, eindY, graveX, graveY, posx, posy, elektro, "white maakt plaats")# misschien moet dit black zijn
+                            posx, posy, elektro = self.Reset(startx, starty, endx, endy, posx, posy, elektro)
+                            whiteConverted[pos2][0] = graveyardPos[pos2]
+                            
+            
+            for pos2 in blackConverted:
+
+                startXY = blackConverted[pos2][0]
+
+                #als dit werkt dan staat er wat op de eindpositie van het stuk
+                if startXY in eindXY:
+                    
+                    if noMove is False:
+                        
+                        graveXY = graveyardPos[pos2].split()
+                        graveX = graveXY[0]
+                        graveY = graveXY[-1]
+                        
+                        print(eindX, eindY, graveX, graveY, posx, posy, elektro, "black maakt plaats") # misschien moet dit white zijn
+                        posx, posy, elektro = self.Reset(eindX, eindY, graveX, graveY, posx, posy, elektro)
+                        blackConverted[pos2][0] = graveyardPos[pos2]
+                        
+                          
+            if noMove is False:      
+
+                if finished is False:
+
+                    startXY = whiteConverted[pos][0].split()
+                    startX = startXY[0]
+                    startY = startXY[-1]
+                    nextEindXY = str(eindX) + str(" ") + str(eindY)
+                    
+                    print(startX, startY, eindX, eindY, posx, posy, elektro)
+                    posx, posy, elektro = self.Reset(startX, startY, eindX, eindY, posx, posy, elektro)
+                    whiteConverted[pos][0] = nextEindXY
+                    
+                        
+                    
+            # x houdt bij waar op de x-as het volgende stuk moet staan
             eindX += 1
-            count += 1
+
+            # als x 9 is moet y op 2 voor de witte pionnen, en x op 2 om in de goede rij te zitten
             if eindX is 9:
                 eindX = 1
-            if count is 9:
                 eindY += 1
+        print(" ")
+        print("hier begint het zwarte gedeelte")
+        print(" ")
 
+        # voor zwart:
         eindX = 1
         eindY = 8
         count = 1
-                
+        graveX = 1
+        graveY = 1
+        
+
+        # gaat door elk stuk heen die gereset moet worden
         for pos in blackConverted:
-            place = list(black[pos][0])
 
-            startX = place[0]
-            startY = place[-1]
+            print(pos)
+            finished = False
+            noMove = False
 
-            if (int(startX) == int(eindX)) & (int(startY) == int(eindY)):
-                print("Pion is nooit bewogen")
-            else:
-                startX = int(startX)
-                startY = int(startY)
-                eindX = int(eindX)
-                eindY = int(eindY)
-                posx, posy, elektro = self.Reset((startX+2)*2, startY*2, (eindX+2)*2, eindY*2, posx, posy, elektro)
+            eindXY = blackActual[pos][0]
+            eindXYList = eindXY.split()
+            eindX2 = eindXYList[0]
+            eindY2 = eindXYList[-1]
+                        
+            for pos2 in whiteConverted:
+
+                startXY = blackConverted[pos2][0]
+
+                #als dit werkt dan staat er wat op de eindpositie van het stuk
+                if startXY in eindXY:
+
+                    #deze kijkt of het stuk verplaatst moet worden, bij zwart moet dit bij de "for pos2 in blackConverted"
+                    if pos in pos2:
+
+                        
+                        print("0 0 0 0 0 0 0 0 False black - hier wordt niets verplaatst")
+                        finished = True
+                        noMove = True
+                        
+                    else:
+
+                        if noMove is False:
+                            graveXY = graveyardPos[pos2].split()
+                            graveX = graveXY[0]
+                            graveY = graveXY[-1]
+                            
+                            print(eindX, eindY, graveX, graveY, posx, posy, elektro, "white maakt plaats")# misschien moet dit black zijn
+                            posx, posy, elektro = self.Reset(eindX, eindY, graveX, graveY, posx, posy, elektro)
+                            blackConverted[pos2][0] = graveyardPos[pos2]
+                            #print(whiteConverted[pos2][0], "is het er klaar voor?")
+                            
+                        
+
             
+
+            for pos2 in blackConverted:
+
+                startXY = blackConverted[pos2][0]
+
+                #als dit werkt dan staat er wat op de eindpositie van het stuk
+                if startXY in eindXY:
+
+                    if noMove is False:
+                        
+                        graveXY = graveyardPos[pos2].split()
+                        graveX = graveXY[0]
+                        graveY = graveXY[-1]
+                        
+                        print(eindX, eindY, graveX, graveY, posx, posy, elektro, "black maakt plaats") # misschien moet dit white zijn
+                        posx, posy, elektro = self.Reset(eindX, eindY, graveX, graveY, posx, posy, elektro)
+                        blackConverted[pos2][0] = graveyardPos[pos2]
+                        
+                        
+                          
+            if noMove is False:      
+
+                if finished is False:
+
+                    startXY = blackConverted[pos][0].split()
+                    startX = startXY[0]
+                    startY = startXY[-1]
+                    nextEindXY = str(eindX) + str(" ") + str(eindY)
+                    
+                    print(startX, startY, eindX, eindY, posx, posy, elektro)
+                    posx, posy, elektro = self.Reset(startX, startY, eindX, eindY, posx, posy, elektro)
+                    blackConverted[pos][0] = nextEindXY
+                    
+                        
+                    
+            # x houdt bij waar op de x-as het volgende stuk moet staan
             eindX += 1
-            count += 1
+
+            # als x 9 is moet y op 2 voor de witte pionnen, en x op 2 om in de goede rij te zitten
             if eindX is 9:
                 eindX = 1
-            if count is 9:
                 eindY -= 1
 
+            
         return(whiteActual, blackActual)
 
     def Set(self, inputstartx, inputstarty, inputendx, inputendy, inputslagx, inputslagy, promotie, rokade, passant, beurt, posx, posy):
@@ -1866,6 +2018,13 @@ class main:
         return posx, posy, elektro
 
     def Reset(self, startx, starty, endx, endy, posx, posy, elektro):
+        startx = int(startx)
+        starty = int(starty)
+        endx = int(endx)
+        endy = int(endy)
+        posx = int(posx)
+        posy = int(posy)
+
         posx, posy = self.Beweegposxy(posx, posy, startx, starty)
         elektro = self.Elektromagneet(1, elektro)
         posx, posy = self.Beweegposxy(posx, posy, posx + 1, posy)
