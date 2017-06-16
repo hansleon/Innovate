@@ -3,6 +3,16 @@ import json
 import time
 import string
 
+import RPi.GPIO as GPIO, time
+GPIO.setmode(GPIO.BCM)
+
+GPIO.setwarnings(False)
+
+GPIO.setup(16, GPIO.OUT)
+GPIO.setup(26, GPIO.OUT)
+GPIO.setup(26, GPIO.HIGH)
+
+
 class usbReader:
     
     def __init__(self):
@@ -2159,6 +2169,14 @@ class main:
 
     def Motorx(self, x):
         print("motor x-as beweeg " + str(x))
+        i = x * 10 * 205
+
+        while i > 0:
+            GPIO.output(16, GPIO.HIGH)
+            time.sleep(0.0004)
+            GPIO.output(16, GPIO.LOW)
+            time.sleep(0.0004)
+            i -= 1
 
     def Motory(self, y):
         print("motor y-as beweeg " + str(y))
