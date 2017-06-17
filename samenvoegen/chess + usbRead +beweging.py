@@ -37,7 +37,7 @@ class usbReader:
 ##            except Exception: 
 ##                print("Path is not correct")
 
-        main("J2AJQ7OJ")
+        main("GjzCcxww")
 
 class main:
 
@@ -595,7 +595,7 @@ class main:
                     # stopLoop is een variabel om ervoor te zorgen dat de buitenste loop wordt gestopt wanneer er een pion in het pad staat (Een bisschop kan niet over pionnen heen bewegen)
                     stopLoop = False
 
-                    # Deze pawnX en Y zijn ervoor om te worden "increment", een bisschop beweegt steeds één vakje vertical
+                    # Deze pawnX en Y zijn ervoor om te worden "increment", een bisschop beweegt steeds één vakje verticaal
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
 
@@ -753,57 +753,78 @@ class main:
 
                 # We kijken alleen naar de pionnen waarbij de waarde in de array een R bevat (Dit is zodat gepromoveerde pionnen ook werken)
                 if "R" in playerBoard[pawn][1]:
-                    
+
+                    # prepareert variabelen van startpositie van de pawn
                     pawnX = int(playerBoard[pawn][0][:-2])
                     pawnY = int(playerBoard[pawn][0][-1])
 
+                    # een variabele die later een loop stop zet als hij true is
                     stopLoop = False
-                    
+
+                    # variabelen voor coordinaten die later worden gebruikt
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
-                    
+
+                    # een loop die af gaat zolang de waardes binnen de coordinaten van het schaakbord zijn.
                     while pawnXTemp < 9 and pawnXTemp > 0 and pawnYTemp < 9 and pawnYTemp > 0:
 
+                        # telt 1 op bij de x-coordinaat zodat de rij rechts van de toren wordt gecontroleerd op stukken
                         pawnXTemp += 1
 
+                        # kijkt og of de coordinaat nog in het schaakbord is
                         if pawnXTemp < 9:
 
+                            # We kijken of we de juiste positie gevonden hebben, dan zetten we de variabelen om en incrementen we amountOfPawns
                             if str(pawnXTemp) == str(movementX) and str(pawnYTemp) == str(movementY):
+
                                 startX = pawnX
                                 startY = pawnY
                                 eindX = movementX
                                 eindY = movementY
                                 amountOfPawns += 1
 
+                            # loopt door alle stukken heen, pawn kan worden gebruikt worden voor zowel wit als zwart
                             for pawn in whiteBoard:
 
+                                # controleert of wit een stuk op de positie van de eerder geprepareerde coordinaten staat
                                 if str(whiteBoard[pawn][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawn][0][-1]) == str(pawnYTemp):
+
                                     stopLoop = True
-                                    
+
+                                # controleert of er een zwart stuk op de positie van de eerder geprepareerde coordinaten staat   
                                 elif str(blackBoard[pawn][0][:-2]) == str(pawnXTemp) and str(blackBoard[pawn][0][2]) == str(pawnYTemp):
                                     stopLoop = True
 
+                            # als stoploop true is moet de loop worden gestopt
                             if stopLoop:
                                 break
 
+                    # coordinaten worden opnieuw opgeslagen
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
 
+                    # stoploop wordt gereset 
                     stopLoop = False
 
+                    # controleert of de coordinaten binnen een normaal schaakbord vallen
                     while pawnXTemp < 9 and pawnXTemp > 0 and pawnYTemp < 9 and pawnYTemp > 0:
-                        
+
+                        # doet de x -1 zodat de rij links van de toren wordt gecheckt op stukken
                         pawnXTemp -= 1
 
+                        # controleert of de x-coordinaat wel op een schaakbord ligt
                         if pawnXTemp > 0:
-                            
+
+                            # We kijken of we de juiste positie gevonden hebben, dan zetten we de variabelen om en incrementen we amountOfPawns
                             if str(pawnXTemp) == str(movementX) and str(pawnYTemp) == str(movementY):
+
                                 startX = pawnX
                                 startY = pawnY
                                 eindX = movementX
                                 eindY = movementY
                                 amountOfPawns += 1
 
+                            # loopt door alle stukken heen, pawn kan worden gebruikt worden voor zowel wit als zwart
                             for pawn in whiteBoard:
 
                                 if str(whiteBoard[pawn][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawn][0][-1]) == str(pawnYTemp):
@@ -812,27 +833,36 @@ class main:
                                 elif str(blackBoard[pawn][0][:-2]) == str(pawnXTemp) and str(blackBoard[pawn][0][2]) == str(pawnYTemp):
                                     stopLoop = True
 
+                            # als stoploop true is moet de loop worden gestopt
                             if stopLoop:
                                 break
 
+                    # coordinaten worden opnieuw opgeslagen 
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
 
+                    # stoploop wordt gereset 
                     stopLoop = False
 
+                    # controleert of de coordinaten op een normaal schaakbord passen
                     while pawnXTemp < 9 and pawnXTemp > 0 and pawnYTemp < 9 and pawnYTemp > 0:
 
+                        # de y coordinaat wordt plus 1 gedaan zodat de rij boven de toren wordt gecontroleerd
                         pawnYTemp += 1
 
+                        # kijkt of de waarde nog op een normaal schaakbord past
                         if pawnYTemp < 9:
-                            
+
+                            # We kijken of we de juiste positie gevonden hebben, dan zetten we de variabelen om en incrementen we amountOfPawns
                             if str(pawnXTemp) == str(movementX) and str(pawnYTemp) == str(movementY):
+
                                 startX = pawnX
                                 startY = pawnY
                                 eindX = movementX
                                 eindY = movementY
                                 amountOfPawns += 1
 
+                            # loopt door alle stukken van 1 speler heen, de waarde van pawn kan voor beide kanten van het bord worden gebruikt
                             for pawn in whiteBoard:
 
                                 if str(whiteBoard[pawn][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawn][0][-1]) == str(pawnYTemp):
@@ -841,28 +871,36 @@ class main:
                                 elif str(blackBoard[pawn][0][:-2]) == str(pawnXTemp) and str(blackBoard[pawn][0][2]) == str(pawnYTemp):
                                     stopLoop = True
 
+                            # als stoploop true is moet de loop worden gestopt
                             if stopLoop:
                                 break
                                     
-
+                    # coordinaten worden gereset
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
 
+                    # stoploop wordt gereset 
                     stopLoop = False
 
+                    # kijkt of de stukken op een bordt passen 
                     while pawnXTemp < 9 and pawnXTemp > 0 and pawnYTemp < 9 and pawnYTemp > 0:
-                        
+
+                        # de y gaat min 1 om de rij onder de toren to controleren
                         pawnYTemp -= 1
 
+                        # kijkt of de positie nog op het schaakbordt is
                         if pawnYTemp > 0:
-                            
+
+                            # We kijken of we de juiste positie gevonden hebben, dan zetten we de variabelen om en incrementen we amountOfPawns
                             if str(pawnXTemp) == str(movementX) and str(pawnYTemp) == str(movementY):
+
                                 startX = pawnX
                                 startY = pawnY
                                 eindX = movementX
                                 eindY = movementY
                                 amountOfPawns += 1
 
+                            # loopt door alle stukken van 1 speler heen, de waarde van pawn kan voor beide kanten van het bord worden gebruikt
                             for pawn in whiteBoard:
 
                                 if str(whiteBoard[pawn][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawn][0][-1]) == str(pawnYTemp):
@@ -871,47 +909,61 @@ class main:
                                 elif str(blackBoard[pawn][0][:-2]) == str(pawnXTemp) and str(blackBoard[pawn][0][2]) == str(pawnYTemp):
                                     stopLoop = True
 
+                            # als stoploop true is moet de loop worden gestopt
                             if stopLoop:
                                 break
-
+                            
+                    # coordinaten worden gereset
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
-
+        
                     stopLoop = False
                             
-
+            # variabele wordt geprepareert voor de motor methode 
             pawnType = "R"
-            
+
+            # gaat naar de volgende methode die de motor aanstuurt
             return(self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, startX, startY, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, False, player, promotieLetter, i, posx, posy))
 
+        # controleert of het stuk dat verplaatst wordt een dame is
         elif "Q" in move:
 
+            # loopt door ieder stuk heen van de speler die op dat moment aan de beurt is
             for pawn in playerBoard:
 
+                # controleert of het stuk dat gecontroleerd wordt een dame is, als dat niet zo is kan de loop door naar het volgende stuk
                 if "Q" in playerBoard[pawn][1]:
 
+                    # prepareert variabelen voor later
                     pawnX = int(playerBoard[pawn][0][:-2])
                     pawnY = int(playerBoard[pawn][0][-1])
 
                     stopLoop = False
 
+                    # tijdelijke coordinaten worden geprepareerd
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
-                    
+
+                    # controleert of de coordinaten in een normaal schaakbord passen
                     while pawnXTemp < 9 and pawnXTemp > 0 and pawnYTemp < 9 and pawnYTemp > 0:
-                        
+
+                        # x en y gaan + 1 om de schuine rij naar rechtsboven te controleren
                         pawnXTemp += 1
                         pawnYTemp += 1
 
+                        # kijkt of de coordinaten nog in het schaakbord zijn
                         if (pawnXTemp < 9) or (pawnYTemp < 9):
-                        
+
+                            # We kijken of we de juiste positie gevonden hebben, dan zetten we de variabelen om en incrementen we amountOfPawns
                             if str(pawnXTemp) == str(movementX) and str(pawnYTemp) == str(movementY):
+
                                 startX = pawnX
                                 startY = pawnY
                                 eindX = movementX
                                 eindY = movementY
                                 amountOfPawns += 1
 
+                            # loopt door alle stukken van 1 speler heen, de waarde van pawn kan voor beide kanten van het bord worden gebruikt
                             for pawn in whiteBoard:
                                 
                                 if str(whiteBoard[pawn][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawn][0][-1]) == str(pawnYTemp):
@@ -919,30 +971,38 @@ class main:
                                     
                                 elif str(blackBoard[pawn][0][:-2]) == str(pawnXTemp) and str(whiteBoard[pawn][0][-1]) == str(pawnYTemp):
                                     stopLoop = False
-
+                                    
+                            # als stoploop true is moet de loop worden gestopt
                             if stopLoop:
                                 break
                                     
-
+                    # coordinaten worden gereset 
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
 
+                    # stoploop wordt terug naar false gezet
                     stopLoop = False
 
+                    # kijkt of de coordinaten in een schaakbord passen
                     while pawnXTemp < 9 and pawnXTemp > 0 and pawnYTemp < 9 and pawnYTemp > 0:
-                        
+
+                        # x min 1 en y plus 1 om de schuine rij linksboven te controleren
                         pawnXTemp -= 1
                         pawnYTemp += 1
-                        
+
+                        # kijkt of de coordinaten nog steeds in een schaakbordt zijn
                         if (pawnXTemp > 0) or (pawnYTemp < 9):
-                        
+
+                            # We kijken of we de juiste positie gevonden hebben, dan zetten we de variabelen om en incrementen we amountOfPawns
                             if str(pawnXTemp) == str(movementX) and str(pawnYTemp) == str(movementY):
+
                                 startX = pawnX
                                 startY = pawnY
                                 eindX = movementX
                                 eindY = movementY
                                 amountOfPawns += 1
 
+                            # loopt door alle stukken van 1 speler heen, de waarde van pawn kan voor beide kanten van het bord worden gebruikt
                             for pawn in whiteBoard:
                                 
                                 if str(whiteBoard[pawn][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawn][0][-1]) == str(pawnYTemp):
@@ -951,29 +1011,37 @@ class main:
                                 elif str(blackBoard[pawn][0][:-2]) == str(pawnXTemp) and str(whiteBoard[pawn][0][-1]) == str(pawnYTemp):
                                     stopLoop = False
 
+                            # als stoploop true is moet de loop worden gestopt
                             if stopLoop:
                                 break
                                 
-
+                    # coordinaten worden gereset 
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
 
+                    # stoploop wordt terug naar false gezet 
                     stopLoop = False
 
+                    # controleert of de coordinaten op een schaakbord passen 
                     while pawnXTemp < 9 and pawnXTemp > 0 and pawnYTemp < 9 and pawnYTemp > 0:
 
+                        # x plus 1 en y min 1 controleert de schuine rij naar rechtsonder
                         pawnXTemp += 1
                         pawnYTemp -= 1
-                        
+
+                        # controleert of de coordinaten nog op een schaakbord passen
                         if (pawnXTemp < 9) or (pawnYTemp > 0):
-                        
+
+                            # We kijken of we de juiste positie gevonden hebben, dan zetten we de variabelen om en incrementen we amountOfPawns
                             if str(pawnXTemp) == str(movementX) and str(pawnYTemp) == str(movementY):
+
                                 startX = pawnX
                                 startY = pawnY
                                 eindX = movementX
                                 eindY = movementY
                                 amountOfPawns += 1
 
+                            # loopt door alle stukken van 1 speler heen, de waarde van pawn kan voor beide kanten van het bord worden gebruikt
                             for pawn in whiteBoard:
                                 
                                 if str(whiteBoard[pawn][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawn][0][-1]) == str(pawnYTemp):
@@ -981,30 +1049,38 @@ class main:
                                     
                                 elif str(blackBoard[pawn][0][:-2]) == str(pawnXTemp) and str(whiteBoard[pawn][0][-1]) == str(pawnYTemp):
                                     stopLoop = False
-
+                                    
+                            # als stoploop true is moet de loop worden gestopt
                             if stopLoop:
                                 break
                                 
-
+                    # De coordinaten worden gereset
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
 
+                    # Stoploop wordt weer op false gezet
                     stopLoop = False
 
+                    # kijkt of de coordinaten binnen een schaakbord vallen
                     while pawnXTemp < 9 and pawnXTemp > 0 and pawnYTemp < 9 and pawnYTemp > 0:
 
+                        # x en y min 1 controleert de schuine rij linksonder
                         pawnXTemp -= 1
                         pawnYTemp -= 1
-                        
+
+                        # controleert of de coordinaten nog op een schaakbord vallen
                         if (pawnXTemp > 0) or (pawnYTemp > 0):
-                        
+
+                            # We kijken of we de juiste positie gevonden hebben, dan zetten we de variabelen om en incrementen we amountOfPawns
                             if str(pawnXTemp) == str(movementX) and str(pawnYTemp) == str(movementY):
+
                                 startX = pawnX
                                 startY = pawnY
                                 eindX = movementX
                                 eindY = movementY
                                 amountOfPawns += 1
 
+                            # loopt door alle stukken van 1 speler heen, de waarde van pawn kan voor beide kanten van het bord worden gebruikt
                             for pawn in whiteBoard:
                                 
                                 if str(whiteBoard[pawn][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawn][0][-1]) == str(pawnYTemp):
@@ -1013,27 +1089,36 @@ class main:
                                 elif str(blackBoard[pawn][0][:-2]) == str(pawnXTemp) and str(whiteBoard[pawn][0][-1]) == str(pawnYTemp):
                                     stopLoop = False
 
+                            # als stoploop true is moet de loop worden gestopt
                             if stopLoop:
                                 break
 
+                    # de coordinaten worden gereset 
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
 
+                    # stoploop wordt weer op false gezet 
                     stopLoop = False
                     
+                    # controleert of de coordinaten nog in het schaakbord zijn 
                     while pawnXTemp < 9 and pawnXTemp > 0 and pawnYTemp < 9 and pawnYTemp > 0:
 
+                        # x plus 1 controleert de rij naar rechts
                         pawnXTemp += 1
 
+                        # controleert of het nog op een schaakbord past 
                         if pawnXTemp < 9:
 
+                            # We kijken of we de juiste positie gevonden hebben, dan zetten we de variabelen om en incrementen we amountOfPawns
                             if str(pawnXTemp) == str(movementX) and str(pawnYTemp) == str(movementY):
+
                                 startX = pawnX
                                 startY = pawnY
                                 eindX = movementX
                                 eindY = movementY
                                 amountOfPawns += 1
 
+                            # loopt door alle stukken van 1 speler heen, de waarde van pawn kan voor beide kanten van het bord worden gebruikt
                             for pawn in whiteBoard:
 
                                 if str(whiteBoard[pawn][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawn][0][-1]) == str(pawnYTemp):
@@ -1041,28 +1126,37 @@ class main:
                                     
                                 elif str(blackBoard[pawn][0][:-2]) == str(pawnXTemp) and str(blackBoard[pawn][0][2]) == str(pawnYTemp):
                                     stopLoop = True
-
+                                    
+                            # als stoploop true is moet de loop worden gestopt 
                             if stopLoop:
                                 break
 
+                    # de coordinaten worden gereset 
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
 
+                    # stoploop wordt terug naar false gezet 
                     stopLoop = False
 
+                    # er wordt gecontroleert of de coordinaten nog binnen een schaakbord vallen
                     while pawnXTemp < 9 and pawnXTemp > 0 and pawnYTemp < 9 and pawnYTemp > 0:
-                        
+
+                        # x min 1 controleert de rij naar links
                         pawnXTemp -= 1
 
+                        # controleert of de coordinaten nog op het schaakbord vallen
                         if pawnXTemp > 0:
-                            
+
+                            # We kijken of we de juiste positie gevonden hebben, dan zetten we de variabelen om en incrementen we amountOfPawns
                             if str(pawnXTemp) == str(movementX) and str(pawnYTemp) == str(movementY):
+
                                 startX = pawnX
                                 startY = pawnY
                                 eindX = movementX
                                 eindY = movementY
                                 amountOfPawns += 1
 
+                            # loopt door alle stukken van 1 speler heen, de waarde van pawn kan dan worden gebruikt voor wit en zwart
                             for pawn in whiteBoard:
 
                                 if str(whiteBoard[pawn][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawn][0][-1]) == str(pawnYTemp):
@@ -1070,21 +1164,28 @@ class main:
                                     
                                 elif str(blackBoard[pawn][0][:-2]) == str(pawnXTemp) and str(blackBoard[pawn][0][2]) == str(pawnYTemp):
                                     stopLoop = True
-
+                                    
+                            # als stoploop true is moet de loop worden afgebroken
                             if stopLoop:
                                 break
-
+                            
+                    # de coordinaten worden gereset 
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
 
+                    # stoploop wordt weer op false gezet 
                     stopLoop = False
 
+                    # controleert of de coordinaten nog op een schaakbord zijn
                     while pawnXTemp < 9 and pawnXTemp > 0 and pawnYTemp < 9 and pawnYTemp > 0:
 
+                        # y plus 1 controleert de rij boven de dame
                         pawnYTemp += 1
 
+                        # controleert of de coordinaten nog in het schaakbord zijn
                         if pawnYTemp < 9:
-                            
+
+                            # We kijken of we de juiste positie gevonden hebben, dan zetten we de variabelen om en incrementen we amountOfPawns
                             if str(pawnXTemp) == str(movementX) and str(pawnYTemp) == str(movementY):
                                 startX = pawnX
                                 startY = pawnY
@@ -1092,6 +1193,7 @@ class main:
                                 eindY = movementY
                                 amountOfPawns += 1
 
+                            # loopt door alle stukken van 1 speler heen, de waarde van pawn kan dan worden gebruikt voor wit en zwart
                             for pawn in whiteBoard:
 
                                 if str(whiteBoard[pawn][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawn][0][-1]) == str(pawnYTemp):
@@ -1100,21 +1202,27 @@ class main:
                                 elif str(blackBoard[pawn][0][:-2]) == str(pawnXTemp) and str(blackBoard[pawn][0][2]) == str(pawnYTemp):
                                     stopLoop = True
 
+                            # als stoploop true is moet de loop worden gestopt
                             if stopLoop:
                                 break
                                     
-
+                    # de coordinaten worden gereset
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
 
+                    # stoploop wordt weer op false gezet 
                     stopLoop = False
 
+                    # controleert of de coordinaten nog binnen een schaakbord vallen 
                     while pawnXTemp < 9 and pawnXTemp > 0 and pawnYTemp < 9 and pawnYTemp > 0:
-                        
+
+                        # y min 1 controleert de rij onder de dame
                         pawnYTemp -= 1
 
+                        # controleert of de coordinaten nog binnen het schaakbord vallen
                         if pawnYTemp > 0:
                             
+                            # We kijken of we de juiste positie gevonden hebben, dan zetten we de variabelen om en incrementen we amountOfPawns
                             if str(pawnXTemp) == str(movementX) and str(pawnYTemp) == str(movementY):
                                 startX = pawnX
                                 startY = pawnY
@@ -1122,6 +1230,7 @@ class main:
                                 eindY = movementY
                                 amountOfPawns += 1
 
+                            # loopt door alle stukken van 1 speler heen, de waarde van pawn kan dan worden gebruikt voor wit en zwart
                             for pawn in whiteBoard:
 
                                 if str(whiteBoard[pawn][0][:-2]) == str(pawnXTemp) and  str(whiteBoard[pawn][0][-1]) == str(pawnYTemp):
@@ -1129,26 +1238,34 @@ class main:
                                     
                                 elif str(blackBoard[pawn][0][:-2]) == str(pawnXTemp) and str(blackBoard[pawn][0][2]) == str(pawnYTemp):
                                     stopLoop = True
-
+                            # als stoploop true is moet de loop worden gestopt
                             if stopLoop:
                                 break
-
+                            
+                    # de coordinaten worden gereset
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
 
-            pawnType = "Q"        
+            # het stuk wordt in een variabele gezet 
+            pawnType = "Q"
+
+            # gaat naar de volgende methode die de motor aanstuurt
             return(self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, startX, startY, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, False, player, promotieLetter, i, posx, posy))
 
-
+        # kijkt of het een paard is dat bewogen wordt
         elif "N" in move:
 
+            # loopt door elk stuk van de speler die aan de beurt is heen
             for pawn in playerBoard:
 
+                # kijkt of het stuk waar doorheen geloopt een paard is.
                 if "N" in playerBoard[pawn][1]:
 
+                    # prepareert variabelen voor later
                     pawnX = int(playerBoard[pawn][0][:-2])
                     pawnY = int(playerBoard[pawn][0][-1])
 
+                    # controleert de eerste van de acht mogelijke zettten van een paard om te kijken of hij naar de eindpositie kan
                     if pawnX + 2 == movementX and pawnY + 1 == movementY:
                         startX = pawnX
                         startY = pawnY
@@ -1156,6 +1273,7 @@ class main:
                         eindY = movementY
                         amountOfPawns += 1
                         
+                    # controleert de tweede van de acht mogelijke zettten van een paard om te kijken of hij naar de eindpositie kan
                     elif pawnX + 2 == movementX and pawnY - 1 == movementY:
                         startX = pawnX
                         startY = pawnY
@@ -1163,6 +1281,7 @@ class main:
                         eindY = movementY
                         amountOfPawns += 1
                         
+                    # controleert de derde van de acht mogelijke zettten van een paard om te kijken of hij naar de eindpositie kan
                     elif pawnX - 2 == movementX and pawnY + 1 == movementY:
                         startX = pawnX
                         startY = pawnY
@@ -1170,6 +1289,7 @@ class main:
                         eindY = movementY
                         amountOfPawns += 1
                         
+                    # controleert de vierde van de acht mogelijke zettten van een paard om te kijken of hij naar de eindpositie kan
                     elif pawnX - 2 == movementX and pawnY - 1 == movementY:
                         startX = pawnX
                         startY = pawnY
@@ -1177,6 +1297,7 @@ class main:
                         eindY = movementY
                         amountOfPawns += 1
                         
+                    # controleert de vijfde van de acht mogelijke zettten van een paard om te kijken of hij naar de eindpositie kan
                     elif pawnX + 1 == movementX and pawnY + 2 == movementY:
                         startX = pawnX
                         startY = pawnY
@@ -1184,6 +1305,7 @@ class main:
                         eindY = movementY
                         amountOfPawns += 1
                         
+                    # controleert de zesde van de acht mogelijke zettten van een paard om te kijken of hij naar de eindpositie kan
                     elif pawnX + 1 == movementX and pawnY - 2 == movementY:
                         startX = pawnX
                         startY = pawnY
@@ -1191,6 +1313,7 @@ class main:
                         eindY = movementY
                         amountOfPawns += 1
                         
+                    # controleert de zevende van de acht mogelijke zettten van een paard om te kijken of hij naar de eindpositie kan
                     elif pawnX - 1 == movementX and pawnY + 2 == movementY:
                         startX = pawnX
                         startY = pawnY
@@ -1198,6 +1321,7 @@ class main:
                         eindY = movementY
                         amountOfPawns += 1
                         
+                    # controleert de achtste van de acht mogelijke zettten van een paard om te kijken of hij naar de eindpositie kan
                     elif pawnX - 1 == movementX and pawnY - 2 == movementY:
                         startX = pawnX
                         startY = pawnY
@@ -1205,19 +1329,26 @@ class main:
                         eindY = movementY
                         amountOfPawns += 1
 
+            # slaat op welk stuk het is dat bewogen wordt
             pawnType = "N"
-            
+
+            # gaat naar de volgende methode die de motor aanstuurt
             return(self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, startX, startY, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, False, player, promotieLetter, i, posx, posy))
-                        
+
+        # controleert of het een koning is dat bewogen wordt, behalve rokade, dat wordt elders gedaan
         elif "K" in move:
 
+            # loopt door elk stuk heen van de speler die aan de beurt is
             for pawn in playerBoard:
 
+                # kijkt of het stuk in de loop een koning is
                 if "K" in playerBoard[pawn][1]:
 
+                    # prepareert variabelen voor later
                     pawnX = int(playerBoard[pawn][0][:-2])
                     pawnY = int(playerBoard[pawn][0][-1])
 
+                    # controleert de eerste van de acht mogelijke zettten van de koning om te kijken of hij naar de eindpositie kan
                     if pawnX + 1 == movementX and pawnY == movementY:
                         startX = pawnX
                         startY = pawnY
@@ -1225,6 +1356,7 @@ class main:
                         eindY = movementY
                         amountOfPawns += 1
                         
+                    # controleert de tweede van de acht mogelijke zettten van de koning om te kijken of hij naar de eindpositie kan
                     elif pawnX + 1 == movementX and pawnY +1 == movementY:
                         startX = pawnX
                         startY = pawnY
@@ -1232,6 +1364,7 @@ class main:
                         eindY = movementY
                         amountOfPawns += 1
                         
+                    # controleert de derde van de acht mogelijke zettten van de koning om te kijken of hij naar de eindpositie kan
                     elif pawnX + 1 == movementX and pawnY - 1 == movementY:
                         startX = pawnX
                         startY = pawnY
@@ -1239,6 +1372,7 @@ class main:
                         eindY = movementY
                         amountOfPawns += 1
                         
+                    # controleert de vierde van de acht mogelijke zettten van de koning om te kijken of hij naar de eindpositie kan
                     elif pawnX == movementX and pawnY - 1 == movementY:
                         startX = pawnX
                         startY = pawnY
@@ -1246,6 +1380,7 @@ class main:
                         eindY = movementY
                         amountOfPawns += 1
                         
+                    # controleert de vijfde van de acht mogelijke zettten van de koning om te kijken of hij naar de eindpositie kan
                     elif pawnX == movementX and pawnY + 1 == movementY:
                         startX = pawnX
                         startY = pawnY
@@ -1253,6 +1388,7 @@ class main:
                         eindY = movementY
                         amountOfPawns += 1
                         
+                    # controleert de zesde van de acht mogelijke zettten van de koning om te kijken of hij naar de eindpositie kan
                     elif pawnX - 1 == movementX and pawnY + 1 == movementY:
                         startX = pawnX
                         startY = pawnY
@@ -1260,6 +1396,7 @@ class main:
                         eindY = movementY
                         amountOfPawns += 1
                         
+                    # controleert de zevende van de acht mogelijke zettten van de koning om te kijken of hij naar de eindpositie kan
                     elif pawnX - 1 == movementX and pawnY == movementY:
                         startX = pawnX
                         startY = pawnY
@@ -1267,6 +1404,7 @@ class main:
                         eindY = movementY
                         amountOfPawns += 1
                         
+                    # controleert de achtste van de acht mogelijke zettten van de koning om te kijken of hij naar de eindpositie kan
                     elif pawnX - 1 == movementX and pawnY - 1 == movementY:
                         startX = pawnX
                         startY = pawnY
@@ -1274,56 +1412,73 @@ class main:
                         eindY = movementY
                         amountOfPawns += 1
 
-            pawnType = "K"                        
+            # slaat op dat het de koning is die bewoog
+            pawnType = "K"
+
+            # geeft alle info door aan de volgende functie die uiteindelijk de motor aanstuurt
             return(self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, startX, startY, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, False, player, promotieLetter, i, posx, posy))
         
         else:
 
+            # controleert of er promotie plaatsvind en haalt dit uit de string
             if promotie:
                 move = move[:-1]
                 moveSplit = list(move)
-                
+
+            # controleert of een korte rokade plaatsvind
             if move == "O-O":
                 rokade = 1
 
+                # rokade is altijd hetzelfde, hier doet hij de korte rokade voor de witte speler met vaste waardes
                 if player == "white":
                     # self.chielsmethod(0, 0, 0, 0, 0, 0, 0, rokade, 0, 0)
                     return("5 1-7 1#8 1-6 1", self.Set(startX, startY, eindX, eindY, graveyardX, graveyardY, 0, rokade, False, player, posx, posy))
-                    
+
+                # rokade is altijd hetzelfde, hier doet hij de korte rokade voor de zwarte speler met vaste waardes
                 else:
                     # self.chielsmethod(0, 0, 0, 0, 0, 0, 0, rokade, 0, 0)
                     return("5 8-7 8#8 8-6 8", self.Set(startX, startY, eindX, eindY, graveyardX, graveyardY, 0, rokade, False, player, posx, posy))
                     
-
+            # controleert of er een lange rokade plaatsvind
             if move == "O-O-O":
                 rokade = 2
-                
+
+                # rokade is altijd hetzelfde, hier doet hij de lange rokade voor de witte speler met vaste waardes
                 if player == "white":
                     # self.chielsmethod(0, 0, 0, 0, 0, 0, 0, rokade, 0, 0)
                     return("5 1-3 1#1 1-4 1", self.Set(startX, startY, eindX, eindY, graveyardX, graveyardY, 0, rokade, False, player, posx, posy))
                     
-                    
+                # rokade is altijd hetzelfde, hier doet hij de lange rokade voor de zwarte speler met vaste waardes
                 else:
                     # self.chielsmethod(0, 0, 0, 0, 0, 0, 0, rokade, 0, 0)
                     return("5 8-3 8#1 8-4 8", self.Set(startX, startY, eindX, eindY, graveyardX, graveyardY, 0, rokade, False, player, posx, posy))
                     
-
+            # prepareert een variabele voor later
             i = 1
-            
+
+            # loopt door elk stuk heen van de speler die aan de beurt is
             for pawn in playerBoard:
-                    
+
+                # kijkt of het stuk waar de loop is een pion is
                 if "P" in playerBoard[pawn][1]:
+
+                    # prepareert variabelen voor later
                     pawnX = int(playerBoard[pawn][0][:-2])
                     pawnY = int(playerBoard[pawn][0][-1])
 
+                    # slaat tijdelijke coordinaten op
                     pawnXTemp = pawnX
                     pawnYTemp = pawnY
 
+                    # controleert of niet geslagen word
                     if slagen != True:
-                    
+
+                        # controleert of wit aan de beurt is
                         if "white" in player:
-                        
+
+                            # We kijken of we de juiste positie gevonden hebben, dan zetten we de variabelen om en incrementen we amountOfPawns en stoppen de loop
                             if pawnX == movementX and pawnY + 1 == movementY:
+
                                 startX = pawnX
                                 startY = pawnY
                                 eindX = movementX
@@ -1331,18 +1486,23 @@ class main:
                                 amountOfPawns += 1
                                 break
 
+                            # We kijken of we de juiste positie gevonden hebben, dan zetten we de variabelen om en incrementen we amountOfPawns en stoppen de loop
                             if pawnX == movementX and pawnY + 2 == movementY:
+
                                 startX = pawnX
                                 startY = pawnY
                                 eindX = movementX
                                 eindY = movementY
                                 amountOfPawns += 1
                                 break
-
+                            
+                            # telt 1 bij i op
                             i += 1
 
+                        # kijkt of zwart aan de beurt is
                         if "black" in player:
-                            
+
+                            # We kijken of we de juiste positie gevonden hebben, dan zetten we de variabelen om en incrementen we amountOfPawns en stoppen de loop
                             if pawnX == movementX and pawnY - 1 == movementY:
                                 
                                 startX = pawnX
@@ -1352,6 +1512,7 @@ class main:
                                 amountOfPawns += 1
                                 break
                         
+                            # We kijken of we de juiste positie gevonden hebben, dan zetten we de variabelen om en incrementen we amountOfPawns en stoppen de loop
                             if pawnX == movementX and pawnY - 2 == movementY:
                                 startX = pawnX
                                 startY = pawnY
@@ -1360,12 +1521,16 @@ class main:
                                 amountOfPawns += 1
                                 break
 
+                            # telt 1 bij i op
                             i += 1
 
+                    # als wel geslagen wordt gaat dit af
                     else:
 
+                        # controleert of wit aan de beurt is
                         if "white" in player:
-                                  
+
+                            # We kijken of we de juiste positie gevonden hebben, dan zetten we de variabelen om en incrementen we amountOfPawns en stoppen de loop
                             if pawnX + 1 == movementX and pawnY + 1 == movementY and pawnX < 9 and pawnY < 9:
                                 startX = pawnX
                                 startY = pawnY
@@ -1374,6 +1539,7 @@ class main:
                                 amountOfPawns += 1
                                 break
 
+                            # We kijken of we de juiste positie gevonden hebben, dan zetten we de variabelen om en incrementen we amountOfPawns en stoppen de loop
                             if pawnX - 1 == movementX and pawnY + 1 == movementY and pawnX > 0 and pawnY < 9:
                                 startX = pawnX
                                 startY = pawnY
@@ -1382,10 +1548,13 @@ class main:
                                 amountOfPawns += 1
                                 break
 
+                            # telt 1 bij i op
                             i += 1
 
+                        # kijkt of zwart aan de beurt is 
                         if "black" in player:
                             
+                            # We kijken of we de juiste positie gevonden hebben, dan zetten we de variabelen om en incrementen we amountOfPawns en stoppen de loop
                             if pawnX + 1 == movementX and pawnY - 1 == movementY and pawnX < 9 and pawnY > 0:
                                 
                                 startX = pawnX
@@ -1395,6 +1564,7 @@ class main:
                                 amountOfPawns += 1
                                 break
                         
+                            # We kijken of we de juiste positie gevonden hebben, dan zetten we de variabelen om en incrementen we amountOfPawns en stoppen de loop
                             if pawnX - 1 == movementX and pawnY - 1 == movementY and pawnX > 0 and pawnY > 0:
                                 startX = pawnX
                                 startY = pawnY
@@ -1402,10 +1572,11 @@ class main:
                                 eindY = movementY
                                 amountOfPawns += 1
                                 break
-
+                            
+                            # telt 1 bij i op
                             i += 1
-                                
-       
+                            
+            # slaat op dat het een pion is die beweegt
             pawnType = "P"
             return(self.pieceCheck(amountOfPawns, move, playerBoard, graveyard, startX, startY, movementX, movementY, slagen, pawnType, whiteBoard, blackBoard, promotieY, rokade, passant, player, promotieLetter, i, posx, posy))
                                 
@@ -1519,7 +1690,7 @@ class main:
             # Er wordt door alle pionnen van de tegenstander geloopt   
             for pawn in enemyBoard:
 
-                # We kijken welke pion wordt geslagne en zorgen dat de coördinaten voor de pion in de graveyard wordt berekent
+                # We kijken welke pion wordt geslagen en zorgen dat de coördinaten voor de pion in de graveyard wordt berekend
                 if enemyBoard[pawn][0] == endCords:
 
                     passant = False
@@ -1537,7 +1708,7 @@ class main:
                         graveyardY = int(graveyardPos[2])
 
                     break
-
+                
             else:
 
                 if passant:
@@ -1577,27 +1748,28 @@ class main:
 
         print(passant)
 
-
+        # als passant geslagen wordt wordt daar hier de motor methode aangeroepen
         if passant:
             
             returnVar = str(startX) + " " + str(startY) + "-" + str(eindX) + " " + str(eindY) + "X"
             return(returnVar, self.Set(startX, startY, eindX, eindY, graveyardX, graveyardY, 0, 0, True, player, posx, posy))
-        
+
+        # als promotie plaatsvind wordt hier de motor methode aangeroepen
         elif promotieY != 0:
             
             returnVar = str(startX) + " " + str(startY) + "-" + str(eindX) + " " + str(eindY) + "&=" + promotieLetter
             return(returnVar, self.Set(startX, startY, eindX, eindY, graveyardX, graveyardY, 0, 0, False, player, posx, posy))
-        
+
+        # hier wordt de motor methode aangeoepen als er geen passant is en geen promotie
         else:
             
             returnVar = str(startX) + " " + str(startY) + "-" + str(eindX) + " " + str(eindY)
             return(returnVar, self.Set(startX, startY, eindX, eindY, graveyardX, graveyardY, 0, 0, False, player, posx, posy))
 
     # roep deze functie aan om het spel opnieuw klaar te zetten
-    # roep deze functie aan om het spel opnieuw klaar te zetten
-    def resetBoard(self, white, black, posx, posy):
+    def resetBoard(self, white, black):
 
-        # dit zet de array op volgorde zodat erdoor heen kan worden gegaan op volgorde van de for loop
+        # dit zet de arrays op volgorde van links naar rechts zodat met simpele tellers de eindposities kunnen worden bepaald
         whiteConverted = {
             "R1" : [white["R1"][0], "K1"],
             "N1" : [white["N1"][0], "Q1"],
@@ -1635,7 +1807,8 @@ class main:
             "P7" : [black["P7"][0], "P7"],
             "P8" : [black["P8"][0], "P8"]
             }
-
+        
+        # dit zijn de standaardposities van een ongespeeld schaakspel die worden teruggestuurd als deze method klaar is
         whiteActual = {
             "K1" : ["5 1", "K1"],
             "Q1" : ["4 1", "Q1"],
@@ -1673,7 +1846,8 @@ class main:
             "P7" : ["7 7", "P7"],
             "P8" : ["8 7", "P8"],
             }
-        
+
+        # dit zijn de graveyard posities van stukken als ze geslagen zijn
         graveyardPos = {
             "K1" : "10 4",
             "Q1" : "10 5",
@@ -1693,89 +1867,101 @@ class main:
             "P8" : "9 8",
             }
 
-        posx = str(posx)
-        posy = str(posy)
-        elektro = False
-        # voor wit:
+        # de tellers voor wit, en een variabele die aangeeft welke speler zijn stukken worden verplaatst.
         eindX = 1
         eindY = 1
         count = 1
+        player = "white"
         graveX = 1
         graveY = 1
         
 
-        # gaat door elk stuk heen die gereset moet worden
+        # loopt door elk stuk heen die gereset moet worden
         for pos in whiteConverted:
-            
-            print(pos)
+
+            # variabelen die gereset moeten worden elke keer dat de loop af gaat
             finished = False
             noMove = False
 
+            # variabelen die gebruikt worden om te controleren wat er gebeurt
             eindXY = whiteActual[pos][0]
             eindXYList = eindXY.split()
             eindX2 = eindXYList[0]
             eindY2 = eindXYList[-1]
-                        
+
+            #als dit werkt dan staat er wat op de eindpositie van het stuk, deze methode zet dat stuk in de grave zodat er ruimte is voor het stuk dat naar de originele plaats moet
             for pos2 in whiteConverted:
 
+                # variabele voor de controle klaarmaken
                 startXY = whiteConverted[pos2][0]
 
                 #als dit werkt dan staat er wat op de eindpositie van het stuk
                 if startXY in eindXY:
 
-                    #deze kijkt of het stuk verplaatst moet worden, bij zwart moet dit bij de "for pos2 in blackConverted"
+                    #deze kijkt of het stuk verplaatst moet worden, als de if af gaat moet hij niet verplaatst worden
                     if pos in pos2:
 
-                        
-                        print("0 0 0 0 0 0", elektro, "hier wordt niets verplaatst")
+                        print("0 0 0 0 0 0 0 0 False White - hier wordt niets verplaatst")
+
+                        # deze variabelen geven aan voor de rest dat er niets meer gedaan hoeft te worden.
                         finished = True
                         noMove = True
-                        
+
+                    # als de if niet af gaat moet het stuk verplaatst worden 
                     else:
-                        
-                        if noMove is False:
-                            
-                            graveXY = graveyardPos[pos2].split()
-                            graveX = graveXY[0]
-                            graveY = graveXY[-1]
-                            
-                            print(eindX, eindY, graveX, graveY, posx, posy, elektro, "white maakt plaats")# misschien moet dit black zijn
-                            posx, posy, elektro = self.Reset(startx, starty, endx, endy, posx, posy, elektro)
-                            whiteConverted[pos2][0] = graveyardPos[pos2]
-                            
-            
-            for pos2 in blackConverted:
 
-                startXY = blackConverted[pos2][0]
-
-                #als dit werkt dan staat er wat op de eindpositie van het stuk
-                if startXY in eindXY:
-                    
-                    if noMove is False:
-                        
+                        # prepareert de variabelen voor de methode van het aansturen van de motors
                         graveXY = graveyardPos[pos2].split()
                         graveX = graveXY[0]
                         graveY = graveXY[-1]
-                        
-                        print(eindX, eindY, graveX, graveY, posx, posy, elektro, "black maakt plaats") # misschien moet dit white zijn
-                        posx, posy, elektro = self.Reset(eindX, eindY, graveX, graveY, posx, posy, elektro)
-                        blackConverted[pos2][0] = graveyardPos[pos2]
-                        
-                          
-            if noMove is False:      
 
+                        # roept de motor methodes aan
+                        print(0, 0, eindX, eindY, graveX, graveY, 0, 0, False, "white maakt plaats")
+                        #self.Set(0, 0, eindX, eindY, graveX, graveY, 0, 0, False, "white")
+
+                        # update de positie van het bewogen stuk in de array van wit
+                        whiteConverted[pos2][0] = graveyardPos[pos2]
+                        #print(whiteConverted[pos2][0], "is het er klaar voor?")
+
+            
+            # de loop die controleert of er zwarte stukken in de weg staan
+            for pos2 in blackConverted:
+
+                # variabele voor de controle klaarmaken
+                startXY = blackConverted[pos2][0]
+
+                #als dit werkt dan staat er wat op de eindpositie van het stuk, deze methode zet dat stuk in de grave zodat er ruimte is voor het stuk dat naar de originele plaats moet
+                if startXY in eindXY:
+
+                    # prepareert de variabelen voor de methode van het aansturen van de motors
+                    graveXY = graveyardPos[pos2].split()
+                    graveX = graveXY[0]
+                    graveY = graveXY[-1]
+
+                    # roept de motor methodes aan
+                    print(0, 0, eindX, eindY, graveX, graveY, 0, 0, False, "black maakt plaats")
+                    #self.Set(0, 0, eindX, eindY, graveX, graveY, 0, 0, False, "black")
+
+                    # update de positie van het bewogen stuk in de array van zwart
+                    blackConverted[pos2][0] = graveyardPos[pos2]
+
+            # als finished en noMove niet op true is gezet betekent het dat het stuk gewoon van positie a naar b kan worden gezet.                          
+            if noMove is False:      
+                
                 if finished is False:
 
+                    # prepareert de variabelen voor de motor methode
                     startXY = whiteConverted[pos][0].split()
                     startX = startXY[0]
                     startY = startXY[-1]
                     nextEindXY = str(eindX) + str(" ") + str(eindY)
-                    
-                    print(startX, startY, eindX, eindY, posx, posy, elektro)
-                    posx, posy, elektro = self.Reset(startX, startY, eindX, eindY, posx, posy, elektro)
+
+                    # roept de motor methode aan 
+                    print(startX, startY, eindX, eindY, 0, 0, 0, 0, False, "white")
+                    # self.Set(startX, startY, eindX, eindY, 0, 0, 0, 0, False, "white")
+
+                    # update de nieuwe positie van het stuk
                     whiteConverted[pos][0] = nextEindXY
-                    
-                        
                     
             # x houdt bij waar op de x-as het volgende stuk moet staan
             eindX += 1
@@ -1784,14 +1970,16 @@ class main:
             if eindX is 9:
                 eindX = 1
                 eindY += 1
+    
         print(" ")
-        print("hier begint het zwarte gedeelte")
+        print("hier begint zwart")
         print(" ")
-
-        # voor zwart:
+        
+        # de tellers voor zwart, en een variabele die aangeeft welke speler zijn stukken worden verplaatst.
         eindX = 1
         eindY = 8
         count = 1
+        player = "black"
         graveX = 1
         graveY = 1
         
@@ -1799,79 +1987,88 @@ class main:
         # gaat door elk stuk heen die gereset moet worden
         for pos in blackConverted:
 
-            print(pos)
+            # variabelen die gereset moeten worden elke keer dat de loop af gaat 
             finished = False
             noMove = False
 
+            # variabelen die gebruikt worden om te controleren wat er gebeurt
             eindXY = blackActual[pos][0]
             eindXYList = eindXY.split()
             eindX2 = eindXYList[0]
             eindY2 = eindXYList[-1]
-                        
+
+            # de loop die controleert of witte stukken in de weg staan        
             for pos2 in whiteConverted:
 
-                startXY = blackConverted[pos2][0]
+                # variabele voor de controle klaarmaken
+                startXY = whiteConverted[pos2][0]
 
-                #als dit werkt dan staat er wat op de eindpositie van het stuk
+                #als dit werkt dan staat er wat op de eindpositie van het stuk, deze methode zet dat stuk in de grave zodat er ruimte is voor het stuk dat naar de originele plaats moet
                 if startXY in eindXY:
 
-                    #deze kijkt of het stuk verplaatst moet worden, bij zwart moet dit bij de "for pos2 in blackConverted"
-                    if pos in pos2:
+                    # prepareert de variabelen voor de motor methode 
+                    graveXY = graveyardPos[pos2].split()
+                    graveX = graveXY[0]
+                    graveY = graveXY[-1]
 
-                        
-                        print("0 0 0 0 0 0 0 0 False black - hier wordt niets verplaatst")
-                        finished = True
-                        noMove = True
-                        
-                    else:
+                    # roept de motor methode aan
+                    print(0, 0, eindX, eindY, graveX, graveY, 0, 0, False, "white maakt plaats")
+                    #self.Set(0, 0, eindX, eindY, graveX, graveY, 0, 0, False, "white")
 
-                        if noMove is False:
-                            graveXY = graveyardPos[pos2].split()
-                            graveX = graveXY[0]
-                            graveY = graveXY[-1]
-                            
-                            print(eindX, eindY, graveX, graveY, posx, posy, elektro, "white maakt plaats")# misschien moet dit black zijn
-                            posx, posy, elektro = self.Reset(eindX, eindY, graveX, graveY, posx, posy, elektro)
-                            blackConverted[pos2][0] = graveyardPos[pos2]
-                            #print(whiteConverted[pos2][0], "is het er klaar voor?")
-                            
-                        
+                    # update de positie van het stuk dat verplaatst wordt
+                    whiteConverted[pos2][0] = graveyardPos[pos2]
 
             
-
+            # de loop die controleert of witte stukken in de weg staan
             for pos2 in blackConverted:
 
+                # variabele voor de controle klaarmaken
                 startXY = blackConverted[pos2][0]
 
-                #als dit werkt dan staat er wat op de eindpositie van het stuk
+                #als dit werkt dan staat er wat op de eindpositie van het stuk, deze methode zet dat stuk in de grave zodat er ruimte is voor het stuk dat naar de originele plaats moet
                 if startXY in eindXY:
 
-                    if noMove is False:
+                    #deze kijkt of het stuk verplaatst moet worden, als de if af gaat moet hij niet verplaatst worden
+                    if pos in pos2:
                         
+                        print("0 0 0 0 0 0 0 0 False White - hier wordt niets verplaatst")
+
+                        # deze variabelen geven aan dat voor de rest niets gedaan hoeft te worden
+                        finished = True
+                        noMove = True
+
+                    # als de if niet af gaat moet een stuk verplaatst worden om plaats te maken
+                    else:
+
+                        # prepareert de variabelen voor de methode van het aansturen van de motors
                         graveXY = graveyardPos[pos2].split()
                         graveX = graveXY[0]
                         graveY = graveXY[-1]
-                        
-                        print(eindX, eindY, graveX, graveY, posx, posy, elektro, "black maakt plaats") # misschien moet dit white zijn
-                        posx, posy, elektro = self.Reset(eindX, eindY, graveX, graveY, posx, posy, elektro)
+
+                        # roept de motor methode aan
+                        print(0, 0, eindX, eindY, graveX, graveY, 0, 0, False, "black maakt plaats") # misschien moet dit white zijn
+                        #self.Set(0, 0, eindX, eindY, graveX, graveY, 0, 0, False, "black")
+
+                        # update de posities van het bewogen stuk in de array
                         blackConverted[pos2][0] = graveyardPos[pos2]
-                        
-                        
-                          
+
+            # als noMove en finished false zijn kan/moet het originele stuk nog bewogen worden
             if noMove is False:      
 
                 if finished is False:
 
-                    startXY = blackConverted[pos][0].split()
+                    # prepareert de variabelen voor de motor methode
+                    startXY = whiteConverted[pos][0].split()
                     startX = startXY[0]
                     startY = startXY[-1]
                     nextEindXY = str(eindX) + str(" ") + str(eindY)
-                    
-                    print(startX, startY, eindX, eindY, posx, posy, elektro)
-                    posx, posy, elektro = self.Reset(startX, startY, eindX, eindY, posx, posy, elektro)
+
+                    # roept de motor methode aan 
+                    print(startX, startY, eindX, eindY, 0, 0, 0, 0, False, "white")
+                    # self.Set(startX, startY, eindX, eindY, 0, 0, 0, 0, False, "white")
+
+                    # update de positie van het stuk in de array
                     blackConverted[pos][0] = nextEindXY
-                    
-                        
                     
             # x houdt bij waar op de x-as het volgende stuk moet staan
             eindX += 1
@@ -1881,7 +2078,8 @@ class main:
                 eindX = 1
                 eindY -= 1
 
-            
+
+        # returnt de standaard posities zodat de main methode klaar is voor een volgend spel
         return(whiteActual, blackActual)
 
     def Set(self, inputstartx, inputstarty, inputendx, inputendy, inputslagx, inputslagy, promotie, rokade, passant, beurt, posx, posy):
