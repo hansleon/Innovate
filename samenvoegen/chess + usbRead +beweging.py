@@ -3,14 +3,14 @@ import json
 import time
 import string
 
-import RPi.GPIO as GPIO, time
-GPIO.setmode(GPIO.BCM)
+# import RPi.GPIO as GPIO, time
+# GPIO.setmode(GPIO.BCM)
 
-GPIO.setwarnings(False)
+# GPIO.setwarnings(False)
 
-GPIO.setup(16, GPIO.OUT)
-GPIO.setup(26, GPIO.OUT)
-GPIO.setup(26, GPIO.HIGH)
+# GPIO.setup(16, GPIO.OUT)
+# GPIO.setup(26, GPIO.OUT)
+# GPIO.setup(26, GPIO.HIGH)
 
 
 class usbReader:
@@ -37,7 +37,7 @@ class usbReader:
 ##            except Exception: 
 ##                print("Path is not correct")
 
-        main("GjzCcxww")
+        main("Gtdpklen")
 
 class main:
 
@@ -202,64 +202,158 @@ class main:
                 # Wanneer er een & wordt gebruikt is er sprake van promotie
                 elif "&" in cords:
 
-                    # We splitsen de coördinaten op op  de &
-                    cords = cords.split("&")
+                    promoInGraveyard = cords[-1]
 
-                    # We splitsen de eerste helft van de array op op de -, deze coördinaten worden behandelt als een gewone zet
-                    cord = cords[0].split("-")
+                    cords = cords[:-1]
 
-                    # van de tweede helft wordt de = afgehaalt en blijft alleen een letter over
-                    promo = cords[1][1]
+                    if promoInGraveyard == "F":
 
-                    # Met dit variabel wordt geteld hoeveel varianten er van dit soort pion zijn (soort als in bijv. queen of loper)
-                    number = 1
+                        # We splitsen de coördinaten op op  de &
+                        cords = cords.split("&")
 
-                    # We checken of de speler wit of zwart is
-                    if player == "white":
+                        # We splitsen de eerste helft van de array op op de -, deze coördinaten worden behandelt als een gewone zet
+                        cord = cords[0].split("-")
+
+                        # van de tweede helft wordt de = afgehaalt en blijft alleen een letter over
+                        promo = cords[1][1]
+
+                        # Met dit variabel wordt geteld hoeveel varianten er van dit soort pion zijn (soort als in bijv. queen of loper)
+                        number = 1
+
+                        # We checken of de speler wit of zwart is
+                        if player == "white":
+                            
+                            # We loopen door de witte pionnen heen
+                            for pawn in white:
+
+                                # Wanneer de een pion de van de soort promo is wordt number opgeteld
+                                if promo in white[pawn][1]:
+                                    number += 1
                         
-                        # We loopen door de witte pionnen heen
-                        for pawn in white:
+                        elif player == "black":
 
-                            # Wanneer de een pion de van de soort promo is wordt number opgeteld
-                            if promo in white[pawn][1]:
-                                number += 1
-                    
-                    elif player == "black":
+                            # We loopen door de zwarte pionnen heen
+                            for pawn in black:
 
-                        # We loopen door de zwarte pionnen heen
-                        for pawn in black:
+                                # Wanneer de een pion de van de soort promo is wordt number opgeteld
+                                if promo in black[pawn][1]:
+                                    number += 1
 
-                            # Wanneer de een pion de van de soort promo is wordt number opgeteld
-                            if promo in black[pawn][1]:
-                                number += 1
+                        # We voegen de letter in promo en de cijfer in number aan elkaar toe om het duidelijk te maken dat het bijvoorbeeld een tweede queen is
+                        promo = promo + str(number)
 
-                    # We voegen de letter in promo en de cijfer in number aan elkaar toe om het duidelijk te maken dat het bijvoorbeeld een tweede queen is
-                    promo = promo + str(number)
+                        # We checken de kleur van de speler weer
+                        # Wanneer de speler wit is
+                        if player == "white":
 
-                    # We checken de kleur van de speler weer
-                    # Wanneer de speler wit is
-                    if player == "white":
+                            # We loopen door alle pionnen heen
+                            for pawn in white:
 
-                        # We loopen door alle pionnen heen
-                        for pawn in white:
+                                # We kijken welke pion op de coördinaten staat
+                                if white[pawn][0] == cord[0]:
 
-                            # We kijken welke pion op de coördinaten staat
-                            if white[pawn][0] == cord[0]:
+                                    # We promoveren de pion
+                                    white[pawn][1] = promo
 
-                                # We promoveren de pion
-                                white[pawn][1] = promo
+                        # Wanneer de speler zwart is
+                        elif player == "black":
 
-                    # Wanneer de speler zwart is
-                    elif player == "black":
+                            # We loopen door alle pionnen heen
+                            for pawn in black:
 
-                        # We loopen door alle pionnen heen
-                        for pawn in black:
+                                # We kijken welke pion op de coördinaten staat
+                                if black[pawn][0] == cord[0]:
 
-                            # We kijken welke pion op de coördinaten staat
-                            if black[pawn][0] == cord[0]:
+                                    # We promoveren de pion
+                                    black[pawn][1] = promo
 
-                                # We promoveren de pion
-                                black[pawn][1] = promo
+                    elif promoInGraveyard == "T":
+
+                         # We splitsen de coördinaten op op  de &
+                        cords = cords.split("&")
+
+                        cord = cords[0]
+                        cord = cord.split("-")
+
+                        beginX = cord[0][0]
+                        beginY = cord[0][2]
+
+                        eindX = cord[1][0]
+                        eindY = cord[1][2]
+
+                        # van de tweede helft wordt de = afgehaalt en blijft alleen een letter over
+                        promo = cords[1][1]
+
+                        # Deze variabel is om te kijken of er al een stuk verplaatst is
+                        foundOne = False
+
+                        # We kijken of de speler wit of zwart is
+                        if player == "white":
+
+                            # We loopen door alle witte pionnen
+                            for pawn in white:
+
+                                # De begincoördinaten worden in een variable gezet
+                                beginCord = beginX + " " + beginY
+
+                                # Dit coördinaat kijk waar de pawn staat
+                                pawnCord = white[pawn][0]
+
+                                # We checken of de pion op de plek staat
+                                if pawnCord == beginCord:
+
+                                        # Zo ja, dan mag deze naar de graveyard
+                                        white[pawn][0] = graveyardPos[pawn]
+
+                                # We zoeken de pion waarnaar wordt gepromoveerd
+                                if promo in pawn and not foundOne:
+
+                                    # De x coördinaat wordt hiervan opgehaalt
+                                    pawnCordX = pawnCord.split(" ")
+                                    pawnCordX = pawnCordX[0]
+
+                                    # We checken of deze in de graveyard zit
+                                    if pawnCordX == "9" or pawnCordX == "10":
+
+                                        # Zo ja, da 
+                                        white[pawn][0] = eindX + " " + eindY
+
+                                        # Er hoeft maar een pion te worden verplaatst (Er zijn bijv 2 paarden in de graveyard maar we zijn maar 1 nodig)
+                                        foundOne = True
+
+                        # We kijken of de speler wit of zwart is
+                        elif player == "black":
+
+                            # We loopen door alle zwarte pionnen
+                            for pawn in black:
+
+                                # De begincoördinaten worden in een variable gezet
+                                beginCord = beginX + " " + beginY
+
+                                # Dit coördinaat kijk waar de pawn staat
+                                pawnCord = black[pawn][0]
+
+                                # We checken of de pion op de plek staat
+                                if pawnCord == beginCord:
+
+                                        # Zo ja, dan mag deze naar de graveyard
+                                        black[pawn][0] = graveyardPos[pawn]
+
+                                # We zoeken de pion waarnaar wordt gepromoveerd
+                                if promo in pawn and not foundOne:
+
+                                    # De x coördinaat wordt hiervan opgehaalt
+                                    pawnCordX = pawnCord.split(" ")
+                                    pawnCordX = pawnCordX[0]
+
+                                    # We checken of deze in de graveyard zit
+                                    if pawnCordX == "9" or pawnCordX == "10":
+
+                                        # Zo ja, da 
+                                        black[pawn][0] = eindX + " " + eindY
+
+                                        # Er hoeft maar een pion te worden verplaatst (Er zijn bijv 2 paarden in de graveyard maar we zijn maar 1 nodig)
+                                        foundOne = True
                                 
                 # Wanneer er een X wordt gebruikt is er sprake van passant
                 elif "X" in cords:
@@ -1746,8 +1840,6 @@ class main:
         if startX == 9:
             startX = 7
 
-        print(passant)
-
         # als passant geslagen wordt wordt daar hier de motor methode aangeroepen
         if passant:
             
@@ -1756,9 +1848,26 @@ class main:
 
         # als promotie plaatsvind wordt hier de motor methode aangeroepen
         elif promotieY != 0:
+
+            promoInGraveyard = "F"
+
+            for pawn in playerBoard:
+
+                if promotieLetter in pawn:
+
+                    pawnCords = playerBoard[pawn][0]
+                    pawnCord = pawnCords.split(" ")
+                    pawnCordX = pawnCord[0]
+                    pawnCordY = pawnCord[1]
+
+                    if pawnCordX == "9" or pawnCordX == "10":
+
+                        promoInGraveyard = "T"
+
+                    
             
-            returnVar = str(startX) + " " + str(startY) + "-" + str(eindX) + " " + str(eindY) + "&=" + promotieLetter
-            return(returnVar, self.Set(startX, startY, eindX, eindY, graveyardX, graveyardY, 0, 0, False, player, posx, posy))
+            returnVar = str(startX) + " " + str(startY) + "-" + str(eindX) + " " + str(eindY) + "&=" + promotieLetter + promoInGraveyard
+            return(returnVar, self.Set(startX, startY, eindX, eindY, graveyardX, graveyardY, pawnCordY, 0, False, player, posx, posy))
 
         # hier wordt de motor methode aangeoepen als er geen passant is en geen promotie
         else:
@@ -1901,7 +2010,7 @@ class main:
                     #deze kijkt of het stuk verplaatst moet worden, als de if af gaat moet hij niet verplaatst worden
                     if pos in pos2:
 
-                        print("0 0 0 0 0 0 0 0 False White - hier wordt niets verplaatst")
+                        # print("0 0 0 0 0 0 0 0 False White - hier wordt niets verplaatst")
 
                         # deze variabelen geven aan voor de rest dat er niets meer gedaan hoeft te worden.
                         finished = True
@@ -1916,7 +2025,7 @@ class main:
                         graveY = graveXY[-1]
 
                         # roept de motor methodes aan
-                        print(0, 0, eindX, eindY, graveX, graveY, 0, 0, False, "white maakt plaats")
+                        # print(0, 0, eindX, eindY, graveX, graveY, 0, 0, False, "white maakt plaats")
                         #self.Set(0, 0, eindX, eindY, graveX, graveY, 0, 0, False, "white")
 
                         # update de positie van het bewogen stuk in de array van wit
@@ -1957,7 +2066,7 @@ class main:
                     nextEindXY = str(eindX) + str(" ") + str(eindY)
 
                     # roept de motor methode aan 
-                    print(startX, startY, eindX, eindY, 0, 0, 0, 0, False, "white")
+                    # print(startX, startY, eindX, eindY, 0, 0, 0, 0, False, "white")
                     # self.Set(startX, startY, eindX, eindY, 0, 0, 0, 0, False, "white")
 
                     # update de nieuwe positie van het stuk
@@ -2012,7 +2121,7 @@ class main:
                     graveY = graveXY[-1]
 
                     # roept de motor methode aan
-                    print(0, 0, eindX, eindY, graveX, graveY, 0, 0, False, "white maakt plaats")
+                    # print(0, 0, eindX, eindY, graveX, graveY, 0, 0, False, "white maakt plaats")
                     #self.Set(0, 0, eindX, eindY, graveX, graveY, 0, 0, False, "white")
 
                     # update de positie van het stuk dat verplaatst wordt
@@ -2031,7 +2140,7 @@ class main:
                     #deze kijkt of het stuk verplaatst moet worden, als de if af gaat moet hij niet verplaatst worden
                     if pos in pos2:
                         
-                        print("0 0 0 0 0 0 0 0 False White - hier wordt niets verplaatst")
+                        # print("0 0 0 0 0 0 0 0 False White - hier wordt niets verplaatst")
 
                         # deze variabelen geven aan dat voor de rest niets gedaan hoeft te worden
                         finished = True
@@ -2046,7 +2155,7 @@ class main:
                         graveY = graveXY[-1]
 
                         # roept de motor methode aan
-                        print(0, 0, eindX, eindY, graveX, graveY, 0, 0, False, "black maakt plaats") # misschien moet dit white zijn
+                        # print(0, 0, eindX, eindY, graveX, graveY, 0, 0, False, "black maakt plaats") # misschien moet dit white zijn
                         #self.Set(0, 0, eindX, eindY, graveX, graveY, 0, 0, False, "black")
 
                         # update de posities van het bewogen stuk in de array
@@ -2064,7 +2173,7 @@ class main:
                     nextEindXY = str(eindX) + str(" ") + str(eindY)
 
                     # roept de motor methode aan 
-                    print(startX, startY, eindX, eindY, 0, 0, 0, 0, False, "white")
+                    # print(startX, startY, eindX, eindY, 0, 0, 0, 0, False, "white")
                     # self.Set(startX, startY, eindX, eindY, 0, 0, 0, 0, False, "white")
 
                     # update de positie van het stuk in de array
@@ -2326,8 +2435,8 @@ class main:
         
         endx = (inputendx + 2) * 2
         endy = inputendy * 2
-        print("");
-        print("beurt = " + str(beurt))
+        # print("");
+        # print("beurt = " + str(beurt))
         if(inputslagx == 9):
             if(beurt == "black"):
                 slagx = 0
@@ -2355,36 +2464,36 @@ class main:
         movementy = y - posy
         posx += movementx
         posy += movementy
-        if(movementx != 0):
-            self.Motorx(movementx)
-        if(movementy != 0): 
-            self.Motory(movementy)
-        print("posx = " + str(posx) + " posy = " + str(posy))
+        # if(movementx != 0):
+            # self.Motorx(movementx)
+        # if(movementy != 0): 
+            # self.Motory(movementy)
+        # print("posx = " + str(posx) + " posy = " + str(posy))
         x = int((posx/2)-2)
         y = int((posy/2))
-        print("x-as " + str(x) + " y-as " + str(y))
+        # print("x-as " + str(x) + " y-as " + str(y))
         return posx, posy
 
     def Motorx(self, x):
         print("motor x-as beweeg " + str(x))
         i = x * 10 * 205
 
-        while i > 0:
-            GPIO.output(16, GPIO.HIGH)
-            time.sleep(0.0004)
-            GPIO.output(16, GPIO.LOW)
-            time.sleep(0.0004)
-            i -= 1
+        # while i > 0:
+            # GPIO.output(16, GPIO.HIGH)
+            # time.sleep(0.0004)
+            # GPIO.output(16, GPIO.LOW)
+            # time.sleep(0.0004)
+            # i -= 1
 
     def Motory(self, y):
         print("motor y-as beweeg " + str(y))
 
     def Elektromagneet(self, status, elektro):
         if(status == 0 and elektro == True):
-            print("Deactiveer de elektromagneet")
+            # print("Deactiveer de elektromagneet")
             elektro = False
         elif(status == 1 and elektro == False):
-            print("Activeer de elektromagneet")
+            # print("Activeer de elektromagneet")
             elektro = True
         return elektro    
 
