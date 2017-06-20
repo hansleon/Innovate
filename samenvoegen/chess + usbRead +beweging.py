@@ -1849,20 +1849,28 @@ class main:
         # als promotie plaatsvind wordt hier de motor methode aangeroepen
         elif promotieY != 0:
 
+            # We geven promoInGraveyard en pawnCordY een basis waarde.
             promoInGraveyard = "F"
+            pawnCordY = 0
 
+            # We loopen door de pionnen van de speler
             for pawn in playerBoard:
 
+                # We kijken alleen naar de pionen van het type dat we willen hebben
                 if promotieLetter in pawn:
 
+                    # We halen de X en Y waarde op van deze pionnen
                     pawnCords = playerBoard[pawn][0]
                     pawnCord = pawnCords.split(" ")
                     pawnCordX = pawnCord[0]
                     pawnCordY = pawnCord[1]
 
+                    # Wanneeer de X 9 of 10 is staat de pion in de graveyard
                     if pawnCordX == "9" or pawnCordX == "10":
 
+                        # We zetten de promoInGraveyard op T van True en breaken de loop
                         promoInGraveyard = "T"
+                        break
 
                     
             
