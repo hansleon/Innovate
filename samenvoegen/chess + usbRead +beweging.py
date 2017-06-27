@@ -4,23 +4,23 @@ import time
 import string
 
 #import RPi.GPIO as GPIO, time
-#GPIO.setmode(#GPIO.BCM)
+GPIO.setmode(GPIO.BCM)
 
-#GPIO.setwarnings(False)
+GPIO.setwarnings(False)
 
 
 #x motor
-#GPIO.setup(26, #GPIO.OUT)
-#GPIO.setup(16, #GPIO.OUT)
-#GPIO.setup(25, #GPIO.OUT)
+GPIO.setup(26, GPIO.OUT)
+GPIO.setup(16, GPIO.OUT)
+GPIO.setup(25, GPIO.OUT)
 
 #y motor
-#GPIO.setup(12, #GPIO.OUT)
-#GPIO.setup(6, #GPIO.OUT)
-#GPIO.setup(24, #GPIO.OUT)
+GPIO.setup(12, GPIO.OUT)
+GPIO.setup(6, GPIO.OUT)
+GPIO.setup(24, GPIO.OUT)
 
 #magneet
-#GPIO.setup(22, #GPIO.OUT)
+GPIO.setup(22, GPIO.OUT)
 
 dirx = 26
 stepx = 16
@@ -30,8 +30,8 @@ diry = 12
 stepy = 6
 enabley = 24
 
-#GPIO.output(enablex, #GPIO.HIGH)
-#GPIO.output(enabley, #GPIO.HIGH)
+GPIO.output(enablex, GPIO.HIGH)
+GPIO.output(enabley, GPIO.HIGH)
 
 class usbReader:
     
@@ -2493,7 +2493,7 @@ class main:
         posx += movementx
         posy += movementy
         self.BeweegXY(movementx, movementy)
-        print("posx = " + str(posx) + " posy = " + str(posy))
+        #print("posx = " + str(posx) + " posy = " + str(posy))
         x = int((posx/2)-2)
         y = int((posy/2))
         # print("x-as " + str(x) + " y-as " + str(y))
@@ -2506,31 +2506,31 @@ class main:
         j = 0
         #zet de driver aan als het de motor moet draaien
         if(x != 0):
-            #GPIO.output(enablex, GPIO.LOW)
-            print("enablex is on")
+            GPIO.output(enablex, GPIO.LOW)
+            #print("enablex is on")
         if(y != 0):
-            #GPIO.output(enabley, GPIO.LOW)
-            print("enabley is on")
+            GPIO.output(enabley, GPIO.LOW)
+            #print("enabley is on")
             
         #bepaalt de richting en het aantal stappen voor de x- as
         if(x > 0):
-            #GPIO.output(dirx, #GPIO.HIGH)
-            print("dirx is HIGH")
+            GPIO.output(dirx, GPIO.HIGH)
+            #print("dirx is HIGH")
             i = x * 1 * stappen
         if(x < 0):
-            #GPIO.output(dirx, #GPIO.LOW)
-            print("dirx is LOW")
+            GPIO.output(dirx, GPIO.LOW)
+            #print("dirx is LOW")
             x *= -1
             i = x * 1 * stappen
 
         #bepaalt de richting en het aantal stappen voor de y- as
         if(y > 0):
-            #GPIO.output(diry, #GPIO.HIGH)
-            print("diry is HIGH")
+            GPIO.output(diry, GPIO.HIGH)
+            #print("diry is HIGH")
             j = y * 1 * stappen
         if(y < 0):
-            #GPIO.output(diry, #GPIO.LOW)
-            print("diry is LOW")
+            GPIO.output(diry, GPIO.LOW)
+            #print("diry is LOW")
             y *= -1
             j = y * 1 * stappen
 
@@ -2538,50 +2538,50 @@ class main:
         total = i
         if(j > i):
             total = j
-            
-        print(total)
 
         #de bewegigins loop
         while total > 0:
+
+            #zet de motor 1 tik aan 
             if(i > 0):
-                #GPIO.output(stepx, #GPIO.HIGH)
-                print("aan " + str(i))
+                GPIO.output(stepx, GPIO.HIGH)
+                #print("aan " + str(i))
             if(j > 0):
-                #GPIO.output(stepy, #GPIO.HIGH)
-                print("aan " + str(j))
+                GPIO.output(stepy, GPIO.HIGH)
+                #print("aan " + str(j))
             time.sleep(0.0004)
             
             if(i > 0):
-                
-                #GPIO.output(stepx, #GPIO.LOW)
-                print("uit " + str(i))
+                GPIO.output(stepx, GPIO.LOW)
+                #print("uit " + str(i))
                 i -= 1
             else:
-                #GPIO.output(enablex, #GPIO.HIGH)
-                print("enablex is LOW")
-            if(j > 0):
+                GPIO.output(enablex, GPIO.HIGH)
+                #print("enablex is LOW")
                 
-                #GPIO.output(stepy, #GPIO.LOW)
-                print("uit " + str(j))
+            if(j > 0):
+                GPIO.output(stepy, GPIO.LOW)
+                #print("uit " + str(j))
                 j -= 1
             else:
-                #GPIO.output(enabley, GPIO.HIGH)
-                print("enabley is LOW")
+                GPIO.output(enabley, GPIO.HIGH)
+                #print("enabley is LOW")
+                
             time.sleep(0.0004)
             
             total -= 1
             
-        #GPIO.output(enablex, #GPIO.HIGH)
-        #GPIO.output(enabley, #GPIO.HIGH)
+        GPIO.output(enablex, GPIO.HIGH)
+        GPIO.output(enabley, GPIO.HIGH)
 
     def Elektromagneet(self, status, elektro):
         if(status == 0 and elektro == True):
             print("Elektromagneet is LOW")
-            #GPIO.output(22, #GPIO.LOW)
+            GPIO.output(22, GPIO.LOW)
             elektro = False
         elif(status == 1 and elektro == False):
             print("Elektromagneet is HIGH")
-            #GPIO.output(22, #GPIO.HIGH)
+            GPIO.output(22, GPIO.HIGH)
             elektro = True
         return elektro    
 
