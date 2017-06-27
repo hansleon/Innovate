@@ -2493,56 +2493,82 @@ class main:
         posx += movementx
         posy += movementy
         self.BeweegXY(movementx, movementy)
-        # print("posx = " + str(posx) + " posy = " + str(posy))
+        print("posx = " + str(posx) + " posy = " + str(posy))
         x = int((posx/2)-2)
         y = int((posy/2))
         # print("x-as " + str(x) + " y-as " + str(y))
         return posx, posy
 
     def BeweegXY(self, x, y):
+        #hoeveel stappen voor half vlak (205)
         stappen = 1
+        i = 0
+        j = 0
+        #zet de driver aan als het de motor moet draaien
+        if(x != 0):
+            #GPIO.output(enablex, GPIO.LOW)
+            print("enablex is on")
+        if(y != 0):
+            #GPIO.output(enabley, GPIO.LOW)
+            print("enabley is on")
+            
+        #bepaalt de richting en het aantal stappen voor de x- as
         if(x > 0):
-            ##GPIO.output(enablex, #GPIO.LOW)
-            ##GPIO.output(dirx, #GPIO.HIGH)
-            i = x * 10 * stappen
+            #GPIO.output(dirx, #GPIO.HIGH)
+            print("dirx is HIGH")
+            i = x * 1 * stappen
         if(x < 0):
-            ##GPIO.output(enablex, #GPIO.LOW)
-            ##GPIO.output(dirx, #GPIO.LOW)
+            #GPIO.output(dirx, #GPIO.LOW)
+            print("dirx is LOW")
             x *= -1
-            i = x * 10 * stappen
-        if(y > 0):
-            ##GPIO.output(enabley, #GPIO.LOW)
-            ##GPIO.output(diry, #GPIO.HIGH)
-            j = y * 10 * stappen
-        if(y < 0):
-            ##GPIO.output(enabley, #GPIO.LOW)
-            ##GPIO.output(diry, #GPIO.LOW)
-            y *= -1
-            j = y * 10 * stappen
+            i = x * 1 * stappen
 
+        #bepaalt de richting en het aantal stappen voor de y- as
+        if(y > 0):
+            #GPIO.output(diry, #GPIO.HIGH)
+            print("diry is HIGH")
+            j = y * 1 * stappen
+        if(y < 0):
+            #GPIO.output(diry, #GPIO.LOW)
+            print("diry is LOW")
+            y *= -1
+            j = y * 1 * stappen
+
+        #bepaalt hoevaak de loop zich moet herhalen aan de hand van de motor die het langst moet bewegen
         total = i
         if(j > i):
             total = j
+            
         print(total)
+
+        #de bewegigins loop
         while total > 0:
-            if(i >= 0):
-                ##GPIO.output(stepx, #GPIO.HIGH)
+            if(i > 0):
+                #GPIO.output(stepx, #GPIO.HIGH)
                 print("aan " + str(i))
-            if(j != 0):
-                ##GPIO.output(stepy, #GPIO.HIGH)
+            if(j > 0):
+                #GPIO.output(stepy, #GPIO.HIGH)
                 print("aan " + str(j))
             time.sleep(0.0004)
             
-            if(i != 0):
-                ##GPIO.output(stepx, #GPIO.LOW)
+            if(i > 0):
+                
+                #GPIO.output(stepx, #GPIO.LOW)
                 print("uit " + str(i))
-            if(j != 0):
-                ##GPIO.output(stepy, #GPIO.LOW)
+                i -= 1
+            else:
+                #GPIO.output(enablex, #GPIO.HIGH)
+                print("enablex is LOW")
+            if(j > 0):
+                
+                #GPIO.output(stepy, #GPIO.LOW)
                 print("uit " + str(j))
+                j -= 1
+            else:
+                #GPIO.output(enabley, GPIO.HIGH)
+                print("enabley is LOW")
             time.sleep(0.0004)
-
-            i -= 1
-            j -= 1
+            
             total -= 1
             
         #GPIO.output(enablex, #GPIO.HIGH)
@@ -2550,11 +2576,11 @@ class main:
 
     def Elektromagneet(self, status, elektro):
         if(status == 0 and elektro == True):
-            # print("Deactiveer de elektromagneet")
+            print("Elektromagneet is LOW")
             #GPIO.output(22, #GPIO.LOW)
             elektro = False
         elif(status == 1 and elektro == False):
-            # print("Activeer de elektromagneet")
+            print("Elektromagneet is HIGH")
             #GPIO.output(22, #GPIO.HIGH)
             elektro = True
         return elektro    
